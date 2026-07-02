@@ -13,7 +13,7 @@
 
 <div
     class={cn(
-        'flex flex-col items-center justify-between gap-4 border-t border-line/50 px-8 py-6 text-xs font-medium text-faint sm:flex-row',
+        'flex flex-col items-center justify-between gap-4 border-t border-line/50 px-8 py-6 text-xs font-medium text-muted sm:flex-row',
         className,
     )}
 >
@@ -21,7 +21,7 @@
         {#each links as link (link.label)}
             <a
                 href={link.href}
-                class="rounded-sm transition-colors hover:text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+                class="rounded-sm transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
                 >{link.label}</a
             >
         {/each}

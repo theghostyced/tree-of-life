@@ -105,7 +105,8 @@
     outline: none;
 }
 .auth-input::placeholder {
-    color: var(--color-faint);
+    /* muted (not faint) so hint text clears WCAG AA 4.5:1 on the dark field. */
+    color: var(--color-muted);
 }
 
 @media (prefers-reduced-motion: reduce) {
