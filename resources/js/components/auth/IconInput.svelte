@@ -21,10 +21,10 @@
     } & HTMLInputAttributes = $props();
 </script>
 
-<div class="relative">
+<div class="group relative">
     {#if icon}
         <div
-            class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-faint"
+            class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-faint transition-colors duration-200 group-focus-within:text-accent"
         >
             {@render icon()}
         </div>

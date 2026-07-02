@@ -62,11 +62,18 @@
     --color-accent-strong: #b5c49a; /* accent hover — brighter (app.primaryHover) */
     --color-accent-soft: #1a1f1c; /* subtle surface for active backgrounds */
     --color-on-accent: #050606; /* text/icon on accent fills */
+    --color-glow-amber: #e0964a; /* warm morning-sun glow on the brand panel */
 
     /* Elevation — dark surfaces lean on borders; shadows stay subtle. */
     --shadow-bar: 0 1px 2px rgba(0, 0, 0, 0.4);
     --shadow-raised: 0 1px 2px rgba(0, 0, 0, 0.35);
     --shadow-card: 0 24px 60px -20px rgba(0, 0, 0, 0.6);
+
+    /* Accent glow for primary buttons — driven by the accent token. */
+    --shadow-btn: 0 4px 14px 0
+        color-mix(in srgb, var(--color-accent) 15%, transparent);
+    --shadow-btn-strong: 0 6px 20px 0
+        color-mix(in srgb, var(--color-accent) 20%, transparent);
 
     /* Motion */
     --animate-fade-in: fadeIn 0.3s ease-out;
@@ -86,14 +93,15 @@
 
 /* Translucent auth input with a sage focus ring (matches the login design). */
 .auth-input {
-    background-color: rgba(15, 18, 16, 0.5);
+    background-color: color-mix(in srgb, var(--color-surface) 50%, transparent);
     border: 1px solid var(--color-line);
     transition: all 0.2s ease;
 }
 .auth-input:focus {
     border-color: var(--color-accent);
-    background-color: rgba(15, 18, 16, 0.8);
-    box-shadow: 0 0 0 1px rgba(163, 177, 138, 0.2);
+    background-color: color-mix(in srgb, var(--color-surface) 80%, transparent);
+    box-shadow: 0 0 0 4px
+        color-mix(in srgb, var(--color-accent) 12%, transparent);
     outline: none;
 }
 .auth-input::placeholder {
@@ -117,6 +125,6 @@
     background: transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #2d3631;
+    background: var(--color-line-strong);
     border-radius: 10px;
 }

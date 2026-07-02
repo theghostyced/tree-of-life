@@ -3,13 +3,14 @@
     import AuthFooter from './AuthFooter.svelte';
 
     /**
-     * Left-hand brand panel for the auth screen: framed dark surface with a
-     * masked grid, ambient sage glows, subtle tracing beams, the Tree Of Life
-     * Fund logo, a hero statement, and the legal footer. Desktop only.
+     * Left-hand brand panel for the auth screen. A warm, softly lit dark surface
+     * — the "greenhouse at first light": layered sage and amber glows that drift
+     * slowly — carrying the Tree Of Life Fund logo, a welcoming statement, the
+     * community avatars, and the legal footer. Desktop only.
      */
-    const roles = [
-        { initials: 'EN', class: 'bg-elevated text-accent' },
-        { initials: 'ME', class: 'bg-line-strong text-muted' },
+    const community = [
+        { initials: 'EN', class: 'bg-accent/25 text-accent' },
+        { initials: 'ME', class: 'bg-accent-orange/25 text-accent-orange' },
         { initials: 'AD', class: 'bg-surface text-ink' },
     ];
 </script>
@@ -17,34 +18,11 @@
 <aside
     class="relative hidden w-[45%] flex-col justify-between overflow-hidden border-r border-line bg-panel lg:flex"
 >
-    <div class="grid-pattern absolute inset-0 z-0" aria-hidden="true"></div>
-    <div class="ambient-glow animate-pulse-slow z-0" aria-hidden="true"></div>
-    <div
-        class="pointer-events-none absolute right-[-200px] bottom-[-200px] z-0 h-[600px] w-[600px] rounded-full"
-        style="background: radial-gradient(circle, rgba(163,177,138,0.02) 0%, rgba(10,12,11,0) 60%);"
-        aria-hidden="true"
-    ></div>
-
-    <!-- Sage lights tracing along the grid lines, turning through boxes -->
-    <svg
-        class="line-trace pointer-events-none absolute inset-0 z-0 h-full w-full"
-        fill="none"
-        preserveAspectRatio="none"
-        aria-hidden="true"
-    >
-        <path
-            class="trace-1"
-            d="M -40 128 H 200 V 320 H 72 V 480 H 360 V 192 H 552 V 416 H 296 V 640"
-        />
-        <path
-            class="trace-2"
-            d="M 640 64 H 424 V 224 H 552 V 384 H 328 V 544 H 200 V 704"
-        />
-        <path
-            class="trace-3"
-            d="M 128 -40 V 160 H 328 V 288 H 200 V 448 H 456 V 640"
-        />
-    </svg>
+    <!-- Warm greenhouse light: layered ambient glows, no cold wireframe grid. -->
+    <div class="glow glow-sage" aria-hidden="true"></div>
+    <div class="glow glow-amber" aria-hidden="true"></div>
+    <div class="glow glow-breathe" aria-hidden="true"></div>
+    <div class="vignette" aria-hidden="true"></div>
 
     <div class="relative z-10 p-12">
         <Logo size="lg" />
@@ -64,17 +42,17 @@
 
         <div class="mt-12 flex items-center gap-4">
             <div class="flex -space-x-3">
-                {#each roles as role (role.initials)}
+                {#each community as person (person.initials)}
                     <div
-                        class="flex h-10 w-10 items-center justify-center rounded-full border-2 border-panel text-xs font-medium {role.class}"
+                        class="flex size-10 items-center justify-center rounded-full border-2 border-panel text-xs font-semibold {person.class}"
                     >
-                        {role.initials}
+                        {person.initials}
                     </div>
                 {/each}
             </div>
-            <div class="text-sm font-medium text-muted">
+            <p class="text-sm font-medium text-muted">
                 Founders, mentors, and reviewers in one workflow
-            </div>
+            </p>
         </div>
     </div>
 
@@ -82,93 +60,114 @@
 </aside>
 
 <style>
-    .grid-pattern {
-        background-size: 32px 32px;
-        background-image:
-            linear-gradient(
-                to right,
-                rgba(26, 31, 28, 0.5) 1px,
-                transparent 1px
-            ),
-            linear-gradient(
-                to bottom,
-                rgba(26, 31, 28, 0.5) 1px,
-                transparent 1px
-            );
-        mask-image: linear-gradient(to bottom right, black 20%, transparent 80%);
-        -webkit-mask-image: linear-gradient(
-            to bottom right,
-            black 20%,
-            transparent 80%
-        );
+    /* Soft ambient light pools. Each drifts on its own long, offset cycle so the
+       light feels alive but calm — like sun moving through leaves, never a
+       pulse. Motion is tiny and slow on purpose; transform + opacity only. */
+    .glow {
+        position: absolute;
+        z-index: 0;
+        border-radius: 9999px;
+        pointer-events: none;
+        will-change: transform, opacity;
     }
 
-    .ambient-glow {
-        position: absolute;
-        top: -200px;
-        left: -200px;
-        width: 800px;
-        height: 800px;
-        border-radius: 50%;
-        pointer-events: none;
+    /* Cool sage light spilling from the top-left, near the logo. */
+    .glow-sage {
+        top: -180px;
+        left: -140px;
+        width: 540px;
+        height: 540px;
         background: radial-gradient(
             circle,
-            rgba(163, 177, 138, 0.04) 0%,
-            rgba(5, 6, 6, 0) 60%
+            color-mix(in srgb, var(--color-accent) 11%, transparent),
+            transparent 62%
+        );
+        animation: drift-sage 26s ease-in-out infinite;
+    }
+
+    /* Warm amber light rising from the bottom-right — the morning-sun note
+       that turns the panel from "cold tool" into "warm room". */
+    .glow-amber {
+        right: -200px;
+        bottom: -180px;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(
+            circle,
+            color-mix(in srgb, var(--color-glow-amber) 7%, transparent),
+            transparent 60%
+        );
+        animation: drift-amber 32s ease-in-out infinite;
+    }
+
+    /* A gentle third light behind the headline that slowly breathes. */
+    .glow-breathe {
+        top: 32%;
+        left: 24%;
+        width: 460px;
+        height: 460px;
+        background: radial-gradient(
+            circle,
+            color-mix(in srgb, var(--color-accent-strong) 7%, transparent),
+            transparent 66%
+        );
+        animation: breathe 18s ease-in-out infinite;
+    }
+
+    /* Settle the edges so the glows read as light in a room, not flat panels. */
+    .vignette {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background: radial-gradient(
+            120% 100% at 50% 0%,
+            transparent 55%,
+            rgba(0, 0, 0, 0.4)
         );
     }
 
-    /* A lit segment travels a grid-aligned path, tracing box borders. The path
-       coordinates are multiples of 32px, so the light rides the existing grid
-       lines. Masked to fade with the grid toward the bottom-right. */
-    .line-trace {
-        overflow: visible;
-        mask-image: linear-gradient(to bottom right, black 20%, transparent 75%);
-        -webkit-mask-image: linear-gradient(
-            to bottom right,
-            black 20%,
-            transparent 75%
-        );
-    }
-
-    .line-trace path {
-        fill: none;
-        stroke: rgba(163, 177, 138, 0.42);
-        stroke-width: 1;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-        stroke-dasharray: 52 2400;
-        filter: drop-shadow(0 0 2px rgba(163, 177, 138, 0.25));
-        /* dashoffset repaints, but strokes are 1px in a small masked area and
-           GPU-compositing the layer keeps it cheap. */
-        will-change: stroke-dashoffset;
-    }
-
-    .trace-1 {
-        animation: trace 11s linear infinite;
-    }
-    .trace-2 {
-        animation: trace 14s linear infinite;
-        animation-delay: -5s;
-    }
-    .trace-3 {
-        animation: trace 17s linear infinite;
-        animation-delay: -9s;
-    }
-
-    @keyframes trace {
-        from {
-            stroke-dashoffset: 0;
+    @keyframes drift-sage {
+        0%,
+        100% {
+            transform: translate3d(0, 0, 0) scale(1);
+            opacity: 0.7;
         }
-        to {
-            stroke-dashoffset: -2452;
+        50% {
+            transform: translate3d(22px, 26px, 0) scale(1.05);
+            opacity: 1;
+        }
+    }
+
+    @keyframes drift-amber {
+        0%,
+        100% {
+            transform: translate3d(0, 0, 0) scale(1);
+            opacity: 0.55;
+        }
+        50% {
+            transform: translate3d(-26px, -20px, 0) scale(1.07);
+            opacity: 0.9;
+        }
+    }
+
+    @keyframes breathe {
+        0%,
+        100% {
+            transform: scale(1);
+            opacity: 0.45;
+        }
+        50% {
+            transform: scale(1.1);
+            opacity: 0.8;
         }
     }
 
     @media (prefers-reduced-motion: reduce) {
-        .line-trace path {
+        .glow-sage,
+        .glow-amber,
+        .glow-breathe {
             animation: none;
-            opacity: 0;
         }
     }
 </style>

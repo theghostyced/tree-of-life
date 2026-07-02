@@ -54,7 +54,7 @@
             </label>
             <a
                 href="#"
-                class="text-sm font-medium text-accent transition-colors hover:text-accent-strong"
+                class="rounded-sm text-sm font-medium text-accent transition-colors hover:text-accent-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
             >
                 Forgot password?
             </a>
@@ -73,9 +73,11 @@
                 <button
                     type="button"
                     onclick={() => (showPassword = !showPassword)}
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    aria-label={showPassword
+                        ? 'Hide password'
+                        : 'Show password'}
                     aria-pressed={showPassword}
-                    class="rounded-lg p-2 text-muted transition-colors hover:bg-surface hover:text-ink"
+                    class="rounded-lg p-2 text-muted transition-colors hover:bg-surface hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
                 >
                     {#if showPassword}
                         <EyeOff class="size-[18px]" strokeWidth={1.75} />
@@ -92,7 +94,7 @@
             type="checkbox"
             id="remember"
             bind:checked={remember}
-            class="size-4 rounded border-line bg-surface accent-[#a3b18a]"
+            class="size-4 cursor-pointer rounded border-line bg-surface accent-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
         />
         <label
             for="remember"
@@ -105,7 +107,7 @@
     <div class="pt-4">
         <Button
             type="submit"
-            class="group h-auto w-full rounded-xl bg-accent py-3.5 text-[15px] font-semibold text-on-accent shadow-[0_4px_14px_0_rgba(163,177,138,0.15)] transition-all hover:-translate-y-px hover:bg-accent-strong hover:shadow-[0_6px_20px_0_rgba(163,177,138,0.2)]"
+            class="group h-auto w-full rounded-xl bg-accent py-3.5 text-[15px] font-semibold text-on-accent shadow-btn transition-all hover:-translate-y-px hover:bg-accent-strong hover:shadow-btn-strong active:translate-y-0 active:shadow-btn focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
         >
             Continue
             <ArrowRight

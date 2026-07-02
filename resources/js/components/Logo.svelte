@@ -35,7 +35,7 @@
 <div class={cn('flex items-center gap-3', className)}>
     <div
         class={cn(
-            'flex items-center justify-center bg-[#A3B18A] text-[#0A0C0B]',
+            'flex items-center justify-center bg-accent text-on-accent',
             tile[size],
         )}
     >

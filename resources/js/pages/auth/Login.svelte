@@ -17,7 +17,11 @@
 
 <AppHead title="Sign in">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin="anonymous"
+    />
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
         rel="stylesheet"
@@ -43,7 +47,7 @@
         >
             <div
                 class="pointer-events-none absolute inset-0"
-                style="background: radial-gradient(ellipse at top right, rgba(163,177,138,0.03), transparent 50%);"
+                style="background: radial-gradient(ellipse 70% 55% at 85% 8%, color-mix(in srgb, var(--color-accent) 6%, transparent), transparent 55%), radial-gradient(ellipse 60% 50% at 12% 100%, color-mix(in srgb, var(--color-glow-amber) 5%, transparent), transparent 55%);"
                 aria-hidden="true"
             ></div>
 

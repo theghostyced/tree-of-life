@@ -19,7 +19,9 @@
 >
     <div class="flex gap-6">
         {#each links as link (link.label)}
-            <a href={link.href} class="transition-colors hover:text-muted"
+            <a
+                href={link.href}
+                class="rounded-sm transition-colors hover:text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
                 >{link.label}</a
             >
         {/each}
