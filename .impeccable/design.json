@@ -1,0 +1,145 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-02T19:10:09Z",
+  "title": "Design System: Tolfund",
+  "extensions": {
+    "colorMeta": {
+      "primary":        { "role": "primary",  "displayName": "Cultivated Green", "canonical": "hsl(140, 94%, 13%)", "tonalRamp": ["hsl(140,94%,13%)","hsl(140,82%,20%)","hsl(140,70%,28%)","hsl(140,60%,37%)","hsl(140,50%,47%)","hsl(140,45%,60%)","hsl(140,45%,74%)","hsl(140,50%,90%)"] },
+      "primary-deep":   { "role": "primary",  "displayName": "Cultivated Green Deep", "canonical": "hsl(140, 94%, 10%)", "tonalRamp": ["hsl(140,94%,10%)","hsl(140,90%,15%)","hsl(140,78%,22%)","hsl(140,66%,30%)","hsl(140,55%,40%)","hsl(140,48%,54%)","hsl(140,46%,70%)","hsl(140,50%,88%)"] },
+      "accent-orange":  { "role": "tertiary", "displayName": "Ember Orange", "canonical": "hsl(17, 76%, 49%)", "tonalRamp": ["hsl(17,76%,20%)","hsl(17,76%,30%)","hsl(17,76%,40%)","hsl(17,76%,49%)","hsl(17,80%,60%)","hsl(17,85%,72%)","hsl(17,90%,84%)","hsl(17,95%,93%)"] },
+      "accent-yellow":  { "role": "tertiary", "displayName": "Harvest Yellow", "canonical": "hsl(51, 100%, 44%)", "tonalRamp": ["hsl(51,100%,18%)","hsl(51,100%,28%)","hsl(51,100%,36%)","hsl(51,100%,44%)","hsl(51,100%,55%)","hsl(51,100%,68%)","hsl(51,100%,82%)","hsl(51,100%,93%)"] },
+      "secondary-blue": { "role": "secondary", "displayName": "Sky Blue", "canonical": "hsl(200, 60%, 64%)", "tonalRamp": ["hsl(200,60%,20%)","hsl(200,60%,30%)","hsl(200,60%,40%)","hsl(200,60%,50%)","hsl(200,60%,64%)","hsl(200,60%,74%)","hsl(200,55%,84%)","hsl(200,55%,93%)"] },
+      "background":     { "role": "neutral",  "displayName": "Warm Field", "canonical": "hsl(41, 100%, 88%)", "tonalRamp": ["hsl(41,60%,24%)","hsl(41,72%,36%)","hsl(41,85%,48%)","hsl(41,95%,60%)","hsl(41,100%,72%)","hsl(41,100%,80%)","hsl(41,100%,88%)","hsl(41,100%,95%)"] },
+      "surface":        { "role": "neutral",  "displayName": "Surface White", "canonical": "#ffffff", "tonalRamp": ["hsl(41,20%,88%)","hsl(41,25%,91%)","hsl(41,30%,93%)","hsl(41,35%,95%)","hsl(41,40%,96%)","hsl(41,50%,97%)","hsl(41,60%,99%)","#ffffff"] },
+      "text-primary":   { "role": "neutral",  "displayName": "Earth Ink", "canonical": "hsl(19, 94%, 13%)", "tonalRamp": ["hsl(19,94%,10%)","hsl(19,90%,16%)","hsl(19,80%,24%)","hsl(19,60%,34%)","hsl(19,40%,46%)","hsl(19,35%,60%)","hsl(19,40%,75%)","hsl(19,50%,90%)"] },
+      "text-secondary": { "role": "neutral",  "displayName": "Muted Earth", "canonical": "hsl(20, 25%, 39%)", "tonalRamp": ["hsl(20,25%,16%)","hsl(20,25%,24%)","hsl(20,25%,31%)","hsl(20,25%,39%)","hsl(20,22%,50%)","hsl(20,22%,64%)","hsl(20,25%,78%)","hsl(20,30%,90%)"] },
+      "border-light":   { "role": "neutral",  "displayName": "Light Border", "canonical": "hsl(40, 70%, 80%)", "tonalRamp": ["hsl(40,50%,40%)","hsl(40,60%,52%)","hsl(40,65%,62%)","hsl(40,70%,70%)","hsl(40,70%,80%)","hsl(40,72%,86%)","hsl(40,75%,91%)","hsl(40,80%,96%)"] },
+      "border-dark":    { "role": "neutral",  "displayName": "Dark Border", "canonical": "hsl(19, 68%, 21%)", "tonalRamp": ["hsl(19,68%,12%)","hsl(19,68%,17%)","hsl(19,68%,21%)","hsl(19,60%,30%)","hsl(19,50%,42%)","hsl(19,42%,58%)","hsl(19,45%,74%)","hsl(19,50%,90%)"] },
+      "success":        { "role": "neutral",  "displayName": "Success Green", "canonical": "hsl(123, 46%, 34%)", "tonalRamp": ["hsl(123,46%,16%)","hsl(123,46%,24%)","hsl(123,46%,34%)","hsl(123,42%,44%)","hsl(123,40%,55%)","hsl(123,40%,68%)","hsl(123,40%,80%)","hsl(123,45%,92%)"] },
+      "warning":        { "role": "neutral",  "displayName": "Warning Yellow", "canonical": "hsl(51, 100%, 44%)", "tonalRamp": ["hsl(51,100%,18%)","hsl(51,100%,28%)","hsl(51,100%,36%)","hsl(51,100%,44%)","hsl(51,100%,55%)","hsl(51,100%,68%)","hsl(51,100%,82%)","hsl(51,100%,93%)"] },
+      "error":          { "role": "neutral",  "displayName": "Error Red", "canonical": "hsl(0, 66%, 47%)", "tonalRamp": ["hsl(0,66%,20%)","hsl(0,66%,30%)","hsl(0,66%,40%)","hsl(0,66%,47%)","hsl(0,70%,58%)","hsl(0,75%,70%)","hsl(0,80%,82%)","hsl(0,85%,92%)"] }
+    },
+    "typographyMeta": {
+      "display":  { "displayName": "Display",  "purpose": "Page titles. One per screen. Fixed rem, never fluid clamp." },
+      "headline": { "displayName": "Headline", "purpose": "Section headers and panel titles within a page." },
+      "title":    { "displayName": "Title",    "purpose": "Card titles, table group headers, dialog titles." },
+      "body":     { "displayName": "Body",     "purpose": "Default reading text and form values. Prose capped at 65-75ch." },
+      "label":    { "displayName": "Label",    "purpose": "Status chips, table headers, field labels, metadata keys. Uppercase, tracked." }
+    },
+    "shadows": [
+      { "name": "field-lift", "value": "0 1px 2px rgba(64, 22, 2, 0.06)", "purpose": "Optional subtle lift of a primary content card off the cream field. Warm-tinted, never neutral." },
+      { "name": "floating-layer", "value": "0 8px 24px rgba(64, 22, 2, 0.14)", "purpose": "Dropdowns, popovers, modals, toasts — layers that genuinely float above the page." }
+    ],
+    "motion": [
+      { "name": "ease-standard", "value": "cubic-bezier(0.2, 0, 0, 1)", "purpose": "Ease-out for state transitions (hover, focus, selection). 150-250ms." },
+      { "name": "duration-fast", "value": "150ms", "purpose": "Default for hover/focus feedback on controls." },
+      { "name": "duration-base", "value": "200ms", "purpose": "Panel and disclosure transitions. No page-load choreography." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The single high-emphasis action per context. Cultivated Green fill, cream text.",
+      "html": "<button class=\"ds-btn-primary\">Approve application</button>",
+      "css": ".ds-btn-primary { background:#024017; color:#ffecc2; padding:10px 20px; border:none; border-radius:8px; font:600 0.9375rem/1 \"Instrument Sans\", ui-sans-serif, system-ui, sans-serif; cursor:pointer; transition:background .15s cubic-bezier(0.2,0,0,1), transform .15s cubic-bezier(0.2,0,0,1); } .ds-btn-primary:hover { background:#013012; } .ds-btn-primary:focus-visible { outline:2px solid #5a2811; outline-offset:2px; } .ds-btn-primary:active { background:#013012; transform:translateY(1px); } .ds-btn-primary:disabled { opacity:.5; cursor:not-allowed; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Second-most-likely action. White fill, green text, green hairline border.",
+      "html": "<button class=\"ds-btn-secondary\">Request changes</button>",
+      "css": ".ds-btn-secondary { background:#ffffff; color:#024017; padding:10px 20px; border:1px solid #024017; border-radius:8px; font:600 0.9375rem/1 \"Instrument Sans\", ui-sans-serif, system-ui, sans-serif; cursor:pointer; transition:background .15s cubic-bezier(0.2,0,0,1); } .ds-btn-secondary:hover { background:#f1f6f2; } .ds-btn-secondary:focus-visible { outline:2px solid #024017; outline-offset:2px; } .ds-btn-secondary:disabled { opacity:.5; cursor:not-allowed; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Low-emphasis / tertiary action (Cancel, inline row actions). No border.",
+      "html": "<button class=\"ds-btn-ghost\">Cancel</button>",
+      "css": ".ds-btn-ghost { background:transparent; color:#401602; padding:10px 16px; border:none; border-radius:8px; font:600 0.9375rem/1 \"Instrument Sans\", ui-sans-serif, system-ui, sans-serif; cursor:pointer; transition:background .15s cubic-bezier(0.2,0,0,1); } .ds-btn-ghost:hover { background:#f0d8a8; } .ds-btn-ghost:focus-visible { outline:2px solid #5a2811; outline-offset:2px; }"
+    },
+    {
+      "name": "Status Chip",
+      "kind": "chip",
+      "refersTo": "chip-status",
+      "description": "The signature component. Status is the interface — color is ALWAYS paired with a text label, never color alone.",
+      "html": "<span class=\"ds-chip ds-chip--approved\"><span class=\"ds-chip__dot\"></span>Approved</span> <span class=\"ds-chip ds-chip--pending\"><span class=\"ds-chip__dot\"></span>Pending</span> <span class=\"ds-chip ds-chip--rejected\"><span class=\"ds-chip__dot\"></span>Rejected</span>",
+      "css": ".ds-chip { display:inline-flex; align-items:center; gap:6px; padding:2px 10px; border-radius:9999px; font:600 0.75rem/1.2 \"Instrument Sans\", ui-sans-serif, system-ui, sans-serif; letter-spacing:.04em; text-transform:uppercase; } .ds-chip__dot { width:6px; height:6px; border-radius:9999px; background:currentColor; } .ds-chip--approved { background:#2f7f33; color:#ffffff; } .ds-chip--pending { background:#fdf6d6; color:#786400; border:1px solid #e0bf00; } .ds-chip--rejected { background:#fbeaea; color:#c72929; border:1px solid #c72929; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "White field on the cream page, hairline border, uppercase label, green focus ring.",
+      "html": "<label class=\"ds-input-wrap\"><span class=\"ds-input-label\">Award amount</span><input class=\"ds-input\" type=\"text\" placeholder=\"e.g. 25,000\" /></label>",
+      "css": ".ds-input-wrap { display:inline-flex; flex-direction:column; gap:6px; font-family:\"Instrument Sans\", ui-sans-serif, system-ui, sans-serif; } .ds-input-label { font:600 0.75rem/1.2 inherit; letter-spacing:.04em; text-transform:uppercase; color:#7c5b4b; } .ds-input { background:#ffffff; color:#401602; padding:8px 12px; border:1px solid #f0d8a8; border-radius:8px; font:400 0.9375rem/1.5 inherit; min-width:220px; transition:border-color .15s cubic-bezier(0.2,0,0,1), box-shadow .15s cubic-bezier(0.2,0,0,1); } .ds-input::placeholder { color:#7c5b4b; } .ds-input:focus-visible { outline:none; border-color:#024017; box-shadow:0 0 0 2px rgba(2,64,23,.25); } .ds-input:disabled { background:#faf1dd; color:#7c5b4b; cursor:not-allowed; }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "White content plane lifted off the cream field. Flat at rest, border-defined, never nested.",
+      "html": "<article class=\"ds-card\"><h3 class=\"ds-card__title\">Milestone 2 · Prototype</h3><p class=\"ds-card__body\">Awaiting mentor review. Planned disbursement $8,000.</p></article>",
+      "css": ".ds-card { background:#ffffff; color:#401602; border:1px solid #f0d8a8; border-radius:12px; padding:24px; font-family:\"Instrument Sans\", ui-sans-serif, system-ui, sans-serif; max-width:340px; } .ds-card__title { font:600 1.125rem/1.3 inherit; margin:0 0 8px; } .ds-card__body { font:400 0.9375rem/1.5 inherit; color:#7c5b4b; margin:0; }"
+    },
+    {
+      "name": "Nav Item",
+      "kind": "nav",
+      "refersTo": "nav-item",
+      "description": "Role-specific side-nav item. Active state carries a green surface; the only legitimate accent indicator is the current item.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-item ds-nav-item--active\" href=\"#\">Applications</a><a class=\"ds-nav-item\" href=\"#\">Awards</a><a class=\"ds-nav-item\" href=\"#\">Disbursements</a></nav>",
+      "css": ".ds-nav { display:inline-flex; flex-direction:column; gap:2px; font-family:\"Instrument Sans\", ui-sans-serif, system-ui, sans-serif; min-width:200px; } .ds-nav-item { display:flex; align-items:center; gap:10px; padding:8px 12px; border-radius:8px; color:#401602; font:600 0.9375rem/1 inherit; text-decoration:none; transition:background .15s cubic-bezier(0.2,0,0,1); } .ds-nav-item:hover { background:#f0d8a8; } .ds-nav-item:focus-visible { outline:2px solid #5a2811; outline-offset:2px; } .ds-nav-item--active { background:#024017; color:#ffecc2; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Greenhouse",
+    "overview": "Tolfund is a greenhouse for entrepreneurs: a warm, structured, well-lit place where funded ventures are cultivated, tracked, and brought to maturity. The green primary (#024017, a deep cultivated leaf) is the growth; the cream background (#ffecc2, warm morning light through glass) is the shelter; the earth-brown ink (#401602) is the soil everything is rooted in. This is not a bank and not a government portal — it is a supportive institution that happens to move real money, and the interface must feel like it is handling this properly while still treating people with warmth and dignity. The system is built for operators under repeated daily pressure. Its first job on every screen is to make the current state and the next legal action unmistakable — status is the interface, not decoration on top of it. Density is a feature: reviewers clear queues in tables and timelines. But density only earns its keep when warmth, hierarchy, and contrast keep it legible.",
+    "keyCharacteristics": [
+      "Warm, not cold. Cream + green + earth. Warmth lives in color, copy, and generosity of guidance — never in decoration.",
+      "Status-first. Every award, application, milestone, disbursement, and session shows its state and next action before anything else.",
+      "Calm density. Tables, queues, and timelines over spacious cards. Legible under pressure.",
+      "Precise. Money, dates, and permissions read as deliberate and correct — alignment and formatting signal care.",
+      "Role-true. Admin, mentor, and entrepreneur get purpose-built chrome, never a one-size shell with hidden controls."
+    ],
+    "rules": [
+      { "name": "The Cream Field Rule", "body": "Every screen sits on Warm Field cream (#ffecc2). Content lifts off it on Surface White. Pure white is never the page background, and cream is never a content plane — the two-layer warmth is the identity.", "section": "colors" },
+      { "name": "The Green-Is-Action Rule", "body": "Cultivated Green means 'the primary thing you can do' and 'Tolfund itself.' It is never decoration and never a status. If green and Success Green appear adjacent, Success must be the brighter cool one so the two do not read as the same state.", "section": "colors" },
+      { "name": "The Accent Rarity Rule", "body": "Ember Orange and Harvest Yellow together occupy <=10% of any screen. Their heat is the signal; spend it only on genuine attention and pending action.", "section": "colors" },
+      { "name": "The One-Family Rule", "body": "Instrument Sans only. Never a display serif, never a second sans, never a script. The Inter stylesheet still loaded on the starter Welcome.svelte is a leftover to remove.", "section": "typography" },
+      { "name": "The Fixed-Scale Rule", "body": "Type sizes are fixed rem steps (~1.2 ratio), not clamp(). Users work at consistent DPI; fluid headings that shrink in panels look worse, not more responsive.", "section": "typography" },
+      { "name": "The Flat-Field Rule", "body": "Surfaces are flat at rest. Elevation is a response to floating above the page (menus, modals), not a default on every card. If a resting card has both a 1px border and a wide soft shadow, delete the shadow.", "section": "elevation" },
+      { "name": "The Warm-Shadow Rule", "body": "Shadows are tinted with Earth Ink (rgba(64,22,2,...)), never rgba(0,0,0,...). A neutral-black shadow on a warm cream field reads cold and wrong.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do sit every screen on Warm Field cream (#ffecc2) and lift content onto Surface White. The two-layer warmth is the brand.",
+      "Do reserve Cultivated Green (#024017) for primary actions and Tolfund's own chrome — action and identity, never status.",
+      "Do carry status with the semantic quartet (Success #2f7f33 / Warning #e0bf00 / Error #c72929 / Info #6cb6da) and always a text label. Never encode status by color alone.",
+      "Do keep Muted Earth (#7c5b4b) as the floor for secondary text — it passes 4.5:1 on cream and white. Verify contrast on the warm background.",
+      "Do use one family, Instrument Sans, at fixed rem sizes across headings, data, and labels.",
+      "Do lead with tables, queues, and timelines. Density is legible when hierarchy and warm contrast hold.",
+      "Do ship every interactive component with default/hover/focus-visible/active/disabled, plus skeleton loading and teaching empty states.",
+      "Do tint shadows with Earth Ink (rgba(64,22,2,...)) and keep surfaces flat at rest."
+    ],
+    "donts": [
+      "Don't build a generic SaaS dashboard — no purple gradients, no hero-metric template, no endless identical icon+heading+text card grids.",
+      "Don't drift toward a cold corporate bank — no sterile navy-and-gray fintech coldness. The palette is warm on purpose.",
+      "Don't ship a cluttered government portal — no dense, dated, hard-to-scan chrome; no unstyled 1998-era data tables; no weak hierarchy.",
+      "Don't make it a consumer/playful app — no gamification, no emoji-driven UI, no over-rounded (24px+) cartoonish corners.",
+      "Don't use a border-left/border-right colored stripe greater than 1px as decoration. The single exception: a nav active-item indicator.",
+      "Don't pair a 1px border with a wide soft drop shadow on the same resting card — pick one.",
+      "Don't use pure white as a page background or cream as a content plane. Don't use rgba(0,0,0,...) shadows on the warm field.",
+      "Don't introduce a second font. Remove the leftover Inter stylesheet from Welcome.svelte; Instrument Sans is the only family.",
+      "Don't let Cultivated Green stand in for 'success,' or use full-saturation accents on inactive states.",
+      "Don't reach for a modal as the first thought — exhaust inline and progressive alternatives first."
+    ]
+  }
+}

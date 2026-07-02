@@ -1,0 +1,62 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@theme inline {
+    --font-sans:
+        Instrument Sans, ui-sans-serif, system-ui, sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Noto Color Emoji';
+}
+
+@theme {
+    /* Brand */
+    /* Primary: green tone rotated from the original #401602 (hsl 19),
+       keeping the exact same saturation (94%) and lightness (13%). */
+    --color-primary: hsl(140, 94%, 13%);
+    --color-accent-orange: hsl(17, 76%, 49%);
+    --color-accent-yellow: hsl(51, 100%, 44%);
+    --color-secondary-blue: hsl(200, 60%, 64%);
+    --color-background: hsl(41, 100%, 88%);
+
+    /* Text (namespaced under --color-* so they don't collide with
+       Tailwind's --text-* font-size namespace) */
+    --color-text-primary: hsl(19, 94%, 13%);
+    --color-text-secondary: hsl(20, 25%, 39%);
+    --color-text-on-dark: hsl(41, 100%, 88%);
+
+    /* Borders */
+    --color-border-light: hsl(40, 70%, 80%);
+    --color-border-dark: hsl(19, 68%, 21%);
+
+    /* Status */
+    --color-success: hsl(123, 46%, 34%);
+    --color-warning: hsl(51, 100%, 44%);
+    --color-error: hsl(0, 66%, 47%);
+
+    /* Sage ramp — muted sage-green grays for the dark auth surfaces.
+       sage-400 (#A3B18A) is the auth accent; the ramp brightens above it
+       and dims below it. Additive; does not touch the warm brand tokens. */
+    --color-sage-200: #d3d9c6;
+    --color-sage-300: #c1c9b0;
+    --color-sage-400: #a3b18a;
+    --color-sage-500: #8a9576;
+    --color-sage-600: #6e7860;
+    --color-sage-700: #515a47;
+    --color-sage-800: #363c30;
+    --color-sage-900: #23271f;
+}
+
+/* Thin dark scrollbar for the app chrome (navbar overflow, scrollable panes). */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #2d3631;
+    border-radius: 10px;
+}
