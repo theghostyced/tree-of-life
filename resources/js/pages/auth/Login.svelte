@@ -45,13 +45,7 @@
         <div
             class="relative z-10 flex flex-1 flex-col items-center justify-center p-6 sm:p-12"
         >
-            <div
-                class="pointer-events-none absolute inset-0"
-                style="background: radial-gradient(ellipse 70% 55% at 85% 8%, color-mix(in srgb, var(--color-accent) 6%, transparent), transparent 55%), radial-gradient(ellipse 60% 50% at 12% 100%, color-mix(in srgb, var(--color-glow-amber) 5%, transparent), transparent 55%);"
-                aria-hidden="true"
-            ></div>
-
-            <div class="w-full max-w-[420px]">
+            <div class="relative z-10 w-full max-w-[420px]">
                 {#if step === 'credentials'}
                     <div class="animate-fade-in">
                         <LoginForm oncontinue={() => (step = 'mfa')} />
