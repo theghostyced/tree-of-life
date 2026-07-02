@@ -21,7 +21,7 @@
 </AppHead>
 
 <div
-    class="flex h-screen flex-col overflow-hidden bg-[#0A0C0B] text-[#E2E8E4]"
+    class="flex h-screen flex-col overflow-hidden bg-canvas text-ink"
     style="font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;"
 >
     <AppNavbar />

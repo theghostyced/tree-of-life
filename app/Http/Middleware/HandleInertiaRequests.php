@@ -40,6 +40,9 @@ class HandleInertiaRequests extends Middleware
             'name' => config('app.name'),
             'auth' => [
                 'user' => $request->user(),
+                // Placeholder viewer role for the dashboard tag. Replace with a
+                // backed UserRole enum + `role` column once the role system lands.
+                'role' => 'admin',
             ],
         ];
     }

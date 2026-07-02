@@ -9,6 +9,13 @@ export type User = {
     [key: string]: unknown;
 };
 
+export type UserRole = 'admin' | 'mentor' | 'entrepreneur';
+
 export type Auth = {
     user: User;
+    /**
+     * Role of the authenticated viewer. Placeholder until a backed
+     * `UserRole` enum + `role` column land server-side.
+     */
+    role: UserRole;
 };

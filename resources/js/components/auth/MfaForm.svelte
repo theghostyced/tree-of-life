@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { ArrowLeft, ShieldCheck } from '@lucide/svelte';
     import { Button } from '@/components/ui/button';
     import OtpInput from './OtpInput.svelte';
 
@@ -16,44 +17,44 @@
     let code = $state('492');
 </script>
 
-<div class="mb-8 text-center">
-    <div
-        class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-[#232B27] bg-[#1A1F1C]"
-    >
-        <svg class="size-5 text-[#A3B18A]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
-            <circle cx="12" cy="10" r="1.5" />
-            <path d="M12 11.5V15" />
-        </svg>
-    </div>
-    <h2 class="mb-2 text-xl font-semibold text-white">Security verification</h2>
-    <p class="text-sm text-white">
-        Enter the 6-digit code from your authenticator app.
-    </p>
-</div>
-
-<div class="mb-8">
-    <OtpInput bind:value={code} />
-</div>
-
-<Button
-    type="button"
-    onclick={() => onverify?.(code)}
-    class="mb-6 h-auto w-full rounded-lg bg-[#A3B18A] py-3.5 text-sm font-semibold text-[#0A0C0B] shadow-none hover:bg-[#A3B18A] hover:opacity-90"
->
-    Verify and login
-</Button>
-
-<div class="text-center">
+<div class="mb-10">
     <button
         type="button"
         onclick={() => onback?.()}
-        class="inline-flex items-center text-[13px] text-white transition-colors hover:text-white/80"
+        aria-label="Back to sign in"
+        class="mb-8 flex size-10 items-center justify-center rounded-full border border-line bg-surface text-muted transition-all hover:border-line-strong hover:text-ink"
     >
-        <svg class="mr-1 size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="m12 19-7-7 7-7" />
-            <path d="M19 12H5" />
-        </svg>
-        Back to login
+        <ArrowLeft class="size-[18px]" strokeWidth={1.75} />
     </button>
+    <h2 class="mb-3 text-3xl font-semibold tracking-tight text-ink">
+        Two-step verification
+    </h2>
+    <p class="text-[15px] text-muted">
+        We've sent a code to your authenticator app. Enter it below to verify
+        your identity.
+    </p>
 </div>
+
+<form class="space-y-8" onsubmit={(e) => { e.preventDefault(); onverify?.(code); }}>
+    <OtpInput bind:value={code} />
+
+    <div class="flex flex-col gap-4">
+        <Button
+            type="submit"
+            class="group h-auto w-full rounded-xl bg-accent py-3.5 text-[15px] font-semibold text-on-accent shadow-[0_4px_14px_0_rgba(163,177,138,0.15)] transition-all hover:-translate-y-px hover:bg-accent-strong hover:shadow-[0_6px_20px_0_rgba(163,177,138,0.2)]"
+        >
+            Verify identity
+            <ShieldCheck class="size-[18px]" strokeWidth={1.75} />
+        </Button>
+
+        <p class="text-center text-sm text-muted">
+            Having trouble?
+            <a
+                href="#"
+                class="font-medium text-accent underline decoration-accent/30 underline-offset-4 transition-colors hover:text-accent-strong"
+            >
+                Use a recovery code
+            </a>
+        </p>
+    </div>
+</form>

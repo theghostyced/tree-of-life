@@ -32,7 +32,7 @@
 
 <div
     class={cn(
-        'custom-scrollbar flex items-center gap-8 overflow-x-auto border-b border-[#1A1F1C]',
+        'custom-scrollbar flex items-center gap-8 overflow-x-auto border-b border-line',
         className,
     )}
 >
@@ -41,10 +41,10 @@
             type="button"
             onclick={() => select(item.value)}
             class={cn(
-                'shrink-0 whitespace-nowrap rounded-sm pb-3 text-sm font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[#A3B18A]/50',
+                'shrink-0 whitespace-nowrap rounded-sm pb-3 text-sm font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-accent/50',
                 active === item.value
-                    ? 'border-b-2 border-[#A3B18A] text-[#A3B18A]'
-                    : 'text-sage-500 hover:text-[#E2E8E4]',
+                    ? 'border-b-2 border-accent text-accent'
+                    : 'text-muted hover:text-ink',
             )}
         >
             {item.label}

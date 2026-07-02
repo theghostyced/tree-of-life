@@ -46,6 +46,66 @@
     --color-sage-700: #515a47;
     --color-sage-800: #363c30;
     --color-sage-900: #23271f;
+
+    /* App surfaces — dark mode, sage-tinted near-blacks. Semantic layer for
+       the Tree Of Life Fund auth + admin surfaces. */
+    --color-canvas: #050606; /* page background (app.bg) */
+    --color-panel: #0a0c0b; /* framed brand panel (app.panel) */
+    --color-surface: #0f1210; /* cards, inputs, raised controls (app.surface) */
+    --color-elevated: #1a1f1c; /* tracks, hover fills */
+    --color-line: #1a1f1c; /* hairline borders, dividers (app.border) */
+    --color-line-strong: #2a332e; /* stronger/hover borders (app.borderHover) */
+    --color-ink: #e2e8e4; /* primary text (app.text) */
+    --color-muted: #8b9990; /* secondary text (app.muted) */
+    --color-faint: #4a554e; /* tertiary text, placeholders, meta (app.darker) */
+    --color-accent: #a3b18a; /* sage: actions, links, active, focus (app.primary) */
+    --color-accent-strong: #b5c49a; /* accent hover — brighter (app.primaryHover) */
+    --color-accent-soft: #1a1f1c; /* subtle surface for active backgrounds */
+    --color-on-accent: #050606; /* text/icon on accent fills */
+
+    /* Elevation — dark surfaces lean on borders; shadows stay subtle. */
+    --shadow-bar: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-raised: 0 1px 2px rgba(0, 0, 0, 0.35);
+    --shadow-card: 0 24px 60px -20px rgba(0, 0, 0, 0.6);
+
+    /* Motion */
+    --animate-fade-in: fadeIn 0.3s ease-out;
+    --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* Translucent auth input with a sage focus ring (matches the login design). */
+.auth-input {
+    background-color: rgba(15, 18, 16, 0.5);
+    border: 1px solid var(--color-line);
+    transition: all 0.2s ease;
+}
+.auth-input:focus {
+    border-color: var(--color-accent);
+    background-color: rgba(15, 18, 16, 0.8);
+    box-shadow: 0 0 0 1px rgba(163, 177, 138, 0.2);
+    outline: none;
+}
+.auth-input::placeholder {
+    color: var(--color-faint);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .animate-fade-in,
+    .animate-pulse-slow,
+    .animate-pulse {
+        animation: none !important;
+    }
 }
 
 /* Thin dark scrollbar for the app chrome (navbar overflow, scrollable panes). */

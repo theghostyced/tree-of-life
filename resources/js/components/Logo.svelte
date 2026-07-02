@@ -42,6 +42,6 @@
         <TreeDeciduous class={icon[size]} strokeWidth={2} />
     </div>
     {#if showName}
-        <span class={cn('text-[#E2E8E4]', label[size])}>{name}</span>
+        <span class={cn('text-ink', label[size])}>{name}</span>
     {/if}
 </div>

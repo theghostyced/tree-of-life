@@ -6,15 +6,20 @@
         MessageSquare,
         LineChart,
     } from '@lucide/svelte';
-    import { Link } from '@inertiajs/svelte';
+    import { Link, page } from '@inertiajs/svelte';
     import AdminLayout from '@/components/layout/AdminLayout.svelte';
     import { Tabs, type TabItem } from '@/components/ui/tabs';
     import { EmptyState } from '@/components/ui/empty-state';
+    import { RoleBadge } from '@/components/ui/role-badge';
+    import type { Auth } from '@/types/auth';
     import { cn } from '@/lib/utils';
 
-    // Shared sage keyboard-focus ring for the dark chrome.
+    // Role of the viewer, from the shared Inertia `auth` prop.
+    const role = $derived((page.props.auth as Auth).role);
+
+    // Shared sage-green keyboard-focus ring.
     const focusRing =
-        'outline-none focus-visible:ring-2 focus-visible:ring-[#A3B18A]/60';
+        'outline-none focus-visible:ring-2 focus-visible:ring-accent/60';
 
     const tabs: TabItem[] = [
         { label: 'Overview', value: 'overview' },
@@ -32,13 +37,13 @@
 <AdminLayout title="Performance">
     <!-- Breadcrumb bar -->
     <div
-        class="flex h-14 shrink-0 items-center gap-2 border-b border-[#1A1F1C] px-6 text-[13px] text-sage-500"
+        class="flex h-14 shrink-0 items-center gap-2 border-b border-line px-6 text-[13px] text-muted"
     >
         <button
             type="button"
             aria-label="Go back"
             class={cn(
-                '-ml-1 flex items-center justify-center rounded p-1 text-sage-500 transition-colors hover:text-[#A3B18A]',
+                '-ml-1 flex items-center justify-center rounded p-1 text-muted transition-colors hover:text-accent',
                 focusRing,
             )}
         >
@@ -46,22 +51,28 @@
         </button>
         <Link
             href="/admin/dashboard"
-            class={cn('rounded-sm transition-colors hover:text-[#A3B18A]', focusRing)}
+            class={cn(
+                'rounded-sm transition-colors hover:text-accent',
+                focusRing,
+            )}
         >
             Dashboard
         </Link>
         <ChevronRight class="size-3.5" strokeWidth={1.75} aria-hidden="true" />
-        <span class="text-[#E2E8E4]">Performance</span>
+        <span class="text-ink">Performance</span>
     </div>
 
     <div class="px-6 pt-8">
         <!-- Page header -->
         <div class="flex items-start justify-between">
             <div>
-                <h1 class="text-2xl font-semibold tracking-tight text-[#E2E8E4]">
-                    Performance
-                </h1>
-                <p class="mt-1 text-sm text-sage-500">
+                <div class="flex items-center gap-3">
+                    <h1 class="text-2xl font-semibold tracking-tight text-ink">
+                        Performance
+                    </h1>
+                    <RoleBadge {role} />
+                </div>
+                <p class="mt-1 text-sm text-muted">
                     Track and analyze key performance indicators to monitor
                     financial health and growth.
                 </p>
@@ -69,7 +80,7 @@
             <button
                 type="button"
                 class={cn(
-                    '-mr-2 flex shrink-0 items-center gap-2 whitespace-nowrap rounded px-2 py-1 text-sm text-sage-400 transition-colors hover:text-[#A3B18A]',
+                    '-mr-2 flex shrink-0 items-center gap-2 whitespace-nowrap rounded px-2 py-1 text-sm text-muted transition-colors hover:text-accent',
                     focusRing,
                 )}
             >
@@ -88,7 +99,7 @@
             class="flex flex-col gap-4 py-6 sm:flex-row sm:items-center sm:justify-between"
         >
             <div
-                class="flex items-center gap-1 rounded-lg border border-[#1A1F1C] bg-[#141816] p-1"
+                class="flex items-center gap-1 rounded-lg border border-line bg-elevated p-1"
             >
                 {#each ranges as range (range)}
                     <button
@@ -98,18 +109,18 @@
                             'rounded px-3 py-1 text-xs font-medium transition-colors',
                             focusRing,
                             activeRange === range
-                                ? 'border border-[#2D3631] bg-[#1A1F1C] text-[#E2E8E4]'
-                                : 'text-sage-400 hover:text-[#E2E8E4]',
+                                ? 'border border-line-strong bg-surface text-ink shadow-raised'
+                                : 'text-muted hover:text-ink',
                         )}
                     >
                         {range}
                     </button>
                 {/each}
-                <div class="mx-1 h-4 w-px bg-[#1A1F1C]"></div>
+                <div class="mx-1 h-4 w-px bg-line-strong"></div>
                 <button
                     type="button"
                     class={cn(
-                        'flex items-center gap-1 rounded px-3 py-1 text-xs font-medium text-sage-400 transition-colors hover:text-[#E2E8E4]',
+                        'flex items-center gap-1 rounded px-3 py-1 text-xs font-medium text-muted transition-colors hover:text-ink',
                         focusRing,
                     )}
                 >
@@ -119,23 +130,26 @@
             </div>
 
             <div class="flex items-center gap-2">
-                <span class="text-xs text-sage-500">Compared to</span>
+                <span class="text-xs text-muted">Compared to</span>
                 <button
                     type="button"
                     class={cn(
-                        'flex items-center gap-4 rounded-lg border border-[#1A1F1C] bg-[#141816] px-3 py-1.5 text-xs font-medium text-[#E2E8E4] transition-colors hover:border-[#2D3631]',
+                        'flex items-center gap-4 rounded-lg border border-line bg-surface px-3 py-1.5 text-xs font-medium text-ink transition-colors hover:border-line-strong',
                         focusRing,
                     )}
                 >
                     Similar Businesses
-                    <ChevronDown class="size-3.5 text-sage-500" strokeWidth={1.75} />
+                    <ChevronDown
+                        class="size-3.5 text-muted"
+                        strokeWidth={1.75}
+                    />
                 </button>
             </div>
         </div>
     </div>
 
     <!-- Charts region → empty state, centred in the remaining space -->
-    <div class="flex flex-1 items-center justify-center border-t border-[#1A1F1C]">
+    <div class="flex flex-1 items-center justify-center border-t border-line">
         <EmptyState
             title="No performance data yet"
             description="Once applications, awards, and disbursements start flowing, your performance metrics and charts will appear here."
@@ -147,7 +161,7 @@
                 <button
                     type="button"
                     class={cn(
-                        'rounded-lg border border-[#232B27] bg-[#141816] px-4 py-2 text-sm font-medium text-sage-300 transition-colors hover:border-[#2D3631] hover:text-[#A3B18A]',
+                        'rounded-lg border border-line-strong bg-surface px-4 py-2 text-sm font-medium text-ink shadow-raised transition-colors hover:border-accent hover:text-accent',
                         focusRing,
                     )}
                 >

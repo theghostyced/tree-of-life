@@ -1,9 +1,8 @@
 <script lang="ts">
     import { router } from '@inertiajs/svelte';
     import AppHead from '@/components/AppHead.svelte';
-    import { Card } from '@/components/ui/card';
-    import AuthBackground from '@/components/auth/AuthBackground.svelte';
-    import BrandMark from '@/components/auth/BrandMark.svelte';
+    import Logo from '@/components/Logo.svelte';
+    import AuthBrandPanel from '@/components/auth/AuthBrandPanel.svelte';
     import LoginForm from '@/components/auth/LoginForm.svelte';
     import MfaForm from '@/components/auth/MfaForm.svelte';
     import AuthFooter from '@/components/auth/AuthFooter.svelte';
@@ -16,7 +15,7 @@
     }
 </script>
 
-<AppHead title="Login">
+<AppHead title="Sign in">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link
@@ -26,31 +25,44 @@
 </AppHead>
 
 <div
-    class="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#0A0C0B] p-6 text-[#E2E8E4]"
+    class="flex h-screen w-full overflow-hidden bg-canvas text-ink selection:bg-accent selection:text-on-accent"
     style="font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;"
 >
-    <AuthBackground />
+    <AuthBrandPanel />
 
-    <div class="z-10 flex w-full max-w-[440px] flex-col items-center">
-        <div class="mb-10">
-            <BrandMark name="Tree Of Life Fund" />
-        </div>
-
-        <Card
-            class="w-full rounded-2xl border-[#1A1F1C] bg-[#0D100E] p-6 shadow-2xl gap-0 sm:p-10"
+    <div class="relative flex w-full flex-col bg-canvas lg:w-[55%]">
+        <!-- Mobile brand header -->
+        <div
+            class="absolute top-0 right-0 left-0 z-20 flex items-center justify-between border-b border-line bg-panel/50 p-6 backdrop-blur-md lg:hidden"
         >
-            {#if step === 'credentials'}
-                <LoginForm oncontinue={() => (step = 'mfa')} />
-            {:else}
-                <MfaForm
-                    onback={() => (step = 'credentials')}
-                    onverify={completeLogin}
-                />
-            {/if}
-        </Card>
-
-        <div class="mt-8">
-            <AuthFooter />
+            <Logo size="sm" />
         </div>
+
+        <div
+            class="relative z-10 flex flex-1 flex-col items-center justify-center p-6 sm:p-12"
+        >
+            <div
+                class="pointer-events-none absolute inset-0"
+                style="background: radial-gradient(ellipse at top right, rgba(163,177,138,0.03), transparent 50%);"
+                aria-hidden="true"
+            ></div>
+
+            <div class="w-full max-w-[420px]">
+                {#if step === 'credentials'}
+                    <div class="animate-fade-in">
+                        <LoginForm oncontinue={() => (step = 'mfa')} />
+                    </div>
+                {:else}
+                    <div class="animate-fade-in">
+                        <MfaForm
+                            onback={() => (step = 'credentials')}
+                            onverify={completeLogin}
+                        />
+                    </div>
+                {/if}
+            </div>
+        </div>
+
+        <AuthFooter class="lg:hidden" />
     </div>
 </div>

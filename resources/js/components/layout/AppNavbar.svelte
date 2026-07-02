@@ -45,22 +45,22 @@
 
     const linkClass = (active: boolean) =>
         cn(
-            'flex items-center gap-2 whitespace-nowrap rounded-md px-3 py-1.5 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[#A3B18A]/60',
+            'flex items-center gap-2 whitespace-nowrap rounded-md px-3 py-1.5 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-accent/60',
             active
-                ? 'bg-[#1A1F1C] text-[#A3B18A]'
-                : 'text-sage-400 hover:bg-[#141816] hover:text-[#A3B18A]',
+                ? 'bg-accent-soft text-accent'
+                : 'text-muted hover:bg-elevated hover:text-accent',
         );
 
     const iconButtonClass =
-        'flex size-8 items-center justify-center rounded-md outline-none transition-colors hover:bg-[#141816] hover:text-[#A3B18A] focus-visible:ring-2 focus-visible:ring-[#A3B18A]/60';
+        'flex size-8 items-center justify-center rounded-md outline-none transition-colors hover:bg-elevated hover:text-accent focus-visible:ring-2 focus-visible:ring-accent/60';
 </script>
 
 <header
-    class="flex h-14 shrink-0 items-center gap-6 border-b border-[#1A1F1C] bg-[#0A0C0B] px-6"
+    class="flex h-14 shrink-0 items-center gap-6 border-b border-line bg-surface px-6 shadow-bar"
 >
     <Link
         href="/admin/dashboard"
-        class="shrink-0 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-[#A3B18A]/60"
+        class="shrink-0 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
     >
         <Logo size="sm" />
     </Link>
@@ -84,7 +84,7 @@
         {/each}
     </nav>
 
-    <div class="ml-auto flex shrink-0 items-center gap-1 text-sage-500">
+    <div class="ml-auto flex shrink-0 items-center gap-1 text-muted">
         <button type="button" aria-label="Search" class={iconButtonClass}>
             <Search class="size-[18px]" strokeWidth={1.75} />
         </button>
@@ -95,7 +95,7 @@
             <Settings class="size-[18px]" strokeWidth={1.75} />
         </button>
         <div
-            class="ml-2 flex size-8 items-center justify-center rounded-full border border-[#232B27] bg-[#141816] text-[12px] font-semibold text-[#A3B18A]"
+            class="ml-2 flex size-8 items-center justify-center rounded-full border border-line bg-accent-soft text-[12px] font-semibold text-accent"
             aria-hidden="true"
         >
             AD

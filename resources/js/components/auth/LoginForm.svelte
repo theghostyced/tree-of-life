@@ -1,126 +1,117 @@
 <script lang="ts">
+    import { Mail, Lock, Eye, EyeOff, ArrowRight } from '@lucide/svelte';
     import { Button } from '@/components/ui/button';
-    import { Input } from '@/components/ui/input';
-    import { Label } from '@/components/ui/label';
+    import IconInput from './IconInput.svelte';
 
     let {
         oncontinue,
     }: {
-        /** Fired when the user submits valid-looking credentials. */
+        /** Fired when the user submits their credentials. */
         oncontinue?: () => void;
     } = $props();
 
     let email = $state('');
     let password = $state('');
+    let remember = $state(false);
     let showPassword = $state(false);
-
-    // Shared field styling — the dark "input-field" look from the design.
-    const fieldClass =
-        'h-auto rounded-lg border-[#232B27] bg-[#141816] px-4 py-3 text-sm text-[#E2E8E4] shadow-none placeholder-sage-700 focus-visible:border-[#A3B18A] focus-visible:ring-0';
-
-    function submit() {
-        oncontinue?.();
-    }
 </script>
 
-<div class="mb-8 text-center">
-    <h2 class="mb-2 text-xl font-semibold text-white">Welcome back</h2>
-    <p class="text-sm text-white">
-        Enter your credentials to access your dashboard.
-    </p>
+<div class="mb-10">
+    <h2 class="mb-3 text-3xl font-semibold tracking-tight text-ink">
+        Welcome back
+    </h2>
+    <p class="text-[15px] text-muted">Sign in to your account to continue.</p>
 </div>
 
 <form
-    class="space-y-6"
+    class="space-y-5"
     onsubmit={(e) => {
         e.preventDefault();
-        submit();
+        oncontinue?.();
     }}
 >
     <div class="space-y-2">
-        <Label for="email" class="ml-1 text-[13px] font-medium text-white">
+        <label for="email" class="block text-sm font-medium text-muted">
             Email address
-        </Label>
-        <Input
+        </label>
+        <IconInput
             id="email"
             type="email"
             autocomplete="email"
             placeholder="name@company.com"
             bind:value={email}
-            class="w-full {fieldClass}"
-        />
+        >
+            {#snippet icon()}
+                <Mail class="size-[18px]" strokeWidth={1.75} />
+            {/snippet}
+        </IconInput>
     </div>
 
     <div class="space-y-2">
-        <div class="ml-1 flex items-center justify-between">
-            <Label for="password" class="text-[13px] font-medium text-white">
+        <div class="flex items-center justify-between">
+            <label for="password" class="text-sm font-medium text-muted">
                 Password
-            </Label>
-            <a href="#" class="text-[12px] text-[#A3B18A] hover:underline">
+            </label>
+            <a
+                href="#"
+                class="text-sm font-medium text-accent transition-colors hover:text-accent-strong"
+            >
                 Forgot password?
             </a>
         </div>
-        <div class="relative">
-            <Input
-                id="password"
-                type={showPassword ? 'text' : 'password'}
-                autocomplete="current-password"
-                placeholder="••••••••"
-                bind:value={password}
-                class="w-full pr-11 {fieldClass}"
-            />
-            <button
-                type="button"
-                onclick={() => (showPassword = !showPassword)}
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
-                aria-pressed={showPassword}
-                class="absolute top-1/2 right-4 -translate-y-1/2 text-sage-600 transition-colors hover:text-sage-400"
-            >
-                {#if showPassword}
-                    <svg
-                        class="size-[18px]"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        aria-hidden="true"
-                    >
-                        <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
-                        <path
-                            d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"
-                        />
-                        <path
-                            d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"
-                        />
-                        <line x1="2" x2="22" y1="2" y2="22" />
-                    </svg>
-                {:else}
-                    <svg
-                        class="size-[18px]"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        aria-hidden="true"
-                    >
-                        <path
-                            d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"
-                        />
-                        <circle cx="12" cy="12" r="3" />
-                    </svg>
-                {/if}
-            </button>
-        </div>
+        <IconInput
+            id="password"
+            type={showPassword ? 'text' : 'password'}
+            autocomplete="current-password"
+            placeholder="••••••••"
+            bind:value={password}
+        >
+            {#snippet icon()}
+                <Lock class="size-[18px]" strokeWidth={1.75} />
+            {/snippet}
+            {#snippet trailing()}
+                <button
+                    type="button"
+                    onclick={() => (showPassword = !showPassword)}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    aria-pressed={showPassword}
+                    class="rounded-lg p-2 text-muted transition-colors hover:bg-surface hover:text-ink"
+                >
+                    {#if showPassword}
+                        <EyeOff class="size-[18px]" strokeWidth={1.75} />
+                    {:else}
+                        <Eye class="size-[18px]" strokeWidth={1.75} />
+                    {/if}
+                </button>
+            {/snippet}
+        </IconInput>
     </div>
 
-    <Button
-        type="submit"
-        class="mt-4 h-auto w-full rounded-lg bg-[#A3B18A] py-3.5 text-sm font-semibold text-[#0A0C0B] shadow-none hover:bg-[#A3B18A] hover:opacity-90"
-    >
-        Continue
-    </Button>
+    <div class="flex items-center pt-2">
+        <input
+            type="checkbox"
+            id="remember"
+            bind:checked={remember}
+            class="size-4 rounded border-line bg-surface accent-[#a3b18a]"
+        />
+        <label
+            for="remember"
+            class="ml-2 block cursor-pointer text-sm text-muted transition-colors hover:text-ink"
+        >
+            Remember this device for 30 days
+        </label>
+    </div>
+
+    <div class="pt-4">
+        <Button
+            type="submit"
+            class="group h-auto w-full rounded-xl bg-accent py-3.5 text-[15px] font-semibold text-on-accent shadow-[0_4px_14px_0_rgba(163,177,138,0.15)] transition-all hover:-translate-y-px hover:bg-accent-strong hover:shadow-[0_6px_20px_0_rgba(163,177,138,0.2)]"
+        >
+            Continue
+            <ArrowRight
+                class="size-[18px] transition-transform group-hover:translate-x-1"
+                strokeWidth={2}
+            />
+        </Button>
+    </div>
 </form>

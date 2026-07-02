@@ -61,11 +61,11 @@
     }
 </script>
 
-<div class="flex w-full items-center justify-center gap-2 sm:gap-3">
+<div class="flex w-full items-center justify-between gap-2">
     {#each digits as digit, index (index)}
         {#if index === groupAfter}
-            <div class="flex w-2 shrink-0 items-center justify-center text-sage-700">
-                —
+            <div class="flex shrink-0 items-center justify-center px-1">
+                <div class="h-0.5 w-2 rounded-full bg-faint"></div>
             </div>
         {/if}
         <input
@@ -79,7 +79,7 @@
             onkeydown={(e) => handleKeydown(index, e)}
             onpaste={handlePaste}
             onfocus={(e) => (e.target as HTMLInputElement).select()}
-            class="h-14 min-w-0 max-w-12 flex-1 rounded-lg border border-[#232B27] bg-[#141816] text-center text-xl font-bold text-[#E2E8E4] transition-colors focus:border-[#A3B18A] focus:outline-none"
+            class="auth-input h-14 min-w-0 max-w-12 flex-1 rounded-xl text-center text-2xl font-semibold text-ink"
         />
     {/each}
 </div>
