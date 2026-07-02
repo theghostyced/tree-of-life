@@ -11,14 +11,17 @@
         Search,
         Bell,
         Settings,
+        Menu,
+        X,
     } from '@lucide/svelte';
+    import { fade, fly } from 'svelte/transition';
     import Logo from '@/components/Logo.svelte';
     import { cn } from '@/lib/utils';
 
     /**
-     * Primary admin navigation. Replaces the design's sidebar with a top navbar,
-     * tailored to Tolfund's admin surfaces. Only routes that exist are wired as
-     * Inertia links; the rest render as placeholders until their views are built.
+     * Primary admin navigation. Adapts across three stages: a hamburger drawer
+     * below lg, a compact icon-only bar from lg, and full icon + label from xl.
+     * One link set at every size; only wired routes are Inertia links.
      */
     type NavLink = {
         label: string;
@@ -37,10 +40,35 @@
         { label: 'Invitations', href: '/admin/invitations', icon: Send },
     ];
 
+    const utilities = [
+        { label: 'Search', icon: Search },
+        { label: 'Notifications', icon: Bell },
+        { label: 'Settings', icon: Settings },
+    ];
+
     const currentUrl = $derived(page.url);
 
     function isActive(href: string): boolean {
         return currentUrl === href || currentUrl.startsWith(href + '/');
+    }
+
+    let mobileOpen = $state(false);
+    let reduceMotion = $state(false);
+
+    $effect(() => {
+        reduceMotion = window.matchMedia(
+            '(prefers-reduced-motion: reduce)',
+        ).matches;
+    });
+
+    const dur = $derived(reduceMotion ? 0 : 200);
+
+    function closeMobile() {
+        mobileOpen = false;
+    }
+
+    function onKeydown(event: KeyboardEvent) {
+        if (event.key === 'Escape') mobileOpen = false;
     }
 
     const linkClass = (active: boolean) =>
@@ -53,10 +81,20 @@
 
     const iconButtonClass =
         'flex size-8 items-center justify-center rounded-md outline-none transition-colors hover:bg-elevated hover:text-accent focus-visible:ring-2 focus-visible:ring-accent/60';
+
+    const mobileRowClass = (active: boolean) =>
+        cn(
+            'flex items-center gap-3 rounded-lg px-3 py-3 text-[15px] outline-none transition-colors focus-visible:ring-2 focus-visible:ring-accent/60',
+            active
+                ? 'bg-accent-soft font-medium text-accent'
+                : 'text-muted hover:bg-elevated hover:text-ink',
+        );
 </script>
 
+<svelte:window onkeydown={onKeydown} />
+
 <header
-    class="flex h-14 shrink-0 items-center gap-6 border-b border-line bg-surface px-6 shadow-bar"
+    class="relative z-50 flex h-14 shrink-0 items-center gap-6 border-b border-line bg-surface px-4 shadow-bar sm:px-6"
 >
     <Link
         href="/admin/dashboard"
@@ -65,35 +103,43 @@
         <Logo size="sm" />
     </Link>
 
-    <nav
-        class="custom-scrollbar flex items-center gap-1 overflow-x-auto text-[13px]"
-    >
+    <!-- Desktop nav: icon-only from lg, icon + label from xl -->
+    <nav class="hidden items-center gap-1 text-[13px] lg:flex">
         {#each links as link (link.href)}
             {@const Icon = link.icon}
+            {@const active = isActive(link.href)}
             {#if link.enabled}
-                <Link href={link.href} class={linkClass(isActive(link.href))}>
+                <Link
+                    href={link.href}
+                    aria-label={link.label}
+                    title={link.label}
+                    class={linkClass(active)}
+                >
                     <Icon class="size-4" strokeWidth={1.75} />
-                    {link.label}
+                    <span class="hidden xl:inline">{link.label}</span>
                 </Link>
             {:else}
-                <button type="button" class={linkClass(isActive(link.href))}>
+                <button
+                    type="button"
+                    aria-label={link.label}
+                    title={link.label}
+                    class={linkClass(active)}
+                >
                     <Icon class="size-4" strokeWidth={1.75} />
-                    {link.label}
+                    <span class="hidden xl:inline">{link.label}</span>
                 </button>
             {/if}
         {/each}
     </nav>
 
-    <div class="ml-auto flex shrink-0 items-center gap-1 text-muted">
-        <button type="button" aria-label="Search" class={iconButtonClass}>
-            <Search class="size-[18px]" strokeWidth={1.75} />
-        </button>
-        <button type="button" aria-label="Notifications" class={iconButtonClass}>
-            <Bell class="size-[18px]" strokeWidth={1.75} />
-        </button>
-        <button type="button" aria-label="Settings" class={iconButtonClass}>
-            <Settings class="size-[18px]" strokeWidth={1.75} />
-        </button>
+    <!-- Desktop utilities -->
+    <div class="ml-auto hidden shrink-0 items-center gap-1 text-muted lg:flex">
+        {#each utilities as util (util.label)}
+            {@const Icon = util.icon}
+            <button type="button" aria-label={util.label} class={iconButtonClass}>
+                <Icon class="size-[18px]" strokeWidth={1.75} />
+            </button>
+        {/each}
         <div
             class="ml-2 flex size-8 items-center justify-center rounded-full border border-line bg-accent-soft text-[12px] font-semibold text-accent"
             aria-hidden="true"
@@ -101,4 +147,91 @@
             AD
         </div>
     </div>
+
+    <!-- Mobile trigger -->
+    <button
+        type="button"
+        onclick={() => (mobileOpen = !mobileOpen)}
+        aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+        aria-expanded={mobileOpen}
+        aria-controls="mobile-nav"
+        class="-mr-1 ml-auto flex size-11 items-center justify-center rounded-md text-muted outline-none transition-colors hover:bg-elevated hover:text-accent focus-visible:ring-2 focus-visible:ring-accent/60 lg:hidden"
+    >
+        {#if mobileOpen}
+            <X class="size-5" strokeWidth={1.75} />
+        {:else}
+            <Menu class="size-5" strokeWidth={1.75} />
+        {/if}
+    </button>
 </header>
+
+{#if mobileOpen}
+    <div class="lg:hidden">
+        <button
+            type="button"
+            aria-label="Close menu"
+            onclick={closeMobile}
+            transition:fade={{ duration: dur }}
+            class="fixed inset-0 top-14 z-30 bg-black/50"
+        ></button>
+
+        <div
+            id="mobile-nav"
+            transition:fly={{ y: -8, duration: dur }}
+            class="fixed inset-x-0 top-14 z-40 max-h-[calc(100vh-3.5rem)] overflow-y-auto border-b border-line bg-surface shadow-lg"
+        >
+            <nav class="flex flex-col gap-1 p-3">
+                {#each links as link (link.href)}
+                    {@const Icon = link.icon}
+                    {@const active = isActive(link.href)}
+                    {#if link.enabled}
+                        <Link
+                            href={link.href}
+                            onclick={closeMobile}
+                            class={mobileRowClass(active)}
+                        >
+                            <Icon class="size-5" strokeWidth={1.75} />
+                            {link.label}
+                        </Link>
+                    {:else}
+                        <button
+                            type="button"
+                            onclick={closeMobile}
+                            class={mobileRowClass(active)}
+                        >
+                            <Icon class="size-5" strokeWidth={1.75} />
+                            {link.label}
+                        </button>
+                    {/if}
+                {/each}
+            </nav>
+
+            <div class="flex flex-col gap-1 border-t border-line p-3">
+                {#each utilities as util (util.label)}
+                    {@const Icon = util.icon}
+                    <button
+                        type="button"
+                        onclick={closeMobile}
+                        class={mobileRowClass(false)}
+                    >
+                        <Icon class="size-5" strokeWidth={1.75} />
+                        {util.label}
+                    </button>
+                {/each}
+
+                <div class="mt-1 flex items-center gap-3 px-3 py-3">
+                    <div
+                        class="flex size-9 items-center justify-center rounded-full border border-line bg-accent-soft text-[12px] font-semibold text-accent"
+                        aria-hidden="true"
+                    >
+                        AD
+                    </div>
+                    <div class="leading-tight">
+                        <p class="text-sm font-medium text-ink">Admin</p>
+                        <p class="text-xs text-faint">Administrator</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{/if}
