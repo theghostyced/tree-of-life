@@ -4,25 +4,17 @@
     import AppNavbar from './AppNavbar.svelte';
 
     /**
-     * Reusable admin shell: dark themed, Inter typeface, top navbar and a
-     * scrollable content region. Wrap any admin page in this.
+     * Reusable admin shell: dark themed, Instrument Sans typeface, top navbar
+     * and a scrollable content region. Wrap any admin page in this.
      */
     let { title = '', children }: { title?: string; children: Snippet } =
         $props();
 </script>
 
-<AppHead {title}>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet"
-    />
-</AppHead>
+<AppHead {title} />
 
 <div
-    class="flex h-screen flex-col overflow-hidden bg-canvas text-ink"
-    style="font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;"
+    class="flex h-screen flex-col overflow-hidden bg-canvas font-sans text-ink"
 >
     <AppNavbar />
     <main class="custom-scrollbar flex flex-1 flex-col overflow-y-auto">
