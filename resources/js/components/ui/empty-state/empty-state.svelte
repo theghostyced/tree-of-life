@@ -34,9 +34,9 @@
             {@render icon()}
         </div>
     {/if}
-    <h3 class="text-base font-medium text-ink">{title}</h3>
+    <h3 class="text-lg font-medium text-ink">{title}</h3>
     {#if description}
-        <p class="mt-1.5 max-w-md text-sm text-muted">{description}</p>
+        <p class="mt-2 max-w-md text-[15px] text-muted">{description}</p>
     {/if}
     {#if action}
         <div class="mt-6">{@render action()}</div>

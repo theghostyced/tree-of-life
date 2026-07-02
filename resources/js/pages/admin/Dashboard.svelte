@@ -37,7 +37,7 @@
 <AdminLayout title="Performance">
     <!-- Breadcrumb bar -->
     <div
-        class="flex h-14 shrink-0 items-center gap-2 border-b border-line px-6 text-[13px] text-muted"
+        class="flex h-14 shrink-0 items-center gap-2 border-b border-line px-6 text-sm text-muted"
     >
         <button
             type="button"
@@ -67,12 +67,12 @@
         <div class="flex items-start justify-between">
             <div>
                 <div class="flex items-center gap-3">
-                    <h1 class="text-2xl font-semibold tracking-tight text-ink">
+                    <h1 class="text-3xl font-semibold tracking-tight text-ink">
                         Performance
                     </h1>
                     <RoleBadge {role} />
                 </div>
-                <p class="mt-1 text-sm text-muted">
+                <p class="mt-1.5 text-[15px] text-muted">
                     Track and analyze key performance indicators to monitor
                     financial health and growth.
                 </p>
@@ -80,7 +80,7 @@
             <button
                 type="button"
                 class={cn(
-                    '-mr-2 flex shrink-0 items-center gap-2 whitespace-nowrap rounded px-2 py-1 text-sm text-muted transition-colors hover:text-accent',
+                    '-mr-2 flex shrink-0 items-center gap-2 whitespace-nowrap rounded px-2 py-1 text-[15px] text-muted transition-colors hover:text-accent',
                     focusRing,
                 )}
             >
@@ -106,7 +106,7 @@
                         type="button"
                         onclick={() => (activeRange = range)}
                         class={cn(
-                            'rounded px-3 py-1 text-xs font-medium transition-colors',
+                            'rounded px-3 py-1 text-sm font-medium transition-colors',
                             focusRing,
                             activeRange === range
                                 ? 'border border-line-strong bg-surface text-ink shadow-raised'
@@ -120,7 +120,7 @@
                 <button
                     type="button"
                     class={cn(
-                        'flex items-center gap-1 rounded px-3 py-1 text-xs font-medium text-muted transition-colors hover:text-ink',
+                        'flex items-center gap-1 rounded px-3 py-1 text-sm font-medium text-muted transition-colors hover:text-ink',
                         focusRing,
                     )}
                 >
@@ -130,11 +130,11 @@
             </div>
 
             <div class="flex items-center gap-2">
-                <span class="text-xs text-muted">Compared to</span>
+                <span class="text-sm text-muted">Compared to</span>
                 <button
                     type="button"
                     class={cn(
-                        'flex items-center gap-4 rounded-lg border border-line bg-surface px-3 py-1.5 text-xs font-medium text-ink transition-colors hover:border-line-strong',
+                        'flex items-center gap-4 rounded-lg border border-line bg-surface px-3 py-1.5 text-sm font-medium text-ink transition-colors hover:border-line-strong',
                         focusRing,
                     )}
                 >
@@ -161,7 +161,7 @@
                 <button
                     type="button"
                     class={cn(
-                        'rounded-lg border border-line-strong bg-surface px-4 py-2 text-sm font-medium text-ink shadow-raised transition-colors hover:border-accent hover:text-accent',
+                        'rounded-lg border border-line-strong bg-surface px-4 py-2 text-[15px] font-medium text-ink shadow-raised transition-colors hover:border-accent hover:text-accent',
                         focusRing,
                     )}
                 >

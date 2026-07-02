@@ -41,7 +41,7 @@
             type="button"
             onclick={() => select(item.value)}
             class={cn(
-                'shrink-0 whitespace-nowrap rounded-sm pb-3 text-sm font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-accent/50',
+                'shrink-0 whitespace-nowrap rounded-sm pb-3 text-[15px] font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-accent/50',
                 active === item.value
                     ? 'border-b-2 border-accent text-accent'
                     : 'text-muted hover:text-ink',
