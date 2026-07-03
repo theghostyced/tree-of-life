@@ -17,6 +17,7 @@
         admin: { label: 'Admin', dot: 'bg-accent' },
         mentor: { label: 'Mentor', dot: 'bg-sage-500' },
         entrepreneur: { label: 'Entrepreneur', dot: 'bg-success' },
+        employee: { label: 'Employee', dot: 'bg-sage-300' },
     };
 
     const current = $derived(config[role] ?? config.entrepreneur);

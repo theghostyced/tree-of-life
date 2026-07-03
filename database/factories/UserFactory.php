@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Enums\AccountStatus;
+use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -30,6 +32,9 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'role' => UserRole::Entrepreneur,
+            'account_status' => AccountStatus::Approved,
+            'phone_number' => '+254'.fake()->unique()->numerify('#########'),
         ];
     }
 
@@ -41,5 +46,52 @@ class UserFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
+    }
+
+    public function admin(): static
+    {
+        return $this->state(fn () => ['role' => UserRole::Admin]);
+    }
+
+    public function mentor(): static
+    {
+        return $this->state(fn () => ['role' => UserRole::Mentor])
+            ->afterCreating(fn (User $user) => $user->mentorProfile()->create([]));
+    }
+
+    public function entrepreneur(): static
+    {
+        return $this->state(fn () => ['role' => UserRole::Entrepreneur])
+            ->afterCreating(fn (User $user) => $user->entrepreneurProfile()->create([]));
+    }
+
+    public function employee(): static
+    {
+        return $this->state(fn () => ['role' => UserRole::Employee]);
+    }
+
+    public function approved(): static
+    {
+        return $this->state(fn () => ['account_status' => AccountStatus::Approved]);
+    }
+
+    public function pending(): static
+    {
+        return $this->state(fn () => ['account_status' => AccountStatus::Pending]);
+    }
+
+    public function draft(): static
+    {
+        return $this->state(fn () => ['account_status' => AccountStatus::Draft]);
+    }
+
+    public function rejected(): static
+    {
+        return $this->state(fn () => ['account_status' => AccountStatus::Rejected]);
+    }
+
+    public function deactivated(): static
+    {
+        return $this->state(fn () => ['account_status' => AccountStatus::Deactivated]);
     }
 }

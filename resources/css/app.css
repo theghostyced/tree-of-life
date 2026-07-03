@@ -5,8 +5,10 @@
 
 @theme inline {
     --font-sans:
-        Figtree, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
-        'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+        -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display',
+        system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Noto Color Emoji';
 }
 
 @theme {
@@ -127,4 +129,9 @@
 .custom-scrollbar::-webkit-scrollbar-thumb {
     background: var(--color-line-strong);
     border-radius: 10px;
+}
+
+#nprogress .bar {
+    height: 3px !important;
+    box-shadow: 0 0 8px color-mix(in srgb, var(--color-accent) 55%, transparent) !important;
 }

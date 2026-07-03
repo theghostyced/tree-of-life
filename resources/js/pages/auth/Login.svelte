@@ -1,21 +1,14 @@
 <script lang="ts">
-    import { router } from '@inertiajs/svelte';
     import AppHead from '@/components/AppHead.svelte';
     import Logo from '@/components/Logo.svelte';
     import AuthBrandPanel from '@/components/auth/AuthBrandPanel.svelte';
     import LoginForm from '@/components/auth/LoginForm.svelte';
-    import MfaForm from '@/components/auth/MfaForm.svelte';
     import AuthFooter from '@/components/auth/AuthFooter.svelte';
-
-    type Step = 'credentials' | 'mfa';
-    let step = $state<Step>('credentials');
-
-    function completeLogin() {
-        router.visit('/admin/dashboard');
-    }
+    import { Toaster } from '@/components/ui/sonner';
 </script>
 
 <AppHead title="Sign in" />
+<Toaster position="top-center" />
 
 <div
     class="flex h-screen w-full overflow-hidden bg-canvas font-sans text-ink selection:bg-accent selection:text-on-accent"
@@ -33,19 +26,8 @@
         <div
             class="relative z-10 flex flex-1 flex-col items-center justify-center p-6 sm:p-12"
         >
-            <div class="relative z-10 w-full max-w-[420px]">
-                {#if step === 'credentials'}
-                    <div class="animate-fade-in">
-                        <LoginForm oncontinue={() => (step = 'mfa')} />
-                    </div>
-                {:else}
-                    <div class="animate-fade-in">
-                        <MfaForm
-                            onback={() => (step = 'credentials')}
-                            onverify={completeLogin}
-                        />
-                    </div>
-                {/if}
+            <div class="relative z-10 w-full max-w-[420px] animate-fade-in">
+                <LoginForm />
             </div>
         </div>
 

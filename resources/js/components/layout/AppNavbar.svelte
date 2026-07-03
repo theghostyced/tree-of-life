@@ -31,13 +31,27 @@
     };
 
     const links: NavLink[] = [
-        { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutGrid, enabled: true },
-        { label: 'Applications', href: '/admin/applications', icon: ClipboardList },
+        {
+            label: 'Dashboard',
+            href: '/admin/dashboard',
+            icon: LayoutGrid,
+            enabled: true,
+        },
+        {
+            label: 'Applications',
+            href: '/admin/applications',
+            icon: ClipboardList,
+        },
         { label: 'Awards', href: '/admin/awards', icon: Award },
         { label: 'Milestones', href: '/admin/milestones', icon: Flag },
         { label: 'Programs', href: '/admin/programs', icon: FolderKanban },
         { label: 'Users', href: '/admin/users', icon: Users },
-        { label: 'Invitations', href: '/admin/invitations', icon: Send },
+        {
+            label: 'Invitations',
+            href: '/admin/invitations',
+            icon: Send,
+            enabled: true,
+        },
     ];
 
     const utilities = [
@@ -73,7 +87,7 @@
 
     const linkClass = (active: boolean) =>
         cn(
-            'flex items-center gap-2 whitespace-nowrap rounded-md px-3 py-1.5 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-accent/60',
+            'flex items-center gap-2 rounded-md px-3 py-1.5 whitespace-nowrap transition-colors outline-none focus-visible:ring-2 focus-visible:ring-accent/60',
             active
                 ? 'bg-accent-soft text-accent'
                 : 'text-muted hover:bg-elevated hover:text-accent',
@@ -84,7 +98,7 @@
 
     const mobileRowClass = (active: boolean) =>
         cn(
-            'flex items-center gap-3 rounded-lg px-3 py-3 text-[15px] outline-none transition-colors focus-visible:ring-2 focus-visible:ring-accent/60',
+            'flex items-center gap-3 rounded-lg px-3 py-3 text-[15px] transition-colors outline-none focus-visible:ring-2 focus-visible:ring-accent/60',
             active
                 ? 'bg-accent-soft font-medium text-accent'
                 : 'text-muted hover:bg-elevated hover:text-ink',
@@ -136,7 +150,11 @@
     <div class="ml-auto hidden shrink-0 items-center gap-1 text-muted lg:flex">
         {#each utilities as util (util.label)}
             {@const Icon = util.icon}
-            <button type="button" aria-label={util.label} class={iconButtonClass}>
+            <button
+                type="button"
+                aria-label={util.label}
+                class={iconButtonClass}
+            >
                 <Icon class="size-[18px]" strokeWidth={1.75} />
             </button>
         {/each}

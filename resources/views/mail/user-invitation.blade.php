@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light">
+    <meta name="x-apple-disable-message-reformatting">
+    <title>{{ $appName }} invitation</title>
+</head>
+<body style="margin:0;padding:0;width:100%;background:#eef1ea;-webkit-font-smoothing:antialiased;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1b211c;">
+    <div style="display:none;max-height:0;overflow:hidden;opacity:0;">You've been invited to join {{ $appName }} as {{ $roleLabel }}. Accept your invitation to get started.</div>
+
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eef1ea;">
+        <tr>
+            <td align="center" style="padding:40px 16px;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:496px;margin:0 auto;">
+
+                    {{-- Brand --}}
+                    <tr>
+                        <td style="padding:0 4px 24px;">
+                            <table role="presentation" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td style="width:40px;height:40px;background:#a3b18a;border-radius:10px;text-align:center;vertical-align:middle;">
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#12160f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;">
+                                            <path d="M8 19a4 4 0 0 1-1.4-7.76A4.5 4.5 0 0 1 12 5a4.5 4.5 0 0 1 5.4 6.24A4 4 0 0 1 16 19Z" />
+                                            <path d="M12 19v3" />
+                                        </svg>
+                                    </td>
+                                    <td style="padding-left:12px;font-size:16px;font-weight:600;letter-spacing:-0.01em;color:#1b211c;vertical-align:middle;">{{ $appName }}</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    {{-- Card --}}
+                    <tr>
+                        <td style="background:#ffffff;border:1px solid #e2e7dc;border-radius:14px;">
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td style="padding:36px 36px 0;">
+                                        <h1 style="margin:0;font-size:24px;line-height:1.3;font-weight:600;letter-spacing:-0.02em;color:#171c17;">
+                                            You're invited{{ $recipientName ? ', '.$recipientName : '' }}
+                                        </h1>
+                                        <p style="margin:14px 0 0;font-size:15px;line-height:1.65;color:#3f4a43;">
+                                            You've been invited to join <strong style="color:#2c332c;">{{ $appName }}</strong>, an invitation only platform where mentors support founders from their first milestone through funded growth.
+                                        </p>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style="padding:20px 36px 0;">
+                                        <table role="presentation" cellpadding="0" cellspacing="0" style="background:#f2f4ee;border-radius:9px;">
+                                            <tr>
+                                                <td style="padding:11px 15px;font-size:14px;color:#4a544b;">
+                                                    You're joining as <strong style="color:#3a5a2a;">{{ $roleLabel }}</strong>.
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+
+                                {{-- CTA --}}
+                                <tr>
+                                    <td style="padding:28px 36px 0;">
+                                        <table role="presentation" cellpadding="0" cellspacing="0">
+                                            <tr>
+                                                <td style="background:#a3b18a;border-radius:9px;">
+                                                    <a href="{{ $acceptUrl }}" target="_blank" style="display:inline-block;padding:14px 28px;font-size:15px;font-weight:600;color:#12160f;text-decoration:none;letter-spacing:-0.01em;">
+                                                        Accept your invitation
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style="padding:22px 36px 4px;">
+                                        <p style="margin:0;font-size:13px;line-height:1.6;color:#6d766c;">
+                                            This link is unique to you and expires in 7 days. If you weren't expecting this invitation, you can safely ignore this email.
+                                        </p>
+                                    </td>
+                                </tr>
+
+                                {{-- Plain-link fallback --}}
+                                <tr>
+                                    <td style="padding:16px 36px 36px;">
+                                        <div style="border-top:1px solid #eef1ea;padding-top:16px;">
+                                            <p style="margin:0;font-size:12px;line-height:1.5;color:#8a938a;">
+                                                Or paste this address into your browser:
+                                            </p>
+                                            <p style="margin:4px 0 0;font-size:12px;line-height:1.5;word-break:break-all;">
+                                                <a href="{{ $acceptUrl }}" style="color:#5a6b4a;text-decoration:underline;">{{ $acceptUrl }}</a>
+                                            </p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    {{-- Footer --}}
+                    <tr>
+                        <td style="padding:22px 4px 0;text-align:center;">
+                            <p style="margin:0;font-size:12px;color:#8a938a;">&copy; {{ date('Y') }} {{ $appName }}</p>
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

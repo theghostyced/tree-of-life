@@ -9,13 +9,12 @@ export type User = {
     [key: string]: unknown;
 };
 
-export type UserRole = 'admin' | 'mentor' | 'entrepreneur';
+import type { UserRole } from './enums';
+
+export type { UserRole };
 
 export type Auth = {
     user: User;
-    /**
-     * Role of the authenticated viewer. Placeholder until a backed
-     * `UserRole` enum + `role` column land server-side.
-     */
+    /** Role of the authenticated viewer (mirrors {@link \App\Enums\UserRole}). */
     role: UserRole;
 };
