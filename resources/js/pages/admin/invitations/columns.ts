@@ -1,11 +1,11 @@
 import type { ColumnDef, RowData } from '@tanstack/table-core';
 import { renderComponent } from '@/components/ui/data-table';
-import type { Invitation } from './types';
+import { type Invitation, relative } from './types';
 import SortableHeader from './data-table-sortable-header.svelte';
 import Invitee from './data-table-invitee.svelte';
 import RoleCell from './data-table-role.svelte';
 import StatusCell from './data-table-status.svelte';
-import Timeline from './data-table-timeline.svelte';
+import TextCell from './data-table-text.svelte';
 import Actions from './data-table-actions.svelte';
 
 declare module '@tanstack/table-core' {
@@ -28,7 +28,7 @@ export function createColumns(handlers: Handlers): ColumnDef<Invitation>[] {
         {
             id: 'sn',
             enableSorting: false,
-            meta: { width: '6%' },
+            meta: { width: '4%' },
             header: 'S/N',
             // Rendered directly in data-table.svelte, which has the visual row index.
             cell: () => '',
@@ -36,7 +36,7 @@ export function createColumns(handlers: Handlers): ColumnDef<Invitation>[] {
         {
             id: 'invitee',
             accessorFn: (row) => `${row.name ?? ''} ${row.email}`,
-            meta: { width: '24%' },
+            meta: { width: '23%' },
             header: ({ column }) =>
                 renderComponent(SortableHeader, { label: 'Invitee', column }),
             cell: ({ row }) =>
@@ -44,7 +44,7 @@ export function createColumns(handlers: Handlers): ColumnDef<Invitation>[] {
         },
         {
             accessorKey: 'role',
-            meta: { width: '12%' },
+            meta: { width: '10%' },
             header: ({ column }) =>
                 renderComponent(SortableHeader, { label: 'Role', column }),
             cell: ({ row }) =>
@@ -52,28 +52,55 @@ export function createColumns(handlers: Handlers): ColumnDef<Invitation>[] {
         },
         {
             accessorKey: 'status',
-            meta: { width: '13%' },
+            meta: { width: '12%' },
             header: ({ column }) =>
                 renderComponent(SortableHeader, { label: 'Status', column }),
             cell: ({ row }) =>
                 renderComponent(StatusCell, { status: row.original.status }),
         },
         {
-            accessorKey: 'sentAt',
-            meta: { width: '26%', align: 'right' },
+            accessorKey: 'invitedBy',
+            meta: { width: '13%' },
             header: ({ column }) =>
                 renderComponent(SortableHeader, {
-                    label: 'Sent',
+                    label: 'Invited by',
                     column,
-                    align: 'right',
                 }),
             cell: ({ row }) =>
-                renderComponent(Timeline, { invitation: row.original }),
+                renderComponent(TextCell, {
+                    value: row.original.invitedBy,
+                    tone: 'muted',
+                }),
+        },
+        {
+            accessorKey: 'sentAt',
+            meta: { width: '11%' },
+            header: ({ column }) =>
+                renderComponent(SortableHeader, { label: 'Sent', column }),
+            cell: ({ row }) =>
+                renderComponent(TextCell, {
+                    value: relative(row.original.sentAt),
+                    tone: 'muted',
+                }),
+        },
+        {
+            accessorKey: 'expiresAt',
+            meta: { width: '11%' },
+            header: ({ column }) =>
+                renderComponent(SortableHeader, { label: 'Expires', column }),
+            cell: ({ row }) =>
+                renderComponent(TextCell, {
+                    value:
+                        row.original.status === 'pending'
+                            ? relative(row.original.expiresAt)
+                            : '—',
+                    tone: row.original.status === 'pending' ? 'muted' : 'faint',
+                }),
         },
         {
             id: 'actions',
             enableSorting: false,
-            meta: { width: '19%', align: 'right' },
+            meta: { width: '16%', align: 'right' },
             header: 'Actions',
             cell: ({ row }) =>
                 renderComponent(Actions, {

@@ -101,7 +101,7 @@
                         {#each headerGroup.headers as header (header.id)}
                             <Table.Head
                                 class={cn(
-                                    'px-5',
+                                    'px-4',
                                     header.column.columnDef.meta?.align ===
                                         'right' && 'text-right',
                                 )}
@@ -123,7 +123,7 @@
                         {#each row.getVisibleCells() as cell (cell.id)}
                             <Table.Cell
                                 class={cn(
-                                    'px-5 py-3',
+                                    'px-4 py-2.5',
                                     cell.column.columnDef.meta?.align ===
                                         'right' && 'text-right',
                                 )}

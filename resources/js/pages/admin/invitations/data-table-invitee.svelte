@@ -4,9 +4,9 @@
     let { invitation }: { invitation: Invitation } = $props();
 </script>
 
-<div class="flex min-w-0 items-center gap-3">
+<div class="flex min-w-0 items-center gap-2.5">
     <div
-        class="flex size-9 shrink-0 items-center justify-center rounded-full bg-accent-soft text-xs font-semibold text-accent"
+        class="flex size-8 shrink-0 items-center justify-center rounded-full bg-accent-soft text-[11px] font-semibold text-accent"
     >
         {initials(invitation)}
     </div>
