@@ -1,14 +1,15 @@
 <script lang="ts">
-    import { ArrowLeft, ChevronRight, Plus, X, Send } from '@lucide/svelte';
     import { Link } from '@inertiajs/svelte';
-    import { fly, fade, scale } from 'svelte/transition';
+    import { ArrowLeft, ChevronRight, Plus, X, Send } from '@lucide/svelte';
     import { cubicOut } from 'svelte/easing';
+    import { fly, fade, scale } from 'svelte/transition';
     import AdminLayout from '@/components/layout/AdminLayout.svelte';
-    import { invitableRoles, userRoleLabel } from '@/types/enums';
+    import * as Select from '@/components/ui/select';
     import { cn } from '@/lib/utils';
-    import type { Invitation, Role, Status } from './types';
-    import { createColumns } from './columns';
-    import DataTable from './data-table.svelte';
+    import { invitableRoles, userRoleLabel } from '@/types/enums';
+    import { createColumns } from '@/components/invitations/columns';
+    import DataTable from '@/components/invitations/data-table.svelte';
+    import type { Invitation, Role, Status } from '@/components/invitations/types';
 
     const DAY = 86_400_000;
     const now = Date.now();
@@ -180,7 +181,11 @@
             revoked: 0,
             expired: 0,
         };
-        for (const inv of invitations) c[inv.status]++;
+
+        for (const inv of invitations) {
+            c[inv.status]++;
+        }
+
         return c;
     });
 
@@ -236,14 +241,19 @@
     function submitInvite(e: Event) {
         e.preventDefault();
         const email = form.email.trim();
+
         if (!email) {
             errors = { email: 'Enter an email address.' };
+
             return;
         }
+
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             errors = { email: 'That doesn’t look like a valid email.' };
+
             return;
         }
+
         if (
             invitations.some(
                 (i) =>
@@ -255,8 +265,10 @@
             errors = {
                 email: 'There’s already a pending invitation for this email and role.',
             };
+
             return;
         }
+
         invitations.unshift({
             id: ++seq,
             name: form.name.trim() || null,
@@ -281,7 +293,9 @@
     }
 
     function onKeydown(e: KeyboardEvent) {
-        if (e.key === 'Escape' && inviteOpen) closeInvite();
+        if (e.key === 'Escape' && inviteOpen) {
+            closeInvite();
+        }
     }
 </script>
 
@@ -501,20 +515,29 @@
                                 class="block text-sm font-medium text-ink"
                                 >Role</label
                             >
-                            <select
-                                id="inv-role"
-                                bind:value={form.role}
-                                class={cn(
-                                    'h-11 w-full rounded-lg border border-line bg-surface px-3 text-[15px] text-ink transition-colors focus:border-accent',
-                                    focusRing,
-                                )}
+                            <Select.Root
+                                type="single"
+                                value={form.role}
+                                onValueChange={(v) => (form.role = v as Role)}
                             >
-                                {#each invitableRoles as role (role)}
-                                    <option value={role}
-                                        >{userRoleLabel[role]}</option
-                                    >
-                                {/each}
-                            </select>
+                                <Select.Trigger
+                                    id="inv-role"
+                                    class="w-full px-3.5 text-[15px]"
+                                >
+                                    {userRoleLabel[form.role]}
+                                </Select.Trigger>
+                                <Select.Content>
+                                    {#each invitableRoles as role (role)}
+                                        <Select.Item
+                                            value={role}
+                                            label={userRoleLabel[role]}
+                                            class="p-2.5"
+                                        >
+                                            {userRoleLabel[role]}
+                                        </Select.Item>
+                                    {/each}
+                                </Select.Content>
+                            </Select.Root>
                             <p class="text-xs text-faint">
                                 The role is locked to this invitation and can’t
                                 be changed by the invitee.
