@@ -21,8 +21,9 @@ class AdminUserSeeder extends Seeder
             ['email' => 'admin@tolfund.com'],
             [
                 'name' => 'Tolfund Admin',
-                // Plain value; the User model's 'hashed' cast hashes it on save.
-                'password' => env('ADMIN_PASSWORD', 'password'),
+                // Bootstrap credential for local/dev only; plain value is hashed
+                // by the User model's 'hashed' cast on save. Change after first sign-in.
+                'password' => 'password',
                 'role' => UserRole::Admin,
                 'account_status' => AccountStatus::Approved,
                 'email_verified_at' => now(),

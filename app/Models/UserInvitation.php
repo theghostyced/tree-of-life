@@ -54,7 +54,7 @@ class UserInvitation extends Model
         return match (true) {
             $this->revoked_at !== null => InvitationStatus::Revoked,
             $this->accepted_at !== null => InvitationStatus::Accepted,
-            $this->expires_at !== null && $this->expires_at->isPast() => InvitationStatus::Expired,
+            $this->expires_at->isPast() => InvitationStatus::Expired,
             default => InvitationStatus::Pending,
         };
     }
