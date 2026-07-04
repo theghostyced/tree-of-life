@@ -61,16 +61,16 @@
             </div>
         </DropdownMenu.Label>
         <DropdownMenu.Separator class="bg-line" />
-        <DropdownMenu.Item disabled class="px-2.5 py-2 text-muted">
+        <DropdownMenu.Item disabled class="px-2.5 py-2 text-muted focus:bg-elevated focus:text-ink">
             <UserRound class="size-4" strokeWidth={1.75} />
             Profile
         </DropdownMenu.Item>
-        <DropdownMenu.Item disabled class="px-2.5 py-2 text-muted">
+        <DropdownMenu.Item disabled class="px-2.5 py-2 text-muted focus:bg-elevated focus:text-ink">
             <Settings class="size-4" strokeWidth={1.75} />
             Settings
         </DropdownMenu.Item>
         <DropdownMenu.Separator class="bg-line" />
-        <DropdownMenu.Item onSelect={signOut} class="px-2.5 py-2 text-muted">
+        <DropdownMenu.Item onSelect={signOut} class="px-2.5 py-2 text-muted focus:bg-elevated focus:text-ink">
             <LogOut class="size-4" strokeWidth={1.75} />
             Sign out
         </DropdownMenu.Item>
