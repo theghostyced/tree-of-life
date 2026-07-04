@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Link, page } from '@inertiajs/svelte';
+    import { Link, page, router } from '@inertiajs/svelte';
     import {
         LayoutGrid,
         ClipboardList,
@@ -13,10 +13,14 @@
         Settings,
         Menu,
         X,
+        LogOut,
     } from '@lucide/svelte';
     import { fade, fly } from 'svelte/transition';
     import Logo from '@/components/Logo.svelte';
+    import { RoleBadge } from '@/components/ui/role-badge';
     import { cn } from '@/lib/utils';
+    import type { Auth } from '@/types/auth';
+    import UserMenu from './UserMenu.svelte';
 
     /**
      * Primary admin navigation. Adapts across three stages: a hamburger drawer
@@ -61,6 +65,7 @@
     ];
 
     const currentUrl = $derived(page.url);
+    const auth = $derived(page.props.auth as Auth);
 
     function isActive(href: string): boolean {
         return currentUrl === href || currentUrl.startsWith(href + '/');
@@ -158,12 +163,8 @@
                 <Icon class="size-[18px]" strokeWidth={1.75} />
             </button>
         {/each}
-        <div
-            class="ml-2 flex size-8 items-center justify-center rounded-full border border-line bg-accent-soft text-[12px] font-semibold text-accent"
-            aria-hidden="true"
-        >
-            AD
-        </div>
+        <RoleBadge role={auth.role} class="ml-2" />
+        <UserMenu />
     </div>
 
     <!-- Mobile trigger -->
@@ -242,13 +243,31 @@
                         class="flex size-9 items-center justify-center rounded-full border border-line bg-accent-soft text-[12px] font-semibold text-accent"
                         aria-hidden="true"
                     >
-                        AD
+                        {auth.user.name
+                            .trim()
+                            .split(/\s+/)
+                            .map((part) => part[0])
+                            .slice(0, 2)
+                            .join('')
+                            .toUpperCase() || auth.user.email.charAt(0).toUpperCase()}
                     </div>
-                    <div class="leading-tight">
-                        <p class="text-sm font-medium text-ink">Admin</p>
-                        <p class="text-xs text-faint">Administrator</p>
+                    <div class="min-w-0 leading-tight">
+                        <p class="truncate text-sm font-medium text-ink">
+                            {auth.user.name}
+                        </p>
+                        <p class="truncate text-xs text-faint">{auth.user.email}</p>
                     </div>
+                    <RoleBadge role={auth.role} class="ml-auto shrink-0" />
                 </div>
+
+                <button
+                    type="button"
+                    onclick={() => router.post('/logout')}
+                    class={mobileRowClass(false)}
+                >
+                    <LogOut class="size-5" strokeWidth={1.75} />
+                    Sign out
+                </button>
             </div>
         </div>
     </div>
