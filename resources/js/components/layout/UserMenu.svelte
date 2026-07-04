@@ -41,7 +41,7 @@
     <DropdownMenu.Content
         align="end"
         sideOffset={8}
-        class="w-64 border border-line bg-surface p-1.5 text-ink"
+        class="w-64 border border-line bg-surface p-1.5 text-ink ring-0"
     >
         <DropdownMenu.Label class="flex items-center gap-3 px-2.5 py-2">
             <div
