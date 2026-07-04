@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { Link } from '@inertiajs/svelte';
     import {
         ArrowLeft,
         ChevronRight,
@@ -6,16 +7,11 @@
         MessageSquare,
         LineChart,
     } from '@lucide/svelte';
-    import { Link, page } from '@inertiajs/svelte';
     import AdminLayout from '@/components/layout/AdminLayout.svelte';
-    import { Tabs, type TabItem } from '@/components/ui/tabs';
     import { EmptyState } from '@/components/ui/empty-state';
-    import { RoleBadge } from '@/components/ui/role-badge';
-    import type { Auth } from '@/types/auth';
+    import type { TabItem } from '@/components/ui/tabs';
+    import { Tabs } from '@/components/ui/tabs';
     import { cn } from '@/lib/utils';
-
-    // Role of the viewer, from the shared Inertia `auth` prop.
-    const role = $derived((page.props.auth as Auth).role);
 
     // Shared sage-green keyboard-focus ring.
     const focusRing =
@@ -66,12 +62,9 @@
         <!-- Page header -->
         <div class="flex items-start justify-between">
             <div>
-                <div class="flex items-center gap-3">
-                    <h1 class="text-3xl font-semibold tracking-tight text-ink">
-                        Performance
-                    </h1>
-                    <RoleBadge {role} />
-                </div>
+                <h1 class="text-3xl font-semibold tracking-tight text-ink">
+                    Performance
+                </h1>
                 <p class="mt-1.5 text-[15px] text-muted">
                     Track and analyze key performance indicators to monitor
                     financial health and growth.
