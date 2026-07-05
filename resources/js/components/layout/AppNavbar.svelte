@@ -10,7 +10,6 @@
         Send,
         Search,
         Bell,
-        Settings,
         Menu,
         X,
         LogOut,
@@ -61,7 +60,6 @@
     const utilities = [
         { label: 'Search', icon: Search },
         { label: 'Notifications', icon: Bell },
-        { label: 'Settings', icon: Settings },
     ];
 
     const currentUrl = $derived(page.url);
