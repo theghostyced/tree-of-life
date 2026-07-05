@@ -8,11 +8,19 @@
         Clock,
         ChevronRight,
         ChevronLeft,
+        ChevronDown,
     } from '@lucide/svelte';
     import MentorLayout from '@/components/layout/MentorLayout.svelte';
     import { Stepper } from '@/components/ui/stepper';
+    import { OptionChecklist } from '@/components/ui/option-checklist';
     import { Button } from '@/components/ui/button';
     import { Toaster, toast } from '@/components/ui/sonner';
+    import {
+        INDUSTRIES,
+        YEAR_RANGES,
+        EXPERTISE_AREAS,
+        AVAILABILITY,
+    } from '@/lib/onboarding-options';
 
     type Doc = { type: string; label: string; uploaded: string | null };
     type Profile = {
@@ -45,8 +53,6 @@
 
     const readOnly = $derived(status === 'pending');
 
-    let industryText = $state((profile.industry_focus ?? []).join(', '));
-
     const form = useForm<{
         primary_expertise: string;
         industry_focus: string[];
@@ -60,6 +66,27 @@
         afcfta_knowledge: profile.afcfta_knowledge ?? '',
         availability: profile.availability ?? '',
     });
+
+    // Primary expertise: a single choice from a list, or a custom "Other" value.
+    const OTHER = '__other__';
+    let expertiseChoice = $state(
+        profile.primary_expertise
+            ? EXPERTISE_AREAS.includes(profile.primary_expertise)
+                ? profile.primary_expertise
+                : OTHER
+            : '',
+    );
+    let expertiseOther = $state(
+        profile.primary_expertise &&
+            !EXPERTISE_AREAS.includes(profile.primary_expertise)
+            ? profile.primary_expertise
+            : '',
+    );
+
+    function syncExpertise() {
+        form.primary_expertise =
+            expertiseChoice === OTHER ? expertiseOther : expertiseChoice;
+    }
 
     const steps = $derived([
         {
@@ -93,10 +120,6 @@
     }
 
     function saveAndContinue() {
-        form.industry_focus = industryText
-            .split(',')
-            .map((s) => s.trim())
-            .filter(Boolean);
         form.patch('/mentor/profile', {
             preserveScroll: true,
             onSuccess: () => {
@@ -208,12 +231,33 @@
                             <label for="pe" class={labelClass}
                                 >Primary expertise</label
                             >
-                            <input
-                                id="pe"
-                                class={field}
-                                bind:value={form.primary_expertise}
-                                placeholder="Trade finance, market access…"
-                            />
+                            <div class="relative">
+                                <select
+                                    id="pe"
+                                    class="{field} appearance-none pr-10"
+                                    style="color-scheme: dark;"
+                                    bind:value={expertiseChoice}
+                                    onchange={syncExpertise}
+                                >
+                                    <option value="" disabled>Select…</option>
+                                    {#each EXPERTISE_AREAS as area (area)}
+                                        <option value={area}>{area}</option>
+                                    {/each}
+                                    <option value={OTHER}>Other</option>
+                                </select>
+                                <ChevronDown
+                                    class="pointer-events-none absolute top-1/2 right-3.5 size-4 -translate-y-1/2 text-muted"
+                                    strokeWidth={1.75}
+                                />
+                            </div>
+                            {#if expertiseChoice === OTHER}
+                                <input
+                                    class={field}
+                                    bind:value={expertiseOther}
+                                    oninput={syncExpertise}
+                                    placeholder="Your primary expertise"
+                                />
+                            {/if}
                             {#if form.errors.primary_expertise}
                                 <p class="text-sm text-error">
                                     {form.errors.primary_expertise}
@@ -221,16 +265,10 @@
                             {/if}
                         </div>
                         <div class="space-y-2">
-                            <label for="if" class={labelClass}
-                                >Industry focus <span class="text-faint"
-                                    >(comma-separated)</span
-                                ></label
-                            >
-                            <input
-                                id="if"
-                                class={field}
-                                bind:value={industryText}
-                                placeholder="Agriculture, Logistics"
+                            <span class={labelClass}>Industry focus</span>
+                            <OptionChecklist
+                                options={INDUSTRIES}
+                                bind:value={form.industry_focus}
                             />
                         </div>
                     </div>
@@ -242,13 +280,27 @@
                                 <label for="ye" class={labelClass}
                                     >Years of experience</label
                                 >
-                                <input
-                                    id="ye"
-                                    type="number"
-                                    min="0"
-                                    class={field}
-                                    bind:value={form.years_experience}
-                                />
+                                <div class="relative">
+                                    <select
+                                        id="ye"
+                                        class="{field} appearance-none pr-10"
+                                        style="color-scheme: dark;"
+                                        bind:value={form.years_experience}
+                                    >
+                                        <option value={null} disabled
+                                            >Select…</option
+                                        >
+                                        {#each YEAR_RANGES as r (r.value)}
+                                            <option value={r.value}
+                                                >{r.label}</option
+                                            >
+                                        {/each}
+                                    </select>
+                                    <ChevronDown
+                                        class="pointer-events-none absolute top-1/2 right-3.5 size-4 -translate-y-1/2 text-muted"
+                                        strokeWidth={1.75}
+                                    />
+                                </div>
                                 {#if form.errors.years_experience}
                                     <p class="text-sm text-error">
                                         {form.errors.years_experience}
@@ -259,12 +311,23 @@
                                 <label for="av" class={labelClass}
                                     >Availability</label
                                 >
-                                <input
-                                    id="av"
-                                    class={field}
-                                    bind:value={form.availability}
-                                    placeholder="e.g. Weekday evenings"
-                                />
+                                <div class="relative">
+                                    <select
+                                        id="av"
+                                        class="{field} appearance-none pr-10"
+                                        style="color-scheme: dark;"
+                                        bind:value={form.availability}
+                                    >
+                                        <option value="" disabled>Select…</option>
+                                        {#each AVAILABILITY as a (a)}
+                                            <option value={a}>{a}</option>
+                                        {/each}
+                                    </select>
+                                    <ChevronDown
+                                        class="pointer-events-none absolute top-1/2 right-3.5 size-4 -translate-y-1/2 text-muted"
+                                        strokeWidth={1.75}
+                                    />
+                                </div>
                                 {#if form.errors.availability}
                                     <p class="text-sm text-error">
                                         {form.errors.availability}

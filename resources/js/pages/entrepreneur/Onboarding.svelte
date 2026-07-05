@@ -8,11 +8,18 @@
         Clock,
         ChevronRight,
         ChevronLeft,
+        ChevronDown,
     } from '@lucide/svelte';
     import EntrepreneurLayout from '@/components/layout/EntrepreneurLayout.svelte';
     import { Stepper } from '@/components/ui/stepper';
+    import { OptionChecklist } from '@/components/ui/option-checklist';
     import { Button } from '@/components/ui/button';
     import { Toaster, toast } from '@/components/ui/sonner';
+    import {
+        SECTORS,
+        YEAR_RANGES,
+        EMPLOYEE_RANGES,
+    } from '@/lib/onboarding-options';
 
     type Doc = { type: string; label: string; uploaded: string | null };
     type Profile = {
@@ -46,8 +53,6 @@
     } = $props();
 
     const readOnly = $derived(status === 'pending');
-
-    let sectorText = $state((profile.sector ?? []).join(', '));
 
     const form = useForm<{
         business_name: string;
@@ -102,10 +107,6 @@
     }
 
     function saveAndContinue() {
-        form.sector = sectorText
-            .split(',')
-            .map((s) => s.trim())
-            .filter(Boolean);
         form.patch('/entrepreneur/profile', {
             preserveScroll: true,
             onSuccess: () => {
@@ -243,16 +244,10 @@
                             ></textarea>
                         </div>
                         <div class="space-y-2">
-                            <label for="sec" class={labelClass}
-                                >Sectors <span class="text-faint"
-                                    >(comma-separated)</span
-                                ></label
-                            >
-                            <input
-                                id="sec"
-                                class={field}
-                                bind:value={sectorText}
-                                placeholder="Manufacturing, Retail"
+                            <span class={labelClass}>Sectors</span>
+                            <OptionChecklist
+                                options={SECTORS}
+                                bind:value={form.sector}
                             />
                         </div>
                     </div>
@@ -285,6 +280,7 @@
                                 >
                                 <input
                                     id="bp"
+                                    type="tel"
                                     class={field}
                                     bind:value={form.business_phone_number}
                                     placeholder="+254 700 000 000"
@@ -301,13 +297,27 @@
                                 <label for="yo" class={labelClass}
                                     >Years in operation</label
                                 >
-                                <input
-                                    id="yo"
-                                    type="number"
-                                    min="0"
-                                    class={field}
-                                    bind:value={form.years_in_operation}
-                                />
+                                <div class="relative">
+                                    <select
+                                        id="yo"
+                                        class="{field} appearance-none pr-10"
+                                        style="color-scheme: dark;"
+                                        bind:value={form.years_in_operation}
+                                    >
+                                        <option value={null} disabled
+                                            >Select…</option
+                                        >
+                                        {#each YEAR_RANGES as r (r.value)}
+                                            <option value={r.value}
+                                                >{r.label}</option
+                                            >
+                                        {/each}
+                                    </select>
+                                    <ChevronDown
+                                        class="pointer-events-none absolute top-1/2 right-3.5 size-4 -translate-y-1/2 text-muted"
+                                        strokeWidth={1.75}
+                                    />
+                                </div>
                                 {#if form.errors.years_in_operation}
                                     <p class="text-sm text-error">
                                         {form.errors.years_in_operation}
@@ -318,13 +328,27 @@
                                 <label for="ec" class={labelClass}
                                     >Number of employees</label
                                 >
-                                <input
-                                    id="ec"
-                                    type="number"
-                                    min="0"
-                                    class={field}
-                                    bind:value={form.employee_count}
-                                />
+                                <div class="relative">
+                                    <select
+                                        id="ec"
+                                        class="{field} appearance-none pr-10"
+                                        style="color-scheme: dark;"
+                                        bind:value={form.employee_count}
+                                    >
+                                        <option value={null} disabled
+                                            >Select…</option
+                                        >
+                                        {#each EMPLOYEE_RANGES as r (r.value)}
+                                            <option value={r.value}
+                                                >{r.label}</option
+                                            >
+                                        {/each}
+                                    </select>
+                                    <ChevronDown
+                                        class="pointer-events-none absolute top-1/2 right-3.5 size-4 -translate-y-1/2 text-muted"
+                                        strokeWidth={1.75}
+                                    />
+                                </div>
                                 {#if form.errors.employee_count}
                                     <p class="text-sm text-error">
                                         {form.errors.employee_count}
