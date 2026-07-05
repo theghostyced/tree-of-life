@@ -33,5 +33,5 @@
         class={cn('size-1.5 rounded-full', current.dot)}
         aria-hidden="true"
     ></span>
-    <span>Viewing as {current.label}</span>
+    <span>{current.label}</span>
 </span>
