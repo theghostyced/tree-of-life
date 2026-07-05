@@ -7,10 +7,44 @@
     import type { Auth } from '@/types/auth';
 
     /**
-     * 403 page, rendered by the exception handler in bootstrap/app.php.
-     * Standalone on purpose: the viewer lacks the role this area belongs
-     * to, so it shows no role chrome — just a way back to their own space.
+     * Error page, rendered by the exception handler in bootstrap/app.php
+     * for the statuses in the map below. Standalone on purpose: the viewer
+     * may lack the role (403) or the destination (404) that any app chrome
+     * would imply — so it shows none, just a way back to familiar ground.
      */
+    let { status }: { status: number } = $props();
+
+    type ErrorMeta = {
+        title: string;
+        chip: string;
+        /** Status-dot tone. Color never carries the meaning alone; the chip label does. */
+        dot: string;
+        illustration: string;
+        headline: string;
+        body: string;
+    };
+
+    const meta: Record<number, ErrorMeta> = {
+        403: {
+            title: 'Access restricted',
+            chip: '403 · Restricted access',
+            dot: 'bg-accent-orange',
+            illustration: '/images/illustrations/security-spy.svg',
+            headline: 'This area isn’t part of your role',
+            body: 'You’re signed in, but this page belongs to a different role on Tolfund. If you think you should have access, ask your program admin to update your account.',
+        },
+        404: {
+            title: 'Page not found',
+            chip: '404 · Page not found',
+            dot: 'bg-secondary-blue',
+            illustration: '/images/illustrations/science-find.svg',
+            headline: 'We couldn’t find that page',
+            body: 'The link may be broken, or the page may have been moved or removed. Check the address, or head back to familiar ground.',
+        },
+    };
+
+    const current = $derived(meta[status] ?? meta[404]);
+
     const auth = $derived(page.props.auth as Auth | undefined);
 
     const dashboards: Record<string, string> = {
@@ -19,7 +53,9 @@
         mentor: '/mentor/dashboard',
     };
 
-    const homeHref = $derived(dashboards[auth?.role ?? ''] ?? '/');
+    const homeHref = $derived(
+        auth?.user ? (dashboards[auth.role] ?? '/') : '/',
+    );
     const homeLabel = $derived(
         homeHref === '/' ? 'Go to the homepage' : 'Go to your dashboard',
     );
@@ -28,7 +64,7 @@
         'outline-none focus-visible:ring-2 focus-visible:ring-accent/60';
 </script>
 
-<AppHead title="Access restricted" />
+<AppHead title={current.title} />
 
 <div class="flex min-h-screen flex-col bg-canvas font-sans text-ink">
     <header class="flex h-14 shrink-0 items-center px-4 sm:px-6">
@@ -53,7 +89,7 @@
                     aria-hidden="true"
                 ></div>
                 <img
-                    src="/images/illustrations/security-spy.svg"
+                    src={current.illustration}
                     alt=""
                     class="relative size-40 opacity-90 sm:size-48"
                 />
@@ -63,22 +99,20 @@
                 class="inline-flex items-center gap-1.5 rounded-full border border-line bg-elevated px-2.5 py-1 text-xs font-medium text-muted"
             >
                 <span
-                    class="size-1.5 rounded-full bg-accent-orange"
+                    class={cn('size-1.5 rounded-full', current.dot)}
                     aria-hidden="true"
                 ></span>
-                <span>403 · Restricted access</span>
+                <span>{current.chip}</span>
             </p>
 
             <h1
                 class="mt-4 text-2xl font-semibold tracking-tight text-balance text-ink sm:text-3xl"
             >
-                This area isn&rsquo;t part of your role
+                {current.headline}
             </h1>
 
             <p class="mt-3 max-w-sm text-[15px] leading-relaxed text-muted">
-                You&rsquo;re signed in, but this page belongs to a different
-                role on Tolfund. If you think you should have access, ask your
-                program admin to update your account.
+                {current.body}
             </p>
 
             <div
