@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Entrepreneur\DashboardController as EntrepreneurDashboardController;
 use App\Http\Controllers\Entrepreneur\EmployeeInvitationController;
 use App\Http\Controllers\Entrepreneur\ProfileController as EntrepreneurProfileController;
+use App\Http\Controllers\Mentor\DashboardController as MentorDashboardController;
 use App\Http\Controllers\Mentor\ProfileController as MentorProfileController;
 use App\Http\Controllers\Onboarding\DocumentController;
 use App\Http\Controllers\Onboarding\SubmissionController;
@@ -48,8 +49,8 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::prefix('mentor')->name('mentor.')->middleware('role:mentor')->group(function () {
-        Route::inertia('/onboarding', 'mentor/Onboarding')->name('onboarding');
-        Route::inertia('/dashboard', 'mentor/Dashboard')->middleware('account.active')->name('dashboard');
+        Route::get('/onboarding', [MentorProfileController::class, 'edit'])->name('onboarding');
+        Route::get('/dashboard', [MentorDashboardController::class, 'index'])->middleware('account.active')->name('dashboard');
         Route::patch('/profile', [MentorProfileController::class, 'update'])->name('profile.update');
     });
 
@@ -60,6 +61,3 @@ Route::middleware('auth')->group(function () {
     Route::get('/onboarding/documents/{document}', [DocumentController::class, 'show'])->name('onboarding.documents.show');
     Route::post('/onboarding/submit', [SubmissionController::class, 'store'])->name('onboarding.submit');
 });
-
-// TEMP-VERIFY-500 (removed after visual check)
-Route::get('/_dev/boom', fn () => abort(500));
