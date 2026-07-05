@@ -17,7 +17,7 @@ class LoginController extends Controller
 
         $user = $request->user();
 
-        return redirect()->intended($user->role->homePath($user->isApproved()));
+        return redirect()->intended($user->role->homePath());
     }
 
     public function destroy(Request $request): RedirectResponse

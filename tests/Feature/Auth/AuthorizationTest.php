@@ -29,7 +29,7 @@ test('a role cannot reach another role dashboard', function () {
         ->get('/entrepreneur/dashboard')->assertForbidden();
 });
 
-test('only approved accounts reach full role capabilities', function () {
+test('approved accounts reach their dashboard', function () {
     $this->actingAs(User::factory()->entrepreneur()->approved()->create())
         ->get('/entrepreneur/dashboard')->assertSuccessful();
 
@@ -37,18 +37,16 @@ test('only approved accounts reach full role capabilities', function () {
         ->get('/mentor/dashboard')->assertSuccessful();
 });
 
-test('unapproved accounts are held at onboarding, not the dashboard', function (string $status) {
+test('unapproved accounts can still reach their dashboard and onboarding', function (string $status) {
     $user = User::factory()->entrepreneur()->{$status}()->create();
 
-    $this->actingAs($user)->get('/entrepreneur/dashboard')
-        ->assertRedirect('/entrepreneur/onboarding');
-
+    $this->actingAs($user)->get('/entrepreneur/dashboard')->assertSuccessful();
     $this->actingAs($user)->get('/entrepreneur/onboarding')->assertSuccessful();
 })->with(['draft', 'pending', 'rejected']);
 
-test('a deactivated account loses full access', function () {
+test('a deactivated account is shut out and signed off', function () {
     $user = User::factory()->entrepreneur()->deactivated()->create();
 
     $this->actingAs($user)->get('/entrepreneur/dashboard')
-        ->assertRedirect('/entrepreneur/onboarding');
+        ->assertRedirect('/login');
 });

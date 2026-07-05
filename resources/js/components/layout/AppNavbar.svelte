@@ -1,19 +1,6 @@
 <script lang="ts">
     import { Link, page, router } from '@inertiajs/svelte';
-    import {
-        LayoutGrid,
-        ClipboardList,
-        Award,
-        Flag,
-        FolderKanban,
-        Users,
-        Send,
-        Search,
-        Bell,
-        Menu,
-        X,
-        LogOut,
-    } from '@lucide/svelte';
+    import { LayoutGrid, Search, Bell, Menu, X, LogOut } from '@lucide/svelte';
     import { fade, fly } from 'svelte/transition';
     import Logo from '@/components/Logo.svelte';
     import { RoleBadge } from '@/components/ui/role-badge';
@@ -22,9 +9,10 @@
     import UserMenu from './UserMenu.svelte';
 
     /**
-     * Primary admin navigation. Adapts across three stages: a hamburger drawer
+     * Primary top navigation, reused across roles. The link set and logo home
+     * are supplied by the layout. Adapts across three stages: a hamburger drawer
      * below lg, a compact icon-only bar from lg, and full icon + label from xl.
-     * One link set at every size; only wired routes are Inertia links.
+     * Only wired routes are Inertia links.
      */
     type NavLink = {
         label: string;
@@ -33,29 +21,13 @@
         enabled?: boolean;
     };
 
-    const links: NavLink[] = [
-        {
-            label: 'Dashboard',
-            href: '/admin/dashboard',
-            icon: LayoutGrid,
-            enabled: true,
-        },
-        {
-            label: 'Applications',
-            href: '/admin/applications',
-            icon: ClipboardList,
-        },
-        { label: 'Awards', href: '/admin/awards', icon: Award },
-        { label: 'Milestones', href: '/admin/milestones', icon: Flag },
-        { label: 'Programs', href: '/admin/programs', icon: FolderKanban },
-        { label: 'Users', href: '/admin/users', icon: Users },
-        {
-            label: 'Invitations',
-            href: '/admin/invitations',
-            icon: Send,
-            enabled: true,
-        },
-    ];
+    let {
+        links,
+        home = '/',
+    }: {
+        links: NavLink[];
+        home?: string;
+    } = $props();
 
     const utilities = [
         { label: 'Search', icon: Search },
@@ -114,7 +86,7 @@
     class="relative z-50 flex h-14 shrink-0 items-center gap-6 border-b border-line bg-surface px-4 shadow-bar sm:px-6"
 >
     <Link
-        href="/admin/dashboard"
+        href={home}
         class="shrink-0 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
     >
         <Logo size="sm" />

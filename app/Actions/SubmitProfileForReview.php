@@ -30,6 +30,18 @@ class SubmitProfileForReview
     }
 
     /**
+     * Total number of items (fields + required documents) a role must supply.
+     */
+    public function requiredCount(User $user): int
+    {
+        return match ($user->role) {
+            UserRole::Entrepreneur => 7 + count(DocumentType::requiredFor(UserRole::Entrepreneur)),
+            UserRole::Mentor => 5 + count(DocumentType::requiredFor(UserRole::Mentor)),
+            default => 0,
+        };
+    }
+
+    /**
      * @return array<int, string>
      */
     public function missingItems(User $user): array

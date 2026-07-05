@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Link, page } from '@inertiajs/svelte';
-    import { ArrowLeft } from '@lucide/svelte';
+    import { ArrowLeft, RotateCw } from '@lucide/svelte';
     import AppHead from '@/components/AppHead.svelte';
     import Logo from '@/components/Logo.svelte';
     import { cn } from '@/lib/utils';
@@ -22,6 +22,8 @@
         illustration: string;
         headline: string;
         body: string;
+        /** Secondary escape: 'back' navigates away, 'retry' reloads (for transient failures). */
+        secondary: 'back' | 'retry';
     };
 
     const meta: Record<number, ErrorMeta> = {
@@ -32,6 +34,7 @@
             illustration: '/images/illustrations/security-spy.svg',
             headline: 'This area isn’t part of your role',
             body: 'You’re signed in, but this page belongs to a different role on Tolfund. If you think you should have access, ask your program admin to update your account.',
+            secondary: 'back',
         },
         404: {
             title: 'Page not found',
@@ -40,6 +43,16 @@
             illustration: '/images/illustrations/science-find.svg',
             headline: 'We couldn’t find that page',
             body: 'The link may be broken, or the page may have been moved or removed. Check the address, or head back to familiar ground.',
+            secondary: 'back',
+        },
+        500: {
+            title: 'Something went wrong',
+            chip: '500 · Server error',
+            dot: 'bg-error',
+            illustration: '/images/illustrations/weather-forecast.svg',
+            headline: 'Something went wrong on our side',
+            body: 'The server hit a problem while handling your request — it’s us, not you. Try again in a moment, and if it keeps happening, let your program admin know.',
+            secondary: 'retry',
         },
     };
 
@@ -129,14 +142,22 @@
                 </Link>
                 <button
                     type="button"
-                    onclick={() => history.back()}
+                    onclick={() =>
+                        current.secondary === 'retry'
+                            ? window.location.reload()
+                            : history.back()}
                     class={cn(
                         'inline-flex w-full items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium text-muted transition-colors hover:bg-elevated hover:text-ink sm:w-auto',
                         focusRing,
                     )}
                 >
-                    <ArrowLeft class="size-4" strokeWidth={1.75} />
-                    Go back
+                    {#if current.secondary === 'retry'}
+                        <RotateCw class="size-4" strokeWidth={1.75} />
+                        Try again
+                    {:else}
+                        <ArrowLeft class="size-4" strokeWidth={1.75} />
+                        Go back
+                    {/if}
                 </button>
             </div>
         </div>

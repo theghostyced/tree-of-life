@@ -37,6 +37,20 @@ enum DocumentType: string
         };
     }
 
+    public function label(): string
+    {
+        return match ($this) {
+            self::BusinessCertificate => 'Business Certificate',
+            self::BusinessRegistrationDocuments => 'Business Registration Documents',
+            self::BusinessPlan => 'Business Plan',
+            self::OperationalPlan => 'Operational Plan',
+            self::TechnicalSupportRequirements => 'Technical Support Requirements',
+            self::PassportPhoto => 'Passport Photo',
+            self::IdentificationCard => 'Identification Card',
+            self::Certification => 'Certification',
+        };
+    }
+
     public function role(): UserRole
     {
         return match ($this) {

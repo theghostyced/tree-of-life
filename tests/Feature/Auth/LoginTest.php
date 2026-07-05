@@ -46,10 +46,10 @@ test('login is redirected by role and account status', function (string $factory
 })->with([
     'admin' => ['admin', 'approved', '/admin/dashboard'],
     'approved entrepreneur' => ['entrepreneur', 'approved', '/entrepreneur/dashboard'],
-    'pending entrepreneur' => ['entrepreneur', 'pending', '/entrepreneur/onboarding'],
-    'draft entrepreneur' => ['entrepreneur', 'draft', '/entrepreneur/onboarding'],
+    'pending entrepreneur' => ['entrepreneur', 'pending', '/entrepreneur/dashboard'],
+    'draft entrepreneur' => ['entrepreneur', 'draft', '/entrepreneur/dashboard'],
     'approved mentor' => ['mentor', 'approved', '/mentor/dashboard'],
-    'pending mentor' => ['mentor', 'pending', '/mentor/onboarding'],
+    'pending mentor' => ['mentor', 'pending', '/mentor/dashboard'],
 ]);
 
 test('a deactivated user cannot establish a session', function () {

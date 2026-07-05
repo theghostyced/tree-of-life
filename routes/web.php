@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\InvitationController;
 use App\Http\Controllers\Admin\UserReviewController;
 use App\Http\Controllers\Auth\InvitationAcceptanceController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Entrepreneur\DashboardController as EntrepreneurDashboardController;
 use App\Http\Controllers\Entrepreneur\EmployeeInvitationController;
 use App\Http\Controllers\Entrepreneur\ProfileController as EntrepreneurProfileController;
 use App\Http\Controllers\Mentor\ProfileController as MentorProfileController;
@@ -31,15 +32,17 @@ Route::post('/invitations/accept/{token}', [InvitationAcceptanceController::clas
 Route::middleware('auth')->group(function () {
     Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
         Route::inertia('/dashboard', 'admin/Dashboard')->name('dashboard');
-        Route::inertia('/invitations', 'admin/invitations/Index')->name('invitations.index');
+        Route::get('/invitations', [InvitationController::class, 'index'])->name('invitations.index');
         Route::post('/invitations', [InvitationController::class, 'store'])->name('invitations.store');
+        Route::post('/invitations/{invitation}/resend', [InvitationController::class, 'resend'])->name('invitations.resend');
+        Route::delete('/invitations/{invitation}', [InvitationController::class, 'revoke'])->name('invitations.revoke');
         Route::post('/users/{user}/approve', [UserReviewController::class, 'approve'])->name('users.approve');
         Route::post('/users/{user}/reject', [UserReviewController::class, 'reject'])->name('users.reject');
     });
 
     Route::prefix('entrepreneur')->name('entrepreneur.')->middleware('role:entrepreneur')->group(function () {
-        Route::inertia('/onboarding', 'entrepreneur/Onboarding')->name('onboarding');
-        Route::inertia('/dashboard', 'entrepreneur/Dashboard')->middleware('account.active')->name('dashboard');
+        Route::get('/onboarding', [EntrepreneurProfileController::class, 'edit'])->name('onboarding');
+        Route::get('/dashboard', [EntrepreneurDashboardController::class, 'index'])->middleware('account.active')->name('dashboard');
         Route::patch('/profile', [EntrepreneurProfileController::class, 'update'])->name('profile.update');
         Route::post('/employees', [EmployeeInvitationController::class, 'store'])->name('employees.store');
     });
@@ -57,3 +60,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/onboarding/documents/{document}', [DocumentController::class, 'show'])->name('onboarding.documents.show');
     Route::post('/onboarding/submit', [SubmissionController::class, 'store'])->name('onboarding.submit');
 });
+
+// TEMP-VERIFY-500 (removed after visual check)
+Route::get('/_dev/boom', fn () => abort(500));

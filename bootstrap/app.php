@@ -36,7 +36,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->respond(function (Response $response, Throwable $e, Request $request): Response {
             $status = $response->getStatusCode();
 
-            if (in_array($status, [403, 404], true) && ! $request->expectsJson() && ! $request->is('api/*')) {
+            // 500s keep the framework debug page while APP_DEBUG is on.
+            $renderable = in_array($status, [403, 404], true)
+                || ($status === 500 && ! config('app.debug'));
+
+            if ($renderable && ! $request->expectsJson() && ! $request->is('api/*')) {
                 return Inertia::render('shared/Error', ['status' => $status])
                     ->toResponse($request)
                     ->setStatusCode($status);

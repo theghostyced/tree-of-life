@@ -55,14 +55,15 @@ enum UserRole: string
     }
 
     /**
-     * Where a user of this role lands after authentication, given their approval state.
+     * Where a user of this role lands after authentication. Onboarding is not a
+     * gate — unapproved users still land on their dashboard (with a banner).
      */
-    public function homePath(bool $approved): string
+    public function homePath(): string
     {
         return match ($this) {
             self::Admin => '/admin/dashboard',
-            self::Mentor => $approved ? '/mentor/dashboard' : '/mentor/onboarding',
-            self::Entrepreneur => $approved ? '/entrepreneur/dashboard' : '/entrepreneur/onboarding',
+            self::Mentor => '/mentor/dashboard',
+            self::Entrepreneur => '/entrepreneur/dashboard',
             self::Employee => '/entrepreneur/dashboard',
         };
     }

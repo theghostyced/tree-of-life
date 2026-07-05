@@ -2,15 +2,18 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\AccountStatus;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnsureAccountActive
 {
     /**
-     * Only approved accounts reach full role capabilities. Everyone else is
-     * sent back to their role's onboarding flow.
+     * Deactivated accounts are shut out entirely. Draft, pending, and rejected
+     * users keep access to their area (their dashboard shows an onboarding
+     * banner) — completing onboarding is not a prerequisite for signing in.
      *
      * @param  Closure(Request): Response  $next
      */
@@ -18,8 +21,12 @@ class EnsureAccountActive
     {
         $user = $request->user();
 
-        if ($user !== null && ! $user->isApproved()) {
-            return redirect($user->role->onboardingPath());
+        if ($user !== null && $user->account_status === AccountStatus::Deactivated) {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect('/login');
         }
 
         return $next($request);

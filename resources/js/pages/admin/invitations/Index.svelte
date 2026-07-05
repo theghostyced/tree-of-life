@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Link } from '@inertiajs/svelte';
+    import { Link, router, useForm } from '@inertiajs/svelte';
     import { ArrowLeft, ChevronRight, Plus, X, Send } from '@lucide/svelte';
     import { cubicOut } from 'svelte/easing';
     import { fly, fade, scale } from 'svelte/transition';
@@ -11,155 +11,11 @@
     import DataTable from '@/components/invitations/data-table.svelte';
     import type { Invitation, Role, Status } from '@/components/invitations/types';
 
-    const DAY = 86_400_000;
-    const now = Date.now();
-    const daysAgo = (n: number) => now - n * DAY;
-    const daysAhead = (n: number) => now + n * DAY;
-
-    // Sample queue — client-side only (the index route isn't fed by a controller yet).
-    let seq = 20;
-    let invitations = $state<Invitation[]>([
-        {
-            id: 1,
-            name: 'Amara Okafor',
-            email: 'amara.okafor@example.com',
-            role: 'entrepreneur',
-            status: 'pending',
-            invitedBy: 'You',
-            sentAt: daysAgo(1),
-            expiresAt: daysAhead(6),
-        },
-        {
-            id: 2,
-            name: 'Zanele Mbeki',
-            email: 'zanele@brightseed.co',
-            role: 'entrepreneur',
-            status: 'pending',
-            invitedBy: 'You',
-            sentAt: daysAgo(3),
-            expiresAt: daysAhead(4),
-        },
-        {
-            id: 3,
-            name: 'Grace Adeyemi',
-            email: 'grace.adeyemi@example.com',
-            role: 'mentor',
-            status: 'accepted',
-            invitedBy: 'Ngozi E.',
-            sentAt: daysAgo(9),
-            expiresAt: daysAgo(2),
-        },
-        {
-            id: 4,
-            name: null,
-            email: 'fatima.bello@ventures.io',
-            role: 'entrepreneur',
-            status: 'accepted',
-            invitedBy: 'You',
-            sentAt: daysAgo(14),
-            expiresAt: daysAgo(7),
-        },
-        {
-            id: 5,
-            name: 'Kwame Mensah',
-            email: 'kwame.mensah@example.com',
-            role: 'mentor',
-            status: 'pending',
-            invitedBy: 'Ngozi E.',
-            sentAt: daysAgo(2),
-            expiresAt: daysAhead(5),
-        },
-        {
-            id: 6,
-            name: 'Lindiwe Dube',
-            email: 'lindiwe.dube@example.com',
-            role: 'entrepreneur',
-            status: 'expired',
-            invitedBy: 'You',
-            sentAt: daysAgo(21),
-            expiresAt: daysAgo(6),
-        },
-        {
-            id: 7,
-            name: 'Thandeka N.',
-            email: 'thandeka@corishubventures.com',
-            role: 'admin',
-            status: 'revoked',
-            invitedBy: 'Ngozi E.',
-            sentAt: daysAgo(11),
-            expiresAt: daysAgo(4),
-        },
-        {
-            id: 8,
-            name: 'Ifeoma Chukwu',
-            email: 'ifeoma.chukwu@example.com',
-            role: 'entrepreneur',
-            status: 'pending',
-            invitedBy: 'You',
-            sentAt: daysAgo(0.2),
-            expiresAt: daysAhead(7),
-        },
-        {
-            id: 9,
-            name: 'Nomsa Khumalo',
-            email: 'nomsa.khumalo@example.com',
-            role: 'entrepreneur',
-            status: 'accepted',
-            invitedBy: 'You',
-            sentAt: daysAgo(18),
-            expiresAt: daysAgo(11),
-        },
-        {
-            id: 10,
-            name: 'Chidi Obi',
-            email: 'chidi@obiventures.africa',
-            role: 'mentor',
-            status: 'pending',
-            invitedBy: 'You',
-            sentAt: daysAgo(4),
-            expiresAt: daysAhead(3),
-        },
-        {
-            id: 11,
-            name: 'Aisha Diallo',
-            email: 'aisha.diallo@example.com',
-            role: 'entrepreneur',
-            status: 'expired',
-            invitedBy: 'Ngozi E.',
-            sentAt: daysAgo(30),
-            expiresAt: daysAgo(16),
-        },
-        {
-            id: 12,
-            name: null,
-            email: 'blessing.eze@example.com',
-            role: 'entrepreneur',
-            status: 'pending',
-            invitedBy: 'You',
-            sentAt: daysAgo(5),
-            expiresAt: daysAhead(2),
-        },
-        {
-            id: 13,
-            name: 'Yaa Asantewaa',
-            email: 'yaa@asantewaa.co',
-            role: 'mentor',
-            status: 'accepted',
-            invitedBy: 'You',
-            sentAt: daysAgo(25),
-            expiresAt: daysAgo(18),
-        },
-        {
-            id: 14,
-            name: 'Rehema Juma',
-            email: 'rehema.juma@example.com',
-            role: 'entrepreneur',
-            status: 'revoked',
-            invitedBy: 'Ngozi E.',
-            sentAt: daysAgo(8),
-            expiresAt: daysAgo(1),
-        },
-    ]);
+    let {
+        invitations = [],
+    }: {
+        invitations: Invitation[];
+    } = $props();
 
     const focusRing =
         'outline-none focus-visible:ring-2 focus-visible:ring-accent/60';
@@ -197,19 +53,26 @@
 
     // ── Row actions ────────────────────────────────────────────────────
     function resend(inv: Invitation) {
-        inv.sentAt = Date.now();
-        inv.expiresAt = Date.now() + 7 * DAY;
-        toastMsg(`Invitation resent to ${inv.email}`);
+        router.post(
+            `/admin/invitations/${inv.id}/resend`,
+            {},
+            {
+                preserveScroll: true,
+                onSuccess: () => toastMsg(`Invitation resent to ${inv.email}`),
+            },
+        );
     }
     function revoke(inv: Invitation) {
-        inv.status = 'revoked';
-        toastMsg(`Invitation to ${inv.email} revoked`);
+        router.delete(`/admin/invitations/${inv.id}`, {
+            preserveScroll: true,
+            onSuccess: () => toastMsg(`Invitation to ${inv.email} revoked`),
+        });
     }
     const columns = createColumns({ onResend: resend, onRevoke: revoke });
 
     // ── Invite slide-over ──────────────────────────────────────────────
     let inviteOpen = $state(false);
-    let form = $state<{
+    const form = useForm<{
         email: string;
         role: Role;
         name: string;
@@ -220,7 +83,6 @@
         name: '',
         note: '',
     });
-    let errors = $state<{ email?: string }>({});
     let emailEl = $state<HTMLInputElement | null>(null);
 
     const reduce =
@@ -230,8 +92,8 @@
     const fadeMs = reduce ? 0 : 180;
 
     function openInvite() {
-        form = { email: '', role: 'entrepreneur', name: '', note: '' };
-        errors = {};
+        form.reset();
+        form.clearErrors();
         inviteOpen = true;
         setTimeout(() => emailEl?.focus(), 60);
     }
@@ -240,47 +102,15 @@
     }
     function submitInvite(e: Event) {
         e.preventDefault();
-        const email = form.email.trim();
-
-        if (!email) {
-            errors = { email: 'Enter an email address.' };
-
-            return;
-        }
-
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            errors = { email: 'That doesn’t look like a valid email.' };
-
-            return;
-        }
-
-        if (
-            invitations.some(
-                (i) =>
-                    i.email.toLowerCase() === email.toLowerCase() &&
-                    i.role === form.role &&
-                    i.status === 'pending',
-            )
-        ) {
-            errors = {
-                email: 'There’s already a pending invitation for this email and role.',
-            };
-
-            return;
-        }
-
-        invitations.unshift({
-            id: ++seq,
-            name: form.name.trim() || null,
-            email,
-            role: form.role,
-            status: 'pending',
-            invitedBy: 'You',
-            sentAt: Date.now(),
-            expiresAt: Date.now() + 7 * DAY,
+        const email = form.email;
+        form.post('/admin/invitations', {
+            preserveScroll: true,
+            onSuccess: () => {
+                toastMsg(`Invitation sent to ${email}`);
+                form.reset();
+                closeInvite();
+            },
         });
-        toastMsg(`Invitation sent to ${email}`);
-        closeInvite();
     }
 
     // ── Toast ──────────────────────────────────────────────────────────
@@ -491,20 +321,22 @@
                                 bind:this={emailEl}
                                 type="email"
                                 bind:value={form.email}
-                                oninput={() => (errors.email = undefined)}
+                                oninput={() => form.clearErrors('email')}
                                 placeholder="name@company.com"
-                                aria-invalid={errors.email ? 'true' : undefined}
+                                aria-invalid={form.errors.email
+                                    ? 'true'
+                                    : undefined}
                                 class={cn(
                                     'h-11 w-full rounded-lg border bg-surface px-3.5 text-[15px] text-ink transition-colors placeholder:text-faint focus:border-accent',
                                     focusRing,
-                                    errors.email
+                                    form.errors.email
                                         ? 'border-[#cf8b8b]'
                                         : 'border-line',
                                 )}
                             />
-                            {#if errors.email}
+                            {#if form.errors.email}
                                 <p class="text-xs text-[#d7a1a1]">
-                                    {errors.email}
+                                    {form.errors.email}
                                 </p>
                             {/if}
                         </div>

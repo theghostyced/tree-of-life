@@ -39,6 +39,11 @@ class UserInvitationPolicy
         return $this->manages($user) && $invitation->isPending();
     }
 
+    public function resend(User $user, UserInvitation $invitation): bool
+    {
+        return $this->manages($user) && $invitation->isPending();
+    }
+
     public function delete(User $user, UserInvitation $invitation): bool
     {
         return $this->revoke($user, $invitation);

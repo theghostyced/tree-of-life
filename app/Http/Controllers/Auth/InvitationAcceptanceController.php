@@ -40,7 +40,12 @@ class InvitationAcceptanceController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
-        return redirect($user->role->homePath($user->isApproved()));
+        // New entrepreneurs and mentors start in onboarding; others go to their dashboard.
+        $destination = $user->role->hasProfile()
+            ? $user->role->onboardingPath()
+            : $user->role->homePath();
+
+        return redirect($destination);
     }
 
     /**
