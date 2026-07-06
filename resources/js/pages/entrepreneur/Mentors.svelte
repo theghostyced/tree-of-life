@@ -256,7 +256,13 @@
                                 class="w-full sm:w-56"
                                 aria-label="Filter by focus area"
                             >
-                                {focusLabel}
+                                <!-- Capitalize stored focus values, but leave
+                                     the sentence-case "All focus areas" alone. -->
+                                <span
+                                    class={cn(focus !== 'all' && 'capitalize')}
+                                >
+                                    {focusLabel}
+                                </span>
                             </Select.Trigger>
                             <Select.Content>
                                 <Select.Item
@@ -266,7 +272,11 @@
                                     All focus areas
                                 </Select.Item>
                                 {#each focusAreas as fa (fa)}
-                                    <Select.Item value={fa} label={fa}>
+                                    <Select.Item
+                                        value={fa}
+                                        label={fa}
+                                        class="capitalize"
+                                    >
                                         {fa}
                                     </Select.Item>
                                 {/each}
