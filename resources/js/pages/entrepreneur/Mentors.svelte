@@ -1,6 +1,12 @@
 <script lang="ts">
     import { router } from '@inertiajs/svelte';
-    import { Search, Check, X } from '@lucide/svelte';
+    import {
+        Search,
+        Check,
+        X,
+        ChevronLeft,
+        ChevronRight,
+    } from '@lucide/svelte';
     import EntrepreneurLayout from '@/components/layout/EntrepreneurLayout.svelte';
     import * as Select from '@/components/ui/select';
     import { Toaster, toast } from '@/components/ui/sonner';
@@ -16,42 +22,87 @@
         availability: string | null;
         bio: string | null;
     };
+    type Paginated<T> = {
+        data: T[];
+        current_page: number;
+        last_page: number;
+        from: number | null;
+        to: number | null;
+        total: number;
+        prev_page_url: string | null;
+        next_page_url: string | null;
+    };
 
     let {
-        mentors = [],
+        mentors,
         focusAreas = [],
+        filters,
     }: {
-        mentors: Mentor[];
+        mentors: Paginated<Mentor>;
         focusAreas: string[];
+        filters: { search: string; focus: string };
     } = $props();
 
-    // ── Search + filter (client-side over the loaded pool) ──────────────
-    let search = $state('');
-    let focusArea = $state('all');
+    // ── Server-driven search + filter + pagination ──────────────────────
+    let search = $state(filters.search ?? '');
+    let focus = $state(filters.focus || 'all');
+    let loading = $state(false);
 
-    const focusAreaLabel = $derived(
-        focusArea === 'all' ? 'All focus areas' : focusArea,
+    const focusLabel = $derived(focus === 'all' ? 'All focus areas' : focus);
+    const isFiltering = $derived(
+        (filters.search ?? '') !== '' || (filters.focus ?? '') !== '',
     );
 
-    const filtered = $derived(
-        mentors.filter((m) => {
-            const q = search.trim().toLowerCase();
-            const matchesSearch =
-                q === '' ||
-                [m.name, m.expertise, m.bio].some((f) =>
-                    f?.toLowerCase().includes(q),
-                );
-            const matchesFocus =
-                focusArea === 'all' || m.industries.includes(focusArea);
-            return matchesSearch && matchesFocus;
-        }),
-    );
+    function reload() {
+        router.get(
+            '/entrepreneur/mentors',
+            {
+                search: search.trim() || undefined,
+                focus: focus === 'all' ? undefined : focus,
+            },
+            {
+                only: ['mentors', 'filters'],
+                preserveState: true,
+                preserveScroll: true,
+                replace: true,
+                onStart: () => (loading = true),
+                onFinish: () => (loading = false),
+            },
+        );
+    }
 
-    const isFiltering = $derived(search.trim() !== '' || focusArea !== 'all');
+    let searchTimer: ReturnType<typeof setTimeout> | undefined;
+    function onSearchInput() {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(reload, 300);
+    }
+
+    function setFocus(value: string | undefined) {
+        focus = value ?? 'all';
+        reload();
+    }
 
     function clearFilters() {
         search = '';
-        focusArea = 'all';
+        focus = 'all';
+        reload();
+    }
+
+    function goTo(url: string | null) {
+        if (!url) {
+            return;
+        }
+        router.get(
+            url,
+            {},
+            {
+                only: ['mentors', 'filters'],
+                preserveState: true,
+                preserveScroll: true,
+                onStart: () => (loading = true),
+                onFinish: () => (loading = false),
+            },
+        );
     }
 
     // ── Helpers ─────────────────────────────────────────────────────────
@@ -105,7 +156,7 @@
             </p>
         </div>
 
-        {#if mentors.length === 0}
+        {#if mentors.total === 0 && !isFiltering}
             <!-- No mentors in the programme yet -->
             <div
                 class="mt-8 flex flex-col items-center justify-center rounded-2xl border border-line bg-panel/40 px-6 py-16 text-center"
@@ -134,6 +185,7 @@
                     <input
                         type="search"
                         bind:value={search}
+                        oninput={onSearchInput}
                         placeholder="Search by name or expertise"
                         class={cn(
                             'h-9 w-full rounded-lg border border-line bg-surface pr-3 pl-9 text-sm text-ink placeholder:text-faint',
@@ -143,13 +195,17 @@
                 </div>
 
                 {#if focusAreas.length}
-                    <Select.Root type="single" bind:value={focusArea}>
+                    <Select.Root
+                        type="single"
+                        value={focus}
+                        onValueChange={setFocus}
+                    >
                         <Select.Trigger
                             size="sm"
                             class="w-full sm:w-56"
                             aria-label="Filter by focus area"
                         >
-                            {focusAreaLabel}
+                            {focusLabel}
                         </Select.Trigger>
                         <Select.Content>
                             <Select.Item value="all" label="All focus areas">
@@ -169,14 +225,19 @@
                     role="status"
                     aria-live="polite"
                 >
-                    {filtered.length}
-                    {filtered.length === 1 ? 'mentor' : 'mentors'}
+                    {mentors.total}
+                    {mentors.total === 1 ? 'mentor' : 'mentors'}
                 </span>
             </div>
 
-            {#if filtered.length}
-                <div class="mt-6 grid gap-5 sm:grid-cols-2">
-                    {#each filtered as m (m.id)}
+            {#if mentors.data.length}
+                <div
+                    class={cn(
+                        'mt-6 grid gap-5 transition-opacity sm:grid-cols-2',
+                        loading && 'pointer-events-none opacity-60',
+                    )}
+                >
+                    {#each mentors.data as m (m.id)}
                         <article
                             class="flex flex-col rounded-2xl border border-line bg-panel/40 p-6 transition-colors hover:border-line-strong"
                         >
@@ -269,6 +330,51 @@
                         </article>
                     {/each}
                 </div>
+
+                {#if mentors.last_page > 1}
+                    <div
+                        class="mt-8 flex flex-col items-center justify-between gap-3 sm:flex-row"
+                    >
+                        <p class="text-sm text-muted">
+                            Showing {mentors.from}–{mentors.to} of {mentors.total}
+                        </p>
+                        <div class="flex items-center gap-2">
+                            <button
+                                type="button"
+                                onclick={() => goTo(mentors.prev_page_url)}
+                                disabled={!mentors.prev_page_url}
+                                class={cn(
+                                    'inline-flex items-center gap-1 rounded-lg border border-line px-3 py-1.5 text-sm text-muted transition-colors hover:text-ink disabled:cursor-not-allowed disabled:opacity-40',
+                                    focusRing,
+                                )}
+                            >
+                                <ChevronLeft
+                                    class="size-4"
+                                    strokeWidth={1.75}
+                                />
+                                Previous
+                            </button>
+                            <span class="px-1 text-sm text-muted">
+                                Page {mentors.current_page} of {mentors.last_page}
+                            </span>
+                            <button
+                                type="button"
+                                onclick={() => goTo(mentors.next_page_url)}
+                                disabled={!mentors.next_page_url}
+                                class={cn(
+                                    'inline-flex items-center gap-1 rounded-lg border border-line px-3 py-1.5 text-sm text-muted transition-colors hover:text-ink disabled:cursor-not-allowed disabled:opacity-40',
+                                    focusRing,
+                                )}
+                            >
+                                Next
+                                <ChevronRight
+                                    class="size-4"
+                                    strokeWidth={1.75}
+                                />
+                            </button>
+                        </div>
+                    </div>
+                {/if}
             {:else}
                 <!-- No matches for the current search / filter -->
                 <div
@@ -280,19 +386,17 @@
                     <p class="mt-1.5 max-w-sm text-[15px] text-muted">
                         Try a different search or focus area.
                     </p>
-                    {#if isFiltering}
-                        <button
-                            type="button"
-                            onclick={clearFilters}
-                            class={cn(
-                                'mt-4 inline-flex items-center gap-1.5 rounded-lg border border-line px-3 py-1.5 text-sm text-muted transition-colors hover:text-ink',
-                                focusRing,
-                            )}
-                        >
-                            <X class="size-3.5" strokeWidth={1.75} />
-                            Clear filters
-                        </button>
-                    {/if}
+                    <button
+                        type="button"
+                        onclick={clearFilters}
+                        class={cn(
+                            'mt-4 inline-flex items-center gap-1.5 rounded-lg border border-line px-3 py-1.5 text-sm text-muted transition-colors hover:text-ink',
+                            focusRing,
+                        )}
+                    >
+                        <X class="size-3.5" strokeWidth={1.75} />
+                        Clear filters
+                    </button>
                 </div>
             {/if}
         {/if}
