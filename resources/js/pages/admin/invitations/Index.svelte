@@ -12,10 +12,6 @@
     } from '@lucide/svelte';
     import { cubicOut } from 'svelte/easing';
     import { fly, fade, scale } from 'svelte/transition';
-    import AdminLayout from '@/components/layout/AdminLayout.svelte';
-    import * as Select from '@/components/ui/select';
-    import { cn } from '@/lib/utils';
-    import { invitableRoles, userRoleLabel } from '@/types/enums';
     import { createColumns } from '@/components/invitations/columns';
     import DataTable from '@/components/invitations/data-table.svelte';
     import type {
@@ -23,6 +19,10 @@
         Role,
         Status,
     } from '@/components/invitations/types';
+    import AdminLayout from '@/components/layout/AdminLayout.svelte';
+    import * as Select from '@/components/ui/select';
+    import { cn } from '@/lib/utils';
+    import { invitableRoles, userRoleLabel } from '@/types/enums';
 
     type ActiveImport = {
         id: number;
@@ -221,9 +221,17 @@
     }
 
     function onKeydown(e: KeyboardEvent) {
-        if (e.key !== 'Escape') return;
-        if (inviteOpen) closeInvite();
-        if (importOpen) closeImport();
+        if (e.key !== 'Escape') {
+            return;
+        }
+
+        if (inviteOpen) {
+            closeInvite();
+        }
+
+        if (importOpen) {
+            closeImport();
+        }
     }
 </script>
 
