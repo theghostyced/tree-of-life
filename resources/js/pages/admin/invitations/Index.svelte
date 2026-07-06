@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Link, router, useForm } from '@inertiajs/svelte';
+    import { Link, router, useForm, usePoll } from '@inertiajs/svelte';
     import {
         ArrowLeft,
         ChevronRight,
@@ -144,6 +144,28 @@
     let importDismissed = $state(false);
     let dragging = $state(false);
     const importForm = useForm<{ file: File | null }>({ file: null });
+
+    // Live progress while a queued import runs: refresh the strip and the
+    // table every 2s, stopping automatically at a terminal status.
+    const importRunning = $derived(
+        activeImport !== null &&
+            (activeImport.status === 'pending' ||
+                activeImport.status === 'processing'),
+    );
+    const importPoll = usePoll(
+        2000,
+        { only: ['activeImport', 'invitations'], async: true },
+        { autoStart: false, keepAlive: true },
+    );
+
+    $effect(() => {
+        if (importRunning) {
+            importDismissed = false;
+            importPoll.start();
+        } else {
+            importPoll.stop();
+        }
+    });
 
     function openImport() {
         importForm.reset();
