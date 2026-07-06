@@ -94,6 +94,7 @@
         if (!url) {
             return;
         }
+
         router.get(
             url,
             {},
@@ -179,7 +180,9 @@
                                     {m.name}
                                 </p>
                                 {#if m.expertise}
-                                    <p class="truncate text-xs text-muted">
+                                    <p
+                                        class="truncate text-xs text-muted capitalize"
+                                    >
                                         {m.expertise}
                                     </p>
                                 {/if}
@@ -307,7 +310,7 @@
                                             </h3>
                                             {#if m.expertise}
                                                 <p
-                                                    class="truncate text-sm text-accent"
+                                                    class="truncate text-sm text-accent capitalize"
                                                 >
                                                     {m.expertise}
                                                 </p>

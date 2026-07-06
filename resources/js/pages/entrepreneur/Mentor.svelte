@@ -89,7 +89,7 @@
                         {mentor.name}
                     </h2>
                     {#if mentor.expertise}
-                        <p class="text-[15px] text-accent">
+                        <p class="text-[15px] text-accent capitalize">
                             {mentor.expertise}
                         </p>
                     {/if}
@@ -124,7 +124,7 @@
                     <div class="mt-2 flex flex-wrap gap-1.5">
                         {#each mentor.industries as ind (ind)}
                             <span
-                                class="rounded-md border border-line bg-elevated px-2.5 py-1 text-xs text-muted"
+                                class="rounded-md border border-line bg-elevated px-2.5 py-1 text-xs text-muted capitalize"
                             >
                                 {ind}
                             </span>
