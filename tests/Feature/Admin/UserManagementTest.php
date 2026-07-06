@@ -117,12 +117,17 @@ test('an entrepreneurs detail page lists their mentor', function () {
     $admin = User::factory()->admin()->approved()->create();
     $pairing = App\Models\Pairing::factory()->create();
 
+    // The entrepreneur's own company must not leak onto the mentor's row.
+    $company = App\Models\Company::factory()->create();
+    $pairing->entrepreneur->update(['company_id' => $company->id]);
+
     $this->actingAs($admin)
         ->get("/admin/users/{$pairing->entrepreneur_user_id}")
         ->assertInertia(fn (Assert $page) => $page
             ->count('pairings.active', 1)
             ->where('pairings.active.0.name', $pairing->mentor->name)
-            ->where('pairings.active.0.userId', $pairing->mentor_user_id));
+            ->where('pairings.active.0.userId', $pairing->mentor_user_id)
+            ->where('pairings.active.0.company', null));
 });
 
 test('users without pairings share empty pairing lists', function () {

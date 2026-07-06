@@ -207,7 +207,11 @@ class UserController extends Controller
                 'id' => $pairing->id,
                 'userId' => $counterpart->id,
                 'name' => $counterpart->name,
-                'company' => $pairing->entrepreneur->company?->name,
+                // Company describes the counterpart, so it only applies when
+                // the counterpart is the entrepreneur (mentors have none).
+                'company' => $counterpart->is($pairing->entrepreneur)
+                    ? $pairing->entrepreneur->company?->name
+                    : null,
                 'since' => $pairing->created_at->getTimestampMs(),
                 'lastMeetingAt' => $lastMeeting?->ends_at->getTimestampMs(),
                 'endedAt' => $pairing->ended_at?->getTimestampMs(),
