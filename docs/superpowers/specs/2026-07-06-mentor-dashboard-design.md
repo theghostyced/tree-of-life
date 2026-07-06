@@ -20,7 +20,9 @@ reframe, and reports become per-meeting records instead of loose file uploads.
 
 **In:** the five mentorship tables + enums + models + factories + demo seeder;
 the dashboard payload and page; exactly two write actions (review a reschedule,
-submit a meeting report).
+submit a meeting report); a read-only pairings section on the admin user
+detail page (mentors show their entrepreneurs, entrepreneurs show their
+mentor).
 
 **Out (later specs):** entrepreneur booking flow, availability management UI,
 pairing pages, the in-app live chat, admin pairing screens, Google
@@ -187,6 +189,25 @@ All colors from tokens (`positive`/`danger` tones where states need them);
 focus rings and disabled states per existing conventions; `animate-fade-in`
 entrance only.
 
+## Admin user detail page: pairings section
+
+The admin user detail page (`admin/users/Show.svelte`) gains a **Mentorship**
+section between Profile and Documents, fed by a new `pairings` prop from
+`Admin\UserController@show`:
+
+- For a **mentor**: their active pairings' entrepreneurs (name, company, since
+  date, last completed meeting), each linking to that entrepreneur's admin
+  detail page.
+- For an **entrepreneur**: their active mentor (same shape, linking to the
+  mentor's page). Ended pairings list beneath in a quieter tone with their
+  ended date.
+- For admins/employees, or when no pairings exist, the section shows a
+  teaching empty state ("No mentorship pairings yet. Pairings are created by
+  program admins."); creating pairings stays out of scope for this spec.
+
+The section reuses the existing card/dl idiom of the page and the
+`components/users` conventions; rows link with the standard focus ring.
+
 ## Error handling
 
 - Policy failures render the existing designed 403 page.
@@ -208,6 +229,9 @@ Pest feature tests:
 - Report submission creates the row; refuses duplicates, non-completed
   meetings, and foreign mentors.
 - Entrepreneurs and admins get 403s on all three endpoints.
+- Admin user detail: a mentor's page lists their active entrepreneurs, an
+  entrepreneur's page lists their mentor, ended pairings appear with ended
+  dates, and users without pairings get the empty state.
 
 Browser verification: seeded mentor signs in, sees all four sections
 populated, accepts a reschedule, declines one, submits a report, and each
