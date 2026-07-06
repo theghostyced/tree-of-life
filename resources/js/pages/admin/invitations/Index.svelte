@@ -438,7 +438,7 @@
                 <img
                     src="/images/illustrations/social-envelope.svg"
                     alt=""
-                    class="mb-6 size-40 opacity-90"
+                    class="mb-6 size-48 opacity-90 sm:size-56 lg:size-64"
                 />
                 <h3 class="text-lg font-semibold text-ink">
                     No invitations yet
@@ -692,10 +692,9 @@
                         </h2>
                         <p class="mt-1 text-sm text-muted">
                             Bulk-invite people from a spreadsheet. Each valid
-                            row gets a single-use link. Rows whose email
-                            already belongs to a user or has an active
-                            invitation are skipped — you&rsquo;ll get a report,
-                            not errors.
+                            row gets a single-use link. Rows whose email already
+                            belongs to a user or has an active invitation are
+                            skipped — you&rsquo;ll get a report, not errors.
                         </p>
                     </div>
                     <button

@@ -161,7 +161,7 @@
 
     const bulkBtn =
         'inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:outline-none';
-    const filterTrigger = 'h-9 min-w-[132px] gap-2 px-3 text-sm';
+    const filterTrigger = 'w-44';
 </script>
 
 <AdminLayout title="Users">
@@ -313,7 +313,7 @@
                     value={roleFilter}
                     onValueChange={(v) => (roleFilter = v as RoleFilter)}
                 >
-                    <Select.Trigger class={filterTrigger}>
+                    <Select.Trigger size="sm" class={filterTrigger}>
                         {labelFor(roleOptions, roleFilter)}
                     </Select.Trigger>
                     <Select.Content>
@@ -333,7 +333,7 @@
                     value={statusFilter}
                     onValueChange={(v) => (statusFilter = v as StatusFilter)}
                 >
-                    <Select.Trigger class={filterTrigger}>
+                    <Select.Trigger size="sm" class={filterTrigger}>
                         {labelFor(statusOptions, statusFilter)}
                     </Select.Trigger>
                     <Select.Content>

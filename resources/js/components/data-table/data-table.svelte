@@ -12,6 +12,7 @@
     import type { Snippet } from 'svelte';
     import { createSvelteTable, FlexRender } from '@/components/ui/data-table';
     import * as Table from '@/components/ui/table';
+    import { Checkbox } from '@/components/ui/checkbox';
     import { Search, ChevronLeft, ChevronRight } from '@lucide/svelte';
     import { cn } from '@/lib/utils';
 
@@ -89,9 +90,6 @@
         },
     });
 
-    const checkboxCls =
-        'size-4 shrink-0 rounded border-line accent-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 disabled:cursor-not-allowed disabled:opacity-30';
-
     const pageBtn =
         'inline-flex items-center gap-1 rounded-lg border border-line bg-surface px-3 py-1.5 text-xs font-medium text-muted transition-colors hover:border-line-strong hover:text-ink disabled:pointer-events-none disabled:opacity-40 focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none';
 </script>
@@ -130,7 +128,7 @@
         <Table.Root class="min-w-[820px] table-fixed">
             <colgroup>
                 {#if selectable}
-                    <col style="width:44px" />
+                    <col style="width:40px" />
                 {/if}
                 {#each table.getVisibleLeafColumns() as col (col.id)}
                     <col
@@ -144,13 +142,14 @@
                 {#each table.getHeaderGroups() as headerGroup (headerGroup.id)}
                     <Table.Row class="hover:bg-transparent">
                         {#if selectable}
-                            <Table.Head class="px-4">
-                                <input
-                                    type="checkbox"
-                                    class={checkboxCls}
+                            <Table.Head class="pl-4 pr-0">
+                                <Checkbox
                                     checked={table.getIsAllPageRowsSelected()}
                                     indeterminate={table.getIsSomePageRowsSelected()}
-                                    onchange={table.getToggleAllPageRowsSelectedHandler()}
+                                    onCheckedChange={(v) =>
+                                        table.toggleAllPageRowsSelected(
+                                            v === true,
+                                        )}
                                     aria-label="Select all on this page"
                                 />
                             </Table.Head>
@@ -159,6 +158,9 @@
                             <Table.Head
                                 class={cn(
                                     'px-4',
+                                    selectable &&
+                                        header.column.id === 'sn' &&
+                                        'pl-2',
                                     header.column.columnDef.meta?.align ===
                                         'right' && 'text-right',
                                 )}
@@ -180,13 +182,12 @@
                         class={cn(row.getIsSelected() && 'bg-accent-soft/30')}
                     >
                         {#if selectable}
-                            <Table.Cell class="px-4 py-2.5">
-                                <input
-                                    type="checkbox"
-                                    class={checkboxCls}
+                            <Table.Cell class="py-2.5 pr-0 pl-4">
+                                <Checkbox
                                     checked={row.getIsSelected()}
                                     disabled={!row.getCanSelect()}
-                                    onchange={row.getToggleSelectedHandler()}
+                                    onCheckedChange={(v) =>
+                                        row.toggleSelected(v === true)}
                                     aria-label="Select row"
                                 />
                             </Table.Cell>
@@ -195,6 +196,9 @@
                             <Table.Cell
                                 class={cn(
                                     'px-4 py-2.5',
+                                    selectable &&
+                                        cell.column.id === 'sn' &&
+                                        'pl-2',
                                     cell.column.columnDef.meta?.align ===
                                         'right' && 'text-right',
                                 )}

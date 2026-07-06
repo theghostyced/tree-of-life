@@ -282,7 +282,7 @@
             <img
                 src="/images/illustrations/social-talk.svg"
                 alt=""
-                class="h-28 w-auto shrink-0 self-center opacity-90 sm:h-32"
+                class="h-36 w-auto shrink-0 self-center opacity-90 sm:h-44 lg:h-52"
             />
         </section>
     </div>

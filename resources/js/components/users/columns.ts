@@ -27,7 +27,8 @@ export function createColumns(handlers: Handlers): ColumnDef<UserRow>[] {
         {
             id: 'user',
             accessorFn: (row) => `${row.name} ${row.email}`,
-            meta: { width: '30%' },
+            // No fixed width: the User column flexes to absorb leftover space so
+            // the fixed-width checkbox column stays narrow under table-fixed.
             header: ({ column }) =>
                 renderComponent(SortableHeader, { label: 'User', column }),
             cell: ({ row }) =>

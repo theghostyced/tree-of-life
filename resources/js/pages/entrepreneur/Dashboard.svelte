@@ -93,7 +93,7 @@
         <img
             src="/images/illustrations/social-talk.svg"
             alt=""
-            class="mb-6 size-36 opacity-90"
+            class="mb-6 size-44 opacity-90 sm:size-52 lg:size-60"
         />
         <h3 class="text-lg font-semibold text-ink">
             Your workspace is taking shape
