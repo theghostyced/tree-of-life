@@ -1383,7 +1383,8 @@ Pairing rules:
 - There is no pairing fee and no payment gate of any kind.
 - Pairing is an entrepreneur action; the entrepreneur selects a mentor from
   the list of approved mentors. Admins do not pair; they monitor pairings.
-- An entrepreneur has one active mentor at a time unless admins explicitly allow more.
+- An entrepreneur can work with several mentors at once; the same mentor can
+  only be selected once while that pairing is active.
 - Draft, pending, rejected, or deactivated users can neither select nor be selected.
 
 Recommended implementation:

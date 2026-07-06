@@ -54,11 +54,13 @@ All tables new; all status columns are string-backed PHP enums following
 | `ended_at` | timestamp nullable |
 | timestamps | |
 
-Pairings are created by the entrepreneur selecting a mentor (the future
-`SelectMentor` action per guide §10.11); no admin-provenance column is
-needed since `entrepreneur_user_id` is the selector. Rule: at most one
-**active** pairing per entrepreneur (enforced in `SelectMentor`; the schema
-carries an index on `(entrepreneur_user_id, status)`).
+Pairings are created by the entrepreneur selecting a mentor (guide §10.11);
+no admin-provenance column is needed since `entrepreneur_user_id` is the
+selector. Rule (revised during implementation, superseding the original
+one-active-pairing rule): an entrepreneur may hold **several active
+pairings at once**; the selection flow refuses only a duplicate of the same
+still-active pair. The `(entrepreneur_user_id, status)` index supports the
+dashboard and admin queries.
 
 ### `mentor_availability_slots`
 | column | type |

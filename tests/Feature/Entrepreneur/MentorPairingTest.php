@@ -70,3 +70,16 @@ test('an entrepreneur cannot pair with a non-mentor', function () {
 
     expect($entrepreneur->mentors()->count())->toBe(0);
 });
+
+test('a chosen mentor sees the entrepreneur on their mentor dashboard', function () {
+    $entrepreneur = completeEntrepreneur();
+    $mentor = availableMentor();
+
+    $this->actingAs($entrepreneur)->post('/entrepreneur/pairings', ['mentor_id' => $mentor->id]);
+
+    $this->actingAs($mentor)
+        ->get('/mentor/dashboard')
+        ->assertInertia(fn (Assert $page) => $page
+            ->count('mentees', 1)
+            ->where('mentees.0.name', $entrepreneur->name));
+});
