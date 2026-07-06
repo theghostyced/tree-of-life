@@ -8,6 +8,7 @@ use App\Enums\AccountStatus;
 use App\Enums\DocumentType;
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\BulkUserActionRequest;
 use App\Models\User;
 use App\Models\UserDocument;
 use Illuminate\Http\RedirectResponse;
@@ -94,6 +95,50 @@ class UserController extends Controller
         return redirect()
             ->route('admin.users.index')
             ->with('status', "{$user->name} has been removed.");
+    }
+
+    /**
+     * Apply one lifecycle action to many users at once. Each target is checked
+     * against the policy, so accounts the admin may not touch (their own) are
+     * silently skipped rather than failing the whole batch.
+     */
+    public function bulk(BulkUserActionRequest $request): RedirectResponse
+    {
+        $action = $request->validated('action');
+        $actor = $request->user();
+        $users = User::query()->whereIn('id', $request->validated('ids'))->get();
+
+        $affected = 0;
+        foreach ($users as $user) {
+            if (! $actor->can($action, $user)) {
+                continue;
+            }
+
+            match ($action) {
+                'deactivate' => $user->update([
+                    'account_status' => AccountStatus::Deactivated,
+                    'account_status_changed_at' => now(),
+                ]),
+                'reactivate' => $user->update([
+                    'account_status' => AccountStatus::Approved,
+                    'account_status_changed_at' => now(),
+                ]),
+                'delete' => $user->delete(),
+            };
+
+            $affected++;
+        }
+
+        $verb = match ($action) {
+            'deactivate' => 'Revoked access for',
+            'reactivate' => 'Restored access for',
+            'delete' => 'Removed',
+        };
+
+        return back()->with(
+            'status',
+            "{$verb} {$affected} ".str('account')->plural($affected).'.',
+        );
     }
 
     /**

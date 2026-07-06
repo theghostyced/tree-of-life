@@ -41,6 +41,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/invitations/import/template', [InvitationImportController::class, 'template'])->name('invitations.import.template');
         Route::post('/invitations/import', [InvitationImportController::class, 'store'])->name('invitations.import.store');
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::post('/users/bulk', [UserController::class, 'bulk'])->name('users.bulk');
         Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
         Route::post('/users/{user}/deactivate', [UserController::class, 'deactivate'])->name('users.deactivate');
         Route::post('/users/{user}/reactivate', [UserController::class, 'reactivate'])->name('users.reactivate');

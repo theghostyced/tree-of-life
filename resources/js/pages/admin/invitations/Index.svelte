@@ -13,7 +13,7 @@
     import { cubicOut } from 'svelte/easing';
     import { fly, fade, scale } from 'svelte/transition';
     import { createColumns } from '@/components/invitations/columns';
-    import DataTable from '@/components/invitations/data-table.svelte';
+    import DataTable from '@/components/data-table/data-table.svelte';
     import type {
         Invitation,
         Role,

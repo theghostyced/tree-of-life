@@ -1,9 +1,9 @@
 import type { ColumnDef } from '@tanstack/table-core';
 import { renderComponent } from '@/components/ui/data-table';
 import { type UserRow, relative } from './types';
-import SortableHeader from '@/components/invitations/data-table-sortable-header.svelte';
-import RoleCell from '@/components/invitations/data-table-role.svelte';
-import TextCell from '@/components/invitations/data-table-text.svelte';
+import SortableHeader from '@/components/data-table/sortable-header.svelte';
+import RoleCell from '@/components/data-table/role-cell.svelte';
+import TextCell from '@/components/data-table/text-cell.svelte';
 import UserIdentity from './user-identity.svelte';
 import AccountStatus from './account-status.svelte';
 import UserActions from './user-actions.svelte';

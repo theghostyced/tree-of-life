@@ -1,11 +1,11 @@
 import type { ColumnDef, RowData } from '@tanstack/table-core';
 import { renderComponent } from '@/components/ui/data-table';
 import { type Invitation, relative } from './types';
-import SortableHeader from './data-table-sortable-header.svelte';
+import SortableHeader from '@/components/data-table/sortable-header.svelte';
+import RoleCell from '@/components/data-table/role-cell.svelte';
+import TextCell from '@/components/data-table/text-cell.svelte';
 import Invitee from './data-table-invitee.svelte';
-import RoleCell from './data-table-role.svelte';
 import StatusCell from './data-table-status.svelte';
-import TextCell from './data-table-text.svelte';
 import Actions from './data-table-actions.svelte';
 
 declare module '@tanstack/table-core' {
