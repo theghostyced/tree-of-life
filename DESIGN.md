@@ -225,7 +225,14 @@ The primary surface for admins and mentors — review queues, pairings, meetings
 - Status column always uses a Status Chip, never bare colored text.
 - **Skeleton rows** on load (not a centered spinner). **Empty state** teaches the next action ("No meetings awaiting a report — you're clear"), never a bare "Nothing here."
 
-## 6. Do's and Don'ts
+## 6. Layout & Page Width
+
+Role pages are full-height surfaces inside their role layout (the layout's `<main>` scrolls). Page **content** sits in one centered column so operators keep the same reading width and aligned left/right edges as they move between screens.
+
+### Named Rules
+**The Page-Width Rule.** Every page's main content is capped at **`max-w-7xl`** (1280px) and centered: `mx-auto w-full max-w-7xl px-6`. This is uniform across dashboards, list/table pages, detail pages, and forms — the mentors list page (`resources/js/pages/entrepreneur/Mentors.svelte`) is the reference width. The one structural exception is a full-bleed top bar (e.g. a breadcrumb strip or sticky header with a full-width `border-b`), which spans the viewport while its inner content still aligns to the 7xl column. Never leave a page's main content uncapped or at an ad-hoc width (`2xl` / `3xl` / `4xl` / `5xl`).
+
+## 7. Do's and Don'ts
 
 ### Do:
 - **Do** sit every screen on Warm Field cream (`#ffecc2`) and lift content onto Surface White. The two-layer warmth is the brand.
@@ -234,6 +241,7 @@ The primary surface for admins and mentors — review queues, pairings, meetings
 - **Do** keep Muted Earth (`#7c5b4b`) as the floor for secondary text — it passes 4.5:1 on cream and white. Verify contrast on the warm background, where muted text easily falls short.
 - **Do** use one family, Instrument Sans, at fixed rem sizes across headings, data, and labels.
 - **Do** lead with tables, queues, and timelines. Density is legible when hierarchy and warm contrast hold.
+- **Do** cap every page's main content at `max-w-7xl` centered (`mx-auto w-full max-w-7xl px-6`) so all screens share one reading width; the mentors list page is the reference.
 - **Do** ship every interactive component with default/hover/focus-visible/active/disabled, plus skeleton loading and teaching empty states.
 - **Do** tint shadows with Earth Ink (`rgba(64,22,2,...)`) and keep surfaces flat at rest.
 

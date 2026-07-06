@@ -25,8 +25,18 @@
             enabled: true,
         },
         { label: 'Mentees', href: '/mentor/mentees', icon: Users },
-        { label: 'Meetings', href: '/mentor/meetings', icon: Calendar },
-        { label: 'Availability', href: '/mentor/availability', icon: Clock },
+        {
+            label: 'Meetings',
+            href: '/mentor/meetings',
+            icon: Calendar,
+            enabled: true,
+        },
+        {
+            label: 'Availability',
+            href: '/mentor/availability',
+            icon: Clock,
+            enabled: true,
+        },
         { label: 'Reports', href: '/mentor/reports', icon: FileText },
     ];
 </script>

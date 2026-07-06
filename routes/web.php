@@ -8,10 +8,13 @@ use App\Http\Controllers\Auth\InvitationAcceptanceController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Entrepreneur\DashboardController as EntrepreneurDashboardController;
 use App\Http\Controllers\Entrepreneur\EmployeeInvitationController;
+use App\Http\Controllers\Entrepreneur\MeetingController as EntrepreneurMeetingController;
 use App\Http\Controllers\Entrepreneur\MentorController as EntrepreneurMentorController;
 use App\Http\Controllers\Entrepreneur\PairingController as EntrepreneurPairingController;
 use App\Http\Controllers\Entrepreneur\ProfileController as EntrepreneurProfileController;
+use App\Http\Controllers\Mentor\AvailabilityController as MentorAvailabilityController;
 use App\Http\Controllers\Mentor\DashboardController as MentorDashboardController;
+use App\Http\Controllers\Mentor\MeetingController as MentorMeetingController;
 use App\Http\Controllers\Mentor\MeetingReportController;
 use App\Http\Controllers\Mentor\ProfileController as MentorProfileController;
 use App\Http\Controllers\Mentor\RescheduleController;
@@ -60,12 +63,20 @@ Route::middleware('auth')->group(function () {
         Route::get('/mentors', [EntrepreneurMentorController::class, 'index'])->middleware('account.active')->name('mentors.index');
         Route::get('/mentors/{mentor}', [EntrepreneurMentorController::class, 'show'])->middleware('account.active')->name('mentors.show');
         Route::post('/pairings', [EntrepreneurPairingController::class, 'store'])->middleware('account.active')->name('pairings.store');
+        Route::get('/meetings', [EntrepreneurMeetingController::class, 'index'])->middleware('account.active')->name('meetings.index');
+        Route::post('/meetings', [EntrepreneurMeetingController::class, 'store'])->middleware('account.active')->name('meetings.store');
         Route::post('/employees', [EmployeeInvitationController::class, 'store'])->name('employees.store');
     });
 
     Route::prefix('mentor')->name('mentor.')->middleware('role:mentor')->group(function () {
         Route::get('/onboarding', [MentorProfileController::class, 'edit'])->name('onboarding');
         Route::get('/dashboard', [MentorDashboardController::class, 'index'])->middleware('account.active')->name('dashboard');
+        Route::middleware('account.active')->group(function () {
+            Route::get('/availability', [MentorAvailabilityController::class, 'index'])->name('availability.index');
+            Route::post('/availability', [MentorAvailabilityController::class, 'store'])->name('availability.store');
+            Route::delete('/availability/{slot}', [MentorAvailabilityController::class, 'destroy'])->name('availability.destroy');
+            Route::get('/meetings', [MentorMeetingController::class, 'index'])->name('meetings.index');
+        });
         Route::post('/reschedules/{reschedule}/accept', [RescheduleController::class, 'accept'])->name('reschedules.accept');
         Route::post('/reschedules/{reschedule}/decline', [RescheduleController::class, 'decline'])->name('reschedules.decline');
         Route::post('/meetings/{meeting}/report', [MeetingReportController::class, 'store'])->name('meetings.report.store');

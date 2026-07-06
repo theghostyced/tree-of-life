@@ -204,7 +204,7 @@
         <span class="truncate text-ink">{user.name}</span>
     </div>
 
-    <div class="mx-auto w-full max-w-3xl px-6 py-8">
+    <div class="mx-auto w-full max-w-7xl px-6 py-8">
         <!-- Identity header -->
         <div
             class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between"
@@ -360,7 +360,11 @@
                                             {entry.name}
                                         </Link>
                                         <p class="mt-0.5 text-xs text-muted">
-                                            {entry.company ? `${entry.company} · ` : ''}Paired {relative(entry.since)}
+                                            {entry.company
+                                                ? `${entry.company} · `
+                                                : ''}Paired {relative(
+                                                entry.since,
+                                            )}
                                         </p>
                                     </div>
                                     <p class="shrink-0 text-xs text-muted">
@@ -387,7 +391,9 @@
                                         {entry.name}
                                     </Link>
                                     <p class="shrink-0 text-xs text-faint">
-                                        {entry.endedAt ? `Ended ${relative(entry.endedAt)}` : 'Ended'}
+                                        {entry.endedAt
+                                            ? `Ended ${relative(entry.endedAt)}`
+                                            : 'Ended'}
                                     </p>
                                 </li>
                             {/each}
@@ -395,8 +401,8 @@
                     {/if}
                 {:else}
                     <p class="mt-4 text-sm text-muted">
-                        No mentorship pairings yet. Entrepreneurs choose their mentor when
-                        they join.
+                        No mentorship pairings yet. Entrepreneurs choose their
+                        mentor when they join.
                     </p>
                 {/if}
             </section>

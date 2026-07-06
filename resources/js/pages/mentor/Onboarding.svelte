@@ -164,7 +164,7 @@
         <span class="text-ink">Complete your profile</span>
     </div>
 
-    <div class="mx-auto w-full max-w-2xl px-6 pt-8 pb-24">
+    <div class="mx-auto w-full max-w-7xl px-6 pt-8 pb-24">
         <div class="mb-8">
             <h1 class="text-2xl font-semibold tracking-tight text-ink">
                 Complete your profile

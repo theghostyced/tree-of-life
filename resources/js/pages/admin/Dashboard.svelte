@@ -87,7 +87,7 @@
 </script>
 
 <AdminLayout title="Dashboard">
-    <div class="mx-auto w-full max-w-5xl space-y-8 px-6 py-8">
+    <div class="mx-auto w-full max-w-7xl space-y-8 px-6 py-8">
         <!-- Header -->
         <div>
             <h1 class="text-2xl font-semibold tracking-tight text-ink">

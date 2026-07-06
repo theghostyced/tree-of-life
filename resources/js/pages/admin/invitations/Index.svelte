@@ -305,7 +305,7 @@
         <span class="text-ink">Invitations</span>
     </div>
 
-    <div class="px-6 pt-8">
+    <div class="mx-auto w-full max-w-7xl px-6 pt-8">
         <!-- Header -->
         <div
             class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
@@ -378,7 +378,7 @@
     </div>
 
     <!-- Content -->
-    <div class="flex flex-1 flex-col px-6 pt-6 pb-10">
+    <div class="mx-auto w-full max-w-7xl flex flex-1 flex-col px-6 pt-6 pb-10">
         {#if activeImport && !importDismissed}
             <div
                 class="mb-6 rounded-xl border border-line bg-panel/50 p-4 sm:p-5"

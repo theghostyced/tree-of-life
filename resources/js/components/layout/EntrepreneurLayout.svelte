@@ -24,7 +24,12 @@
             icon: UserRound,
             enabled: true,
         },
-        { label: 'Meetings', href: '/entrepreneur/meetings', icon: Calendar },
+        {
+            label: 'Meetings',
+            href: '/entrepreneur/meetings',
+            icon: Calendar,
+            enabled: true,
+        },
         { label: 'Reports', href: '/entrepreneur/reports', icon: FileText },
     ];
 </script>

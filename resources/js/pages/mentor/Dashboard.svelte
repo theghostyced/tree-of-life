@@ -72,7 +72,7 @@
 </script>
 
 <MentorLayout title="Dashboard">
-    <div class="px-6 pt-10">
+    <div class="mx-auto w-full max-w-7xl px-6 pt-10">
         <div>
             <h1 class="text-3xl font-semibold tracking-tight text-ink">
                 Dashboard
@@ -133,7 +133,7 @@
         {/if}
     </div>
 
-    <div class="px-6">
+    <div class="mx-auto w-full max-w-7xl px-6">
         {#if needsAttention}
             <section class="mt-8" aria-labelledby="attention-heading">
                 <h2

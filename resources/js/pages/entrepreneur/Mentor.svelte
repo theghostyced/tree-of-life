@@ -50,7 +50,7 @@
 </script>
 
 <EntrepreneurLayout title="My mentor">
-    <div class="mx-auto w-full max-w-4xl px-6 py-8">
+    <div class="mx-auto w-full max-w-7xl px-6 py-8">
         <!-- Header -->
         <div>
             <Link

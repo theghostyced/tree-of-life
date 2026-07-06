@@ -115,6 +115,12 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
+    /** A mentor's weekly availability slots. @return HasMany<MentorAvailabilitySlot, $this> */
+    public function availabilitySlots(): HasMany
+    {
+        return $this->hasMany(MentorAvailabilitySlot::class, 'mentor_user_id');
+    }
+
     /**
      * Approved mentors who have set up their mentoring profile — the pool an
      * entrepreneur browses and can pair with.

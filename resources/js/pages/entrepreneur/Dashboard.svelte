@@ -52,7 +52,7 @@
 <EntrepreneurLayout title="Dashboard">
     <Toaster position="top-center" />
 
-    <div class="mx-auto w-full max-w-5xl px-6 py-8">
+    <div class="mx-auto w-full max-w-7xl px-6 py-8">
         <!-- Header -->
         <div>
             <h1 class="text-2xl font-semibold tracking-tight text-ink">
