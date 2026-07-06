@@ -33,6 +33,7 @@ class ProcessInvitationImport implements ShouldQueue
 
         $disk = Storage::disk('local');
         $line = 1;
+        $stream = null;
 
         try {
             $stream = $disk->readStream($this->import->storagePath());
@@ -60,8 +61,6 @@ class ProcessInvitationImport implements ShouldQueue
                 }
             }
 
-            fclose($stream);
-
             $this->import->status = InvitationImportStatus::Completed;
             $this->import->save();
         } catch (Throwable $e) {
@@ -78,6 +77,10 @@ class ProcessInvitationImport implements ShouldQueue
             $this->import->status = InvitationImportStatus::Failed;
             $this->import->save();
         } finally {
+            if (is_resource($stream)) {
+                fclose($stream);
+            }
+
             $disk->delete($this->import->storagePath());
         }
     }
