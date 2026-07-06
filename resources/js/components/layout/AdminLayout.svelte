@@ -2,11 +2,9 @@
     import type { Snippet } from 'svelte';
     import {
         LayoutGrid,
-        ClipboardList,
-        Award,
-        Flag,
-        FolderKanban,
         Users,
+        Calendar,
+        FileText,
         Send,
     } from '@lucide/svelte';
     import AppHead from '@/components/AppHead.svelte';
@@ -20,13 +18,21 @@
         $props();
 
     const links = [
-        { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutGrid, enabled: true },
-        { label: 'Applications', href: '/admin/applications', icon: ClipboardList },
-        { label: 'Awards', href: '/admin/awards', icon: Award },
-        { label: 'Milestones', href: '/admin/milestones', icon: Flag },
-        { label: 'Programs', href: '/admin/programs', icon: FolderKanban },
+        {
+            label: 'Dashboard',
+            href: '/admin/dashboard',
+            icon: LayoutGrid,
+            enabled: true,
+        },
         { label: 'Users', href: '/admin/users', icon: Users, enabled: true },
-        { label: 'Invitations', href: '/admin/invitations', icon: Send, enabled: true },
+        { label: 'Meetings', href: '/admin/meetings', icon: Calendar },
+        { label: 'Reports', href: '/admin/reports', icon: FileText },
+        {
+            label: 'Invitations',
+            href: '/admin/invitations',
+            icon: Send,
+            enabled: true,
+        },
     ];
 </script>
 

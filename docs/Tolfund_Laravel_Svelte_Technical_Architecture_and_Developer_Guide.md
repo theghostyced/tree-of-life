@@ -52,7 +52,7 @@ This guide aligns with Laravel 13's official Svelte starter kit structure and In
 11. [Real-time Notifications and Broadcasting](#11-real-time-notifications-and-broadcasting)
 12. [Files, Storage, and Document Access](#12-files-storage-and-document-access)
 13. [Email and Notification Delivery](#13-email-and-notification-delivery)
-14. [Payments and Financial Controls](#14-payments-and-financial-controls)
+14. [Payments and Financial Controls (out of scope)](#14-payments-and-financial-controls)
 15. [Configuration and Environment Variables](#15-configuration-and-environment-variables)
 16. [Testing Strategy](#16-testing-strategy)
 17. [Development Workflow](#17-development-workflow)
@@ -112,7 +112,7 @@ tol-fund/
 
 ### 1.2 Why This Change Is Better for Tolfund
 
-Tolfund is a workflow-heavy support platform for externally funded teams and companies. Funding applications and approval decisions happen outside the system, through the TLF Investment Committee. The platform handles onboarding (which may run in parallel with committee review), profile completion, instructor discovery, subscriptions, training bookings, reporting, quarterly assessment, documents, notifications, and auditability. These responsibilities belong close to Laravel's domain and persistence layer.
+Tolfund is a workflow-heavy mentorship and meeting-support platform. It is invitation-only and connects entrepreneurs with mentors, then supports that relationship through scheduled meetings and a report for every meeting. The platform handles onboarding, profile completion, mentor–entrepreneur pairing, mentor availability, meeting scheduling and rescheduling, per-meeting reporting, documents, notifications, and auditability. It does not move money and runs no funding workflow. These responsibilities belong close to Laravel's domain and persistence layer.
 
 A full-stack Laravel application gives the project:
 
@@ -185,11 +185,11 @@ Laravel is the source of truth for:
 
 - User identity and session state.
 - Role and account status access control.
-- Funded company onboarding and membership.
+- Mentor–entrepreneur pairing and membership.
 - Profile completion and document integrity.
-- Mentor discovery, assignment, and mentorship access.
-- Reports, milestones, and support progress.
-- Recurring support meeting scheduling and conflict detection.
+- Mentor discovery, pairing, and mentorship access.
+- Per-meeting reports and meeting progress.
+- Recurring meeting scheduling and conflict detection.
 - Generated calendar invites and meeting link metadata.
 - File upload validation and secure streaming.
 - Notification persistence and broadcasting.
@@ -207,7 +207,7 @@ Svelte is responsible for:
 - Complex admin review screens.
 - Local display state, filters, tabs, tables, modals, and wizards.
 
-Svelte must not become the authority for permissions, money, status transitions, or eligibility. It can hide unavailable actions for usability, but Laravel must enforce every rule.
+Svelte must not become the authority for permissions, status transitions, or eligibility. It can hide unavailable actions for usability, but Laravel must enforce every rule.
 
 ---
 
@@ -220,18 +220,18 @@ tol-fund/
 ├── app/
 │   ├── Actions/
 │   │   ├── Auth/
-│   │   ├── Support/
+│   │   ├── Pairing/
 │   │   ├── Mentorship/
-│   │   ├── Milestones/
+│   │   ├── Meetings/
 │   │   └── Profiles/
 │   ├── Console/
 │   │   └── Commands/
 │   ├── Data/
 │   │   └── ViewModels/
 │   ├── Domain/
-│   │   ├── Support/
+│   │   ├── Pairing/
 │   │   ├── Mentorship/
-│   │   ├── Milestones/
+│   │   ├── Meetings/
 │   │   └── Profiles/
 │   ├── Enums/
 │   ├── Events/
@@ -246,9 +246,9 @@ tol-fund/
 │   │   ├── Middleware/
 │   │   ├── Requests/
 │   │   │   ├── Admin/
-│   │   │   ├── Support/
+│   │   │   ├── Pairing/
 │   │   │   ├── Mentorship/
-│   │   │   ├── Milestones/
+│   │   │   ├── Meetings/
 │   │   │   └── Profiles/
 │   │   └── Resources/
 │   ├── Jobs/
@@ -311,15 +311,13 @@ Avoid putting major business state transitions directly in controllers. The prev
 Use single-purpose action classes for meaningful workflow operations:
 
 ```text
-app/Actions/FundedCompanies/CreateFundedCompany.php
-app/Actions/FundedCompanies/InviteFundedCompanyMember.php
 app/Actions/Invitations/CreateUserInvitation.php
 app/Actions/Invitations/AcceptUserInvitation.php
-app/Actions/Milestones/SubmitMilestoneForMentorReview.php
-app/Actions/Milestones/ApproveMilestoneAsAdmin.php
-app/Actions/Mentorship/AssignMentorToFundedCompany.php
-app/Actions/Mentorship/ScheduleRecurringMentorshipMeeting.php
-app/Actions/Mentorship/BookMentorshipSession.php
+app/Actions/Pairing/PairEntrepreneurWithMentor.php
+app/Actions/Mentorship/SetMentorAvailability.php
+app/Actions/Meetings/ScheduleMeeting.php
+app/Actions/Meetings/RescheduleMeeting.php
+app/Actions/Meetings/SubmitMeetingReport.php
 app/Actions/Profiles/SubmitEntrepreneurProfile.php
 ```
 
@@ -330,10 +328,10 @@ Actions make workflow rules testable without forcing tests through full HTTP lay
 Use data objects, API resources, or View Models when pages need assembled, formatted data:
 
 ```text
-app/Data/ViewModels/AdminFundedCompanyViewModel.php
-app/Data/ViewModels/EntrepreneurSupportDashboardViewModel.php
+app/Data/ViewModels/AdminPairingViewModel.php
+app/Data/ViewModels/EntrepreneurMeetingsDashboardViewModel.php
 app/Data/ViewModels/MentorBookingDashboardViewModel.php
-app/Data/ViewModels/AdminQuarterlyAssessmentViewModel.php
+app/Data/ViewModels/AdminMeetingReportsViewModel.php
 ```
 
 These classes should format data for Inertia page props, but they should not mutate state. Use them to avoid passing raw Eloquent models directly into Svelte pages.
@@ -345,14 +343,10 @@ Important statuses should be PHP backed enums, not loose strings scattered acros
 ```text
 app/Enums/UserRole.php
 app/Enums/AccountStatus.php
-app/Enums/SupportProgramStatus.php
-app/Enums/FundedCompanySupportStatus.php
-app/Enums/SupportReportStatus.php
-app/Enums/QuarterlyAssessmentStatus.php
-app/Enums/MilestoneStatus.php
-app/Enums/MilestoneUpdateStatus.php
-app/Enums/MentorshipSessionStatus.php
-app/Enums/PaymentStatus.php
+app/Enums/PairingStatus.php
+app/Enums/MeetingStatus.php
+app/Enums/MeetingReportStatus.php
+app/Enums/DocumentType.php
 ```
 
 The frontend should mirror these as generated or manually maintained TypeScript union types.
@@ -442,9 +436,9 @@ The domain workflow layer includes:
 - Actions.
 - Domain services.
 - State transition helpers.
-- Subscription eligibility checks.
+- Mentorship eligibility checks.
 - Booking conflict detection.
-- Quarterly report collation.
+- Per-meeting report handling.
 
 This is where Tolfund's most important business rules live.
 
@@ -457,7 +451,7 @@ Eloquent models should own:
 - Query scopes.
 - Small computed helpers.
 
-They should not become giant workflow objects. For example, `Milestone` can expose `isEditable()` or `scopeAwaitingMentorReview()`, but approving a milestone should live in an Action because it touches comments, notifications, allocation rules, timestamps, and possibly downstream state.
+They should not become giant workflow objects. For example, `Meeting` can expose `isEditable()` or `scopeAwaitingReport()`, but scheduling or reporting on a meeting should live in an Action because it touches availability, notifications, timestamps, and possibly downstream state.
 
 ### 5.4 Presentation Layer
 
@@ -470,7 +464,7 @@ Presentation includes:
 - TypeScript types.
 - Frontend stores.
 
-Presentation can format statuses and amounts, but it cannot decide whether money is released or access is granted.
+Presentation can format statuses, but it cannot decide whether access is granted.
 
 ---
 
@@ -495,9 +489,9 @@ The following model set should be preserved from the previous application, with 
 Relationships:
 - one `mentor_profile`
 - one `entrepreneur_profile`
-- many funded company memberships
-- many mentorship sessions as mentor
-- many mentorship sessions as entrepreneur
+- many mentor–entrepreneur pairings
+- many meetings as mentor
+- many meetings as entrepreneur
 - many notifications
 - many feedback items
 
@@ -554,7 +548,7 @@ Private onboarding and role documents live in a normalized table rather than as 
 - timestamps
 
 Required document sets by role (via `DocumentType`):
-- Entrepreneur: `business_certificate`, `business_registration_documents`, `business_plan`, `operational_plan`, `technical_support_requirements` — pdf/png/jpg/jpeg/docx, max 5 MB each.
+- Entrepreneur: `business_certificate`, `business_registration_documents`, `business_plan` — pdf/png/jpg/jpeg/docx, max 5 MB each.
 - Mentor: `passport_photo`, `identification_card`, and one or more `certification` documents — pdf/png/jpg/jpeg (docx also allowed for certifications), max 2 MB each.
 
 Store documents on a private disk and serve them only through authenticated, authorized streaming routes gated by `UserDocumentPolicy` (see 7.8 and 12). Validate type, size, and MIME on upload; overwriting a required document replaces the prior row rather than mutating a shared column.
@@ -566,187 +560,23 @@ Entrepreneur and mentor accounts begin at `account_status = draft` after invitat
 - A domain action (`SubmitEntrepreneurProfile` / `SubmitMentorProfile`) computes a `missing_items` list from the role's required fields and required `DocumentType`s.
 - Submission is allowed only when `missing_items` is empty.
 - On submission, set `profile_submitted_at` and move `account_status` from `draft` to `pending`. Admin approval moves `pending -> approved`; rejection moves `pending -> rejected` with reviewer notes; a rejected user may revise and resubmit (`rejected -> pending`).
-- This submission concerns profile/document readiness only. Funding is decided offline by the TLF Investment Committee (see 6.2); the platform never collects a funding application.
+- This submission concerns profile/document readiness only.
 
-### 6.2 Funded Companies and Support Cohorts
+### 6.2 Mentor–Entrepreneur Pairing and Cohorts
 
-Tolfund must not collect or review funding applications inside the platform. Financing is applied for offline and decided by the TLF Investment Committee. The platform stores a team or company only after an admin creates its record; onboarding may begin in parallel with committee review, and the external funding decision is recorded on the company when the committee approves (see 10.4).
+> **Out of scope (data model to be designed).** The former "funded companies / support programs" model — externally funded teams, support cohorts, offline financing references, and committee-recorded funding decisions — has been removed from Tolfund's scope. Tolfund now pairs an entrepreneur with a mentor. How pairings (and any grouping/cohort concept) are stored is still to be designed and is intentionally not specified here.
 
-`support_programs`
-- title
-- description
-- sector
-- target audience
-- support benefits
-- documents expected
-- reporting expectations
-- status
-- starts at / ends at nullable
-- hero image path nullable
+### 6.3 Meetings and Reports
 
-`funded_companies`
-- support program id nullable
-- name
-- registration number nullable
-- sector
-- country
-- external funding reference nullable
-- externally funded at nullable
-- support status
-- primary entrepreneur user id nullable
-- assigned mentor user id nullable
-- onboarding completed at nullable
-- support started at nullable
-- support completed at nullable
-- notes
-- timestamps
+> **Out of scope (data model to be designed).** The former milestones, milestone updates/comments, support reports, and quarterly investor/regulator assessments have been removed. Tolfund now records scheduled meetings and a report for every meeting. That data model — meetings, their lifecycle, and per-meeting reports — is still to be designed and is intentionally not specified here.
 
-`funded_company_members`
-- funded company id
-- user id
-- role within company
-- is primary contact
-- invited by
-- joined at nullable
-- timestamps
+### 6.4 Mentorship (Availability and Meetings)
 
-Supported company member roles should include at least:
+> **Out of scope (data model to be designed).** Mentor availability, meeting scheduling, rescheduling, and per-meeting reports are in scope for the product, but their concrete schema — previously coupled to funded companies and milestones — is still to be designed and is intentionally not specified here.
 
-- founder / entrepreneur
-- assistant
-- operations contact
+### 6.5 Payments and Subscriptions
 
-Admins create the funded company, add the funded entrepreneur and their assistant or other company contacts, and send invitation emails. The invited users complete their account and profile before gaining full support access.
-
-### 6.3 Milestones and Reports
-
-`milestones`
-- funded company id
-- title
-- description
-- measurable goal
-- deadline
-- status
-- submitted/reviewed/completed timestamps
-
-`milestone_updates`
-- milestone id
-- author user id
-- summary
-- progress percent
-- evidence links
-- status
-- reviewed by
-- reviewed at
-
-`milestone_comments`
-- milestone id
-- milestone update id nullable
-- author user id
-- body
-- scope
-- decision/status context
-
-`support_reports`
-- funded company id
-- author user id
-- mentor user id nullable
-- report period start
-- report period end
-- summary
-- challenges
-- next steps
-- report path nullable
-- report metadata
-- submitted at nullable
-- reviewed at nullable
-- status
-
-Both the entrepreneur side and the instructor (mentor) side submit `support_reports` about their training sessions. Reports appear on both dashboards. The interaction itself is not refereed; it is monitored through these reports.
-
-`quarterly_assessments`
-- period start
-- period end
-- prepared by (admin user id)
-- summary
-- objectives alignment notes
-- report path nullable
-- status
-- published at nullable
-- timestamps
-
-At the end of each quarter, admins assess the entrepreneur and instructor reports for the period and collate them into an overall report for investors and regulatory authorities, showing how the training given aligns with the initial business plan objectives.
-
-### 6.4 Mentorship
-
-`mentorship_requests`
-- funded company id
-- mentor user id
-- status
-- accepted at
-
-`mentor_availability_slots`
-- mentor user id
-- day of week
-- start time
-- end time
-- timezone
-- session type
-- location
-- meeting link
-- active flag
-
-`mentorship_sessions`
-- funded company id
-- mentor user id
-- entrepreneur user id
-- milestone id nullable
-- availability slot id nullable
-- starts at
-- ends at
-- timezone
-- session type
-- location
-- meeting link
-- calendar event id nullable
-- meeting provider nullable
-- recurrence rule nullable
-- recurring series id nullable
-- agenda
-- status
-- notes
-- outcome summary
-
-`mentorship_session_reschedules`
-- session id
-- requested by
-- reviewed by nullable
-- old/new start and end times
-- reason
-- status
-
-`mentor_mentorship_reports`
-- mentor user id
-- entrepreneur user id nullable
-- funded company id nullable
-- report path
-- report metadata
-
-### 6.5 Subscriptions
-
-`entrepreneur_subscriptions`
-- user id
-- funded company id nullable
-- amount
-- currency
-- payment reference
-- provider reference nullable
-- status
-- paid at nullable
-- expires at
-- timestamps
-
-The annual subscription is the only platform fee an entrepreneur pays. It can be paid through the portal or recorded from an offsite payment as a manual reference-based record. A subscription is active when `status = paid` and `expires_at` is in the future.
+> **Out of scope.** Tolfund does not move money and runs no payment workflow. The former annual subscription, payment references, and fee configuration have been removed entirely; there is no subscription or payment data model.
 
 ### 6.6 Platform Configuration
 
@@ -791,39 +621,15 @@ Add explicit indexes for:
 - `users.account_status`
 - `users.email`
 - `users.phone_number`
-- `support_programs.status`
-- `funded_companies.support_program_id`
-- `funded_companies.primary_entrepreneur_user_id`
-- `funded_companies.assigned_mentor_user_id`
-- `funded_companies.support_status`
-- `funded_company_members.funded_company_id`
-- `funded_company_members.user_id`
-- `funded_company_members.role_within_company`
-- `milestones.funded_company_id`
-- `milestones.status`
-- `milestone_updates.milestone_id`
-- `support_reports.funded_company_id`
-- `support_reports.status`
-- `quarterly_assessments.period_start`
-- `quarterly_assessments.status`
-- `entrepreneur_subscriptions.user_id`
-- `entrepreneur_subscriptions.status`
-- `entrepreneur_subscriptions.expires_at`
-- `mentorship_sessions.mentor_user_id`
-- `mentorship_sessions.entrepreneur_user_id`
-- `mentorship_sessions.funded_company_id`
-- `mentorship_sessions.starts_at`
-- `mentorship_sessions.ends_at`
-- `mentorship_sessions.recurring_series_id`
+
+Add indexes for the lookup-heavy fields of the mentorship/meetings domain (pairing, availability, meetings, reports) once that data model is designed — for example participant foreign keys, statuses, and meeting start/end times. Those tables are out of scope here (see 6.2–6.5) and are intentionally not enumerated.
 
 Where supported and appropriate, add unique constraints that protect business invariants:
 
 - One active unaccepted invitation per email and role.
-- One primary contact per funded company where practical.
-- One active accepted membership per user per funded company.
 - Unique setting key in `platform_settings`.
 
-Some invariants, such as "no overlapping mentorship session for either participant", cannot be fully represented by a simple MySQL unique index and must be enforced by transactional application logic.
+Some invariants, such as "no overlapping meeting for either participant", cannot be fully represented by a simple MySQL unique index and must be enforced by transactional application logic.
 
 ---
 
@@ -858,14 +664,13 @@ Do not use Sanctum tokens as the primary browser session mechanism in the full-s
 
 Tolfund must not expose public registration for any role.
 
-There should be no general `/register`, `/mentor/register`, `/entrepreneur/register`, or `/admin/register` page that a visitor can discover and use. Account creation starts only from an invitation — either an authorized admin inviting a person by email and role, or an approved entrepreneur inviting an employee to their own company (see "Entrepreneur-invited employees" below).
+There should be no general `/register`, `/mentor/register`, `/entrepreneur/register`, or `/admin/register` page that a visitor can discover and use. Account creation starts only from an invitation issued by an authorized admin, by email and role.
 
 This applies to:
 
 - Entrepreneurs.
 - Mentors.
 - Admins.
-- Employees (invited by an approved entrepreneur, not by public registration).
 
 The recommended invitation flow:
 
@@ -925,7 +730,6 @@ On successful invitation acceptance:
 - Create `users` row.
 - Create matching `entrepreneur_profiles` or `mentor_profiles` row when applicable.
 - Admin users do not need entrepreneur/mentor profiles.
-- Employees do not need an entrepreneur/mentor profile; create a company membership scoped to the inviting entrepreneur's company (see "Entrepreneur-invited employees").
 - Set `account_status = draft` for entrepreneurs and mentors.
 - Set admin account status according to policy, normally `approved`.
 - Set `email_verified_at = now()`. Acceptance already proves control of the email, so no separate verification email is sent to invited users (see 7.1).
@@ -934,16 +738,7 @@ On successful invitation acceptance:
 
 #### Entrepreneur-invited employees
 
-Beyond admin-issued invitations, an **approved** entrepreneur can invite employees — team members of their funded company — without going through an admin. This delegates a narrow slice of invitation power to the company owner.
-
-- Only an approved entrepreneur whose funded company has active support may invite; draft, pending, rejected, or deactivated entrepreneurs may not.
-- The only role an entrepreneur can invite is `employee`. Entrepreneurs cannot invite entrepreneurs, mentors, or admins.
-- The invitation is bound to the inviting entrepreneur's company: `invited_by` is the entrepreneur's user id, and the invitation carries the company id.
-- Employees accept through the same `/invitations/accept/{token}` flow, with the same single-use, expiring, email-locked, revalidate-on-POST rules described above.
-- On acceptance, create a `users` row with role `employee` and a company membership scoped to that company; no entrepreneur/mentor profile is created.
-- Employees receive scoped, permission-gated access to their company's applications, milestones, and documents only — never admin or mentor capabilities, and never another company's data. Authorize every employee action through a policy that checks company membership.
-- Enforce a per-company employee cap and let the owning entrepreneur (and admins) view, resend, and revoke the employee invitations they issued.
-- All invitation security rules in 7.4 apply equally to entrepreneur-issued invitations.
+> **Out of scope.** The previous "funded company" model let an approved entrepreneur delegate invitations to employees of their company. Tolfund's corrected scope has only three roles (admin, mentor, entrepreneur) and no company/employee concept; delegated employee invitations have been removed. All invitations are admin-issued.
 
 ### 7.4 Invitation Administration
 
@@ -962,7 +757,7 @@ Capabilities:
 
 Security rules:
 
-- Only approved admins can create invitations for the admin, mentor, or entrepreneur roles. Approved entrepreneurs may additionally create `employee` invitations scoped to their own company, and only that role (see "Entrepreneur-invited employees").
+- Only approved admins can create invitations for the admin, mentor, or entrepreneur roles.
 - Admin invitation creation may require a stronger permission, such as `manage-admin-invitations`.
 - Invitation emails should not reveal whether an account already exists beyond safe, generic messages.
 - Invitation tokens must be single-use.
@@ -1014,8 +809,7 @@ Recommended middleware:
 - `role:entrepreneur`
 - `account.active`
 - `profile.editable`
-- `entrepreneur.has-active-support`
-- `entrepreneur.has-active-subscription`
+- `entrepreneur.has-mentor`
 
 The middleware should handle broad access gates. Fine-grained ownership and workflow decisions should live in policies and Actions.
 
@@ -1024,23 +818,18 @@ The middleware should handle broad access gates. Fine-grained ownership and work
 Create policies for important models:
 
 - `UserInvitationPolicy`
-- `SupportProgramPolicy`
-- `FundedCompanyPolicy`
-- `SupportReportPolicy`
-- `QuarterlyAssessmentPolicy`
-- `MilestonePolicy`
-- `MilestoneUpdatePolicy`
-- `MentorshipSessionPolicy`
+- `MentorPairingPolicy`
+- `MeetingPolicy`
+- `MeetingReportPolicy`
 - `MentorAvailabilitySlotPolicy`
 - `FeedbackItemPolicy`
 - `UserDocumentPolicy`
 
 Policies should answer questions such as:
 
-- Can this user view this funded company?
-- Can this member submit a support report for this company?
-- Can this mentor review this milestone?
-- Can this admin publish this quarterly assessment?
+- Can this user view this pairing?
+- Can this mentor or entrepreneur schedule or reschedule this meeting?
+- Can this mentor submit the report for this meeting?
 - Can this user download this private document?
 - Can this admin invite another admin?
 - Can this invitation be resent or revoked?
@@ -1072,13 +861,13 @@ Laravel controllers return Inertia pages:
 use Inertia\Inertia;
 use Inertia\Response;
 
-public function show(FundedCompany $company): Response
+public function show(Pairing $pairing): Response
 {
-    $this->authorize('view', $company);
+    $this->authorize('view', $pairing);
 
-    return Inertia::render('entrepreneur/company/Show', [
-        'company' => FundedCompanyData::from($company),
-        'milestones' => MilestoneData::collection($company->milestones),
+    return Inertia::render('entrepreneur/pairing/Show', [
+        'pairing' => PairingData::from($pairing),
+        'meetings' => MeetingData::collection($pairing->meetings),
     ]);
 }
 ```
@@ -1088,14 +877,14 @@ Svelte pages receive props directly from Inertia:
 ```svelte
 <script lang="ts">
     import AppLayout from '@/layouts/app/AppLayout.svelte';
-    import type { FundedCompany, Milestone } from '@/types/support';
+    import type { Pairing, Meeting } from '@/types/mentorship';
 
     interface Props {
-        company: FundedCompany;
-        milestones: Milestone[];
+        pairing: Pairing;
+        meetings: Meeting[];
     }
 
-    let { company, milestones }: Props = $props();
+    let { pairing, meetings }: Props = $props();
 </script>
 
 <AppLayout>
@@ -1134,9 +923,9 @@ resources/js/
 │   ├── ui/
 │   ├── layout/
 │   ├── forms/
-│   ├── support/
+│   ├── pairing/
 │   ├── mentorship/
-│   ├── milestones/
+│   ├── meetings/
 │   └── notifications/
 ├── layouts/
 │   ├── app/
@@ -1153,7 +942,6 @@ resources/js/
 │       └── MentorLayout.svelte
 ├── lib/
 │   ├── dates.ts
-│   ├── money.ts
 │   ├── status.ts
 │   ├── utils.ts
 │   └── validation.ts
@@ -1170,9 +958,9 @@ resources/js/
 │   └── ui.ts
 ├── types/
 │   ├── auth.ts
-│   ├── support.ts
+│   ├── pairing.ts
 │   ├── mentorship.ts
-│   ├── milestones.ts
+│   ├── meetings.ts
 │   └── shared.ts
 ```
 
@@ -1218,8 +1006,8 @@ Use Inertia form helpers for most forms:
 - Invitation acceptance.
 - Login.
 - Profile editing.
-- Support report submission.
-- Milestone creation and update submission.
+- Meeting report submission.
+- Meeting scheduling and rescheduling.
 - Admin review decisions.
 - Mentor availability and booking.
 
@@ -1369,15 +1157,15 @@ Do not put all browser behavior in `api.php` just because Svelte exists. Inertia
 Most browser pages should return Inertia responses:
 
 ```php
-Route::get('/company/{company}', [EntrepreneurCompanyController::class, 'show'])
-    ->name('company.show');
+Route::get('/pairing/{pairing}', [EntrepreneurPairingController::class, 'show'])
+    ->name('pairing.show');
 ```
 
 Some web routes may return JSON for narrow adjunct interactions:
 
 ```php
-Route::post('/milestones/{milestone}/updates', SubmitMilestoneUpdateController::class)
-    ->name('milestones.updates.store');
+Route::get('/availability/{slot}/occurrences', PreviewAvailabilityOccurrencesController::class)
+    ->name('availability.occurrences');
 ```
 
 For mutations, prefer redirects from Inertia form submissions. Use JSON only when the interaction is not naturally a page visit or redirect cycle.
@@ -1394,12 +1182,12 @@ The controller can return:
 Use route model binding, but always pair it with policies:
 
 ```php
-public function show(FundedCompany $company)
+public function show(Pairing $pairing)
 {
-    $this->authorize('view', $company);
+    $this->authorize('view', $pairing);
 
-    return Inertia::render('entrepreneur/company/Show', [
-        'company' => FundedCompanyData::from($company, auth()->user()),
+    return Inertia::render('entrepreneur/pairing/Show', [
+        'pairing' => PairingData::from($pairing, auth()->user()),
     ]);
 }
 ```
@@ -1413,7 +1201,7 @@ Success:
 ```json
 {
   "ok": true,
-  "message": "Milestone submitted for review.",
+  "message": "Meeting report submitted.",
   "data": {}
 }
 ```
@@ -1434,8 +1222,8 @@ Domain rejection:
 ```json
 {
   "ok": false,
-  "code": "milestone_not_editable",
-  "message": "This milestone cannot be edited while it is under review."
+  "code": "meeting_not_editable",
+  "message": "This meeting cannot be edited after it has taken place."
 }
 ```
 
@@ -1453,7 +1241,7 @@ Roles:
 - `mentor`
 - `entrepreneur`
 
-Admins operate the platform, review reports, and produce quarterly assessments. Mentors — called instructors or trainers in the business process documents — deliver the technical support and training and review progress. Entrepreneurs receive financing decisions offline through the TLF Investment Committee, onboard onto the portal, pay the annual subscription, book training sessions, and report on progress.
+Admins operate the platform: they invite and vet people, manage accounts, pair entrepreneurs with mentors, and oversee whether meetings are happening and reports are being captured. Mentors — called instructors or trainers in the business process documents — complete a profile, set their availability, meet with paired entrepreneurs on a schedule, and write a short report after each meeting. Entrepreneurs onboard onto the portal, complete a profile, get paired with a mentor, schedule meetings, and read the report from each meeting.
 
 The platform role stays `mentor` in code, routes, and types even where business documents say "instructor" or "trainer". Do not introduce a second role name for the same concept; UI copy may say "instructor" where the audience expects it.
 
@@ -1504,7 +1292,7 @@ Submission:
 
 - Validated by a Form Request and domain completeness checker.
 - Sets `account_status = pending`.
-- Sets `application_submitted_at`.
+- Sets `profile_submitted_at`.
 - Notifies admins.
 
 Admin review:
@@ -1524,207 +1312,83 @@ Recommended implementation:
 ```text
 SubmitEntrepreneurProfile
 SubmitMentorProfile
-ApproveUserApplication
-RejectUserApplication
+ApproveUserAccount
+RejectUserAccount
 DeactivateUser
 ```
 
-### 10.4 Offline Financing and the Investment Committee
+### 10.4 Financing and Funding Decisions
 
-Financing is applied for and decided entirely outside the platform:
+> **Out of scope.** The funding workflow (offline financing, applications, awards, milestones, disbursements, payments) has been removed from Tolfund's scope. The platform records no funding decisions and stores no funded-company records. The system now covers mentor–entrepreneur pairing, scheduling, meetings, and per-meeting reports; that domain's data model is still to be designed.
 
-1. A woman entrepreneur applies for financing from TLF offline by submitting business paperwork (business certificate and similar), a business plan, an operational plan for use of the financing amount, and the technical support she requires to meet the objectives outlined in those plans.
-2. The Investment Committee established under TLF reviews the application offline.
-3. In parallel with committee review, the entrepreneur can be onboarded onto the portal through an admin invitation so her account and profile are ready when financing is approved.
+### 10.5 Programs and Cohorts
 
-The platform never collects, reviews, approves, or rejects financing applications. It records the outcome only:
+> **Out of scope.** Support programs and funded-company cohorts belonged to the removed funding workflow and are not part of Tolfund's corrected scope.
 
-- Admin creates or updates the `funded_companies` record.
-- `external_funding_reference` stores the committee decision reference.
-- `externally_funded_at` records when financing was approved.
-- The operational plan's objectives become the basis for milestones and support reports inside the platform.
+### 10.6 Support Lifecycle
 
-Recommended implementation:
-
-```text
-CreateFundedCompany
-RecordExternalFundingDecision
-InviteFundedCompanyMember
-```
-
-### 10.5 Support Programs
-
-Admins can create, edit, publish, and close support programs — cohorts that group funded companies and describe the support offered.
-
-Support program fields:
-
-- Title.
-- Description.
-- Sector.
-- Target audience.
-- Support benefits.
-- Documents expected.
-- Reporting expectations.
-- Status.
-- Start/end dates.
-- Optional hero image.
-
-Recommended implementation:
-
-```text
-CreateSupportProgram
-UpdateSupportProgram
-CloseSupportProgram
-```
-
-### 10.6 Funded Company Support Lifecycle
-
-A funded company record represents an externally financed team receiving support through Tolfund.
-
-Support status:
-
-```text
-onboarding -> active -> completed
-```
-
-- `onboarding`: company record exists, members are accepting invitations and completing profiles; committee review may still be in progress.
-- `active`: financing confirmed (`externally_funded_at` set), primary entrepreneur approved, support underway.
-- `completed`: support period ended or all required milestones completed.
-
-A funded company has:
-
-- A primary entrepreneur and optional additional members.
-- An optional support program (cohort).
-- An optional assigned mentor (instructor).
-- Milestones derived from the operational plan.
-- Support reports from both sides.
-- Related mentorship sessions.
-
-Completion should be calculated through a domain action, not ad hoc controller code.
-
-Recommended implementation:
-
-```text
-ActivateFundedCompanySupport
-CompleteFundedCompanySupport
-RefreshSupportCompletion
-```
+> **Out of scope.** The funded-company support lifecycle (onboarding → active → completed, driven by financing and milestones) has been removed. The relationship Tolfund now tracks is a mentor–entrepreneur pairing supported by scheduled meetings and reports; that lifecycle and data model are still to be designed.
 
 ### 10.7 Milestone Lifecycle
 
-Milestones encode the objectives of the entrepreneur's business plan and operational plan. They track progress only — no money is attached to them and completing one does not release funds. Financing is disbursed offline by TLF.
+> **Out of scope.** Milestones (and their review chain, progress updates, and completion) belonged to the removed funding workflow and are not part of Tolfund's corrected scope.
 
-Milestone statuses:
+### 10.8 Meetings and Reports
 
-```text
-draft
-mentor_review
-mentor_changes_requested
-admin_review
-admin_changes_requested
-active
-completed
-```
-
-Flow:
-
-1. Entrepreneur creates milestone as draft, derived from the operational plan.
-2. Entrepreneur submits for mentor review.
-3. Mentor approves or requests changes.
-4. Admin approves or requests changes.
-5. Active milestone accepts progress updates.
-6. Mentor reviews progress updates.
-7. Approved update with `progress_percent >= 100` completes milestone.
-8. Milestone completion feeds support completion and the quarterly assessment.
-
-Recommended implementation:
-
-```text
-CreateMilestone
-UpdateMilestone
-SubmitMilestoneForMentorReview
-ReviewMilestoneAsMentor
-ReviewMilestoneAsAdmin
-SubmitMilestoneUpdate
-ReviewMilestoneUpdateAsMentor
-RefreshSupportCompletion
-```
-
-### 10.8 Training Reports and Quarterly Assessment
-
-No financing money moves through the platform. The platform's only payment surface is the annual subscription (10.10). Progress accountability happens through reports.
+Tolfund does not move money. Accountability happens through meetings and the report captured for each one.
 
 Report rules:
 
-- Both the entrepreneur and the instructor submit regular reports about their training sessions through the dedicated training page (10.14).
-- Each report covers a period and is linked to the funded company, and to the instructor where relevant.
-- Submitted reports appear on the entrepreneur's dashboard and on the instructor's dashboard.
-- The interaction between entrepreneur and instructor is not refereed; it is monitored through the reports submitted on the portal.
-- Missing or overdue reports should be visible to admins, with reminder notifications.
-
-At the end of each quarter:
-
-1. Admin reviews the entrepreneur and instructor reports for the quarter.
-2. Admin records an assessment of how the training given aligns with the initial business plan and operational plan objectives.
-3. Admin collates the assessments into an overall quarterly report for investors and regulatory authorities.
-4. The collated report is stored as a `quarterly_assessments` record with an exportable document.
+- After each scheduled meeting, the mentor writes a short report on that meeting.
+- The report is linked to the meeting (and thereby to the paired mentor and entrepreneur).
+- Submitted reports appear on the entrepreneur's dashboard and on the mentor's dashboard.
+- The interaction between entrepreneur and mentor is not refereed; it is monitored through the reports submitted on the portal.
+- Meetings that have taken place without a report should be visible to admins, with reminder notifications.
 
 Recommended implementation:
 
 ```text
-SubmitSupportReport
-ReviewSupportReport
-PrepareQuarterlyAssessment
-PublishQuarterlyAssessment
+ScheduleMeeting
+SubmitMeetingReport
+ReviewMeetingReport
 ```
 
 ### 10.9 Mentorship Access
 
-Entrepreneur mentorship (training) access requires:
+Entrepreneur mentorship access requires:
 
-1. Membership in a funded company with active support — i.e. financing approved offline by the Investment Committee.
-2. Active paid annual subscription.
+1. An `approved` account.
+2. An active pairing with a mentor (see 10.11).
 
 If missing:
 
-- Return clear response in JSON flows.
-- Redirect to the subscription page or a support-required page in browser flows.
-- Use `402 Payment Required` for subscription gate in JSON endpoints where appropriate.
+- Return a clear response in JSON flows.
+- Redirect to a "pairing required" page in browser flows.
 
-### 10.10 Subscription
+### 10.10 Payments and Subscriptions
 
-Annual subscription:
+> **Out of scope.** Tolfund does not move money and runs no payment or subscription workflow. The former annual subscription and any payment gate have been removed entirely.
 
-- Fee amount configured by `platform_settings`.
-- Paid once per year, after the entrepreneur is approved for financing.
-- Payable through the portal, or offsite with an admin recording a manual reference-based payment.
-- Creates `EntrepreneurSubscription`.
-- Active if `status = paid` and `expires_at` is in the future.
+### 10.11 Mentor Discovery and Pairing
 
-Payment integration can start with manual/reference-based records, but the architecture should allow a payment provider later through a `PaymentGateway` interface.
+Admins pair entrepreneurs with mentors. Discovery tooling can help admins choose a good match:
 
-### 10.11 Instructor Discovery and Assignment
-
-Entrepreneurs with mentorship access can:
-
-- Browse approved instructors.
+- Browse approved mentors.
 - View relevance based on sector overlap and expertise.
-- Request an instructor for their company, or be assigned one by an admin.
 
-Assignment rules:
+Pairing rules:
 
-- There is no pairing fee. The annual subscription is the only payment gate; this replaces the earlier one-time mentor pairing fee concept.
-- A request creates a `mentorship_requests` record; acceptance by the instructor or an admin sets `funded_companies.assigned_mentor_user_id`.
-- A company has one active assigned instructor at a time unless admins explicitly allow more.
-- Draft, pending, rejected, or deactivated users can neither request nor be assigned.
+- There is no pairing fee and no payment gate of any kind.
+- Pairing is an admin action; an admin assigns a mentor to an entrepreneur.
+- An entrepreneur has one active mentor at a time unless admins explicitly allow more.
+- Draft, pending, rejected, or deactivated users can neither be paired nor pair.
 
 Recommended implementation:
 
 ```text
 RankMentorsForEntrepreneur
-RequestMentorForFundedCompany
-AcceptMentorshipRequest
-AssignMentorToFundedCompany
+PairEntrepreneurWithMentor
+UnpairEntrepreneurFromMentor
 ```
 
 ### 10.12 Mentor Availability and Bookings
@@ -1744,13 +1408,11 @@ Entrepreneurs book generated occurrences.
 
 Booking rules:
 
-- The instructor must be assigned to the entrepreneur's funded company (accepted mentorship request or admin assignment).
-- The entrepreneur's subscription must be active.
-- Session must be in the future.
+- The mentor must be paired with the entrepreneur (admin pairing).
+- Meeting must be in the future.
 - Occurrence must match the availability slot.
-- Neither participant can have overlapping sessions.
-- Optional milestone must belong to the same funded company.
-- Sessions follow the configured cadence — quarterly or half-yearly — driven by `default_mentorship_meeting_frequency` in `platform_settings`.
+- Neither participant can have overlapping meetings.
+- Meetings follow the configured cadence — quarterly or half-yearly — driven by `default_mentorship_meeting_frequency` in `platform_settings`.
 
 Recommended implementation:
 
@@ -1760,8 +1422,8 @@ UpdateAvailabilitySlot
 DeleteAvailabilitySlot
 BuildUpcomingAvailabilityOccurrences
 ResolveAvailabilityOccurrence
-BookMentorshipSession
-DetectMentorshipSessionConflict
+ScheduleMeeting
+DetectMeetingConflict
 ```
 
 ### 10.13 Rescheduling and Completion
@@ -1780,16 +1442,16 @@ Completion:
 - Outcome summary is stored.
 - Notifications are sent.
 
-### 10.14 Dedicated Training Page
+### 10.14 Dedicated Pairing Page
 
-Each funded company/instructor relationship gets a dedicated training page on the portal where:
+Each mentor–entrepreneur pairing gets a dedicated page on the portal where:
 
-- The entrepreneur and the instructor interact on the subject matter of the trainings (threaded discussion).
-- Upcoming and past sessions for the relationship are listed.
-- Both parties submit their regular training reports.
+- The entrepreneur and the mentor interact on the subject matter of the meetings (threaded discussion).
+- Upcoming and past meetings for the pairing are listed.
+- The mentor submits the report for each meeting.
 - Submitted reports surface on both dashboards.
 
-Access is private to the company's members, the assigned instructor, and admins. Admins monitor through the reports rather than refereeing the interaction; moderation happens only when a feedback item flags an issue.
+Access is private to the paired entrepreneur, the paired mentor, and admins. Admins monitor through the reports rather than refereeing the interaction; moderation happens only when a feedback item flags an issue.
 
 ### 10.15 Feedback
 
@@ -1834,7 +1496,7 @@ Broadcast::channel('users.{userId}', function (User $user, int $userId) {
 Role-specific operational channels can be added carefully:
 
 ```php
-Broadcast::channel('admin.applications', function (User $user) {
+Broadcast::channel('admin.pairings', function (User $user) {
     return $user->role === UserRole::Admin;
 });
 ```
@@ -1866,8 +1528,8 @@ Provide:
 
 Use separate disk intentions:
 
-- `public` for intentionally public assets such as funding program hero images.
-- `local` or private disk for user documents, pitch decks, reports, IDs, certificates, and business plans.
+- `public` for intentionally public assets such as brand or informational hero images.
+- `local` or private disk for user documents, reports, IDs, certificates, and business plans.
 
 ### 12.2 Private Documents
 
@@ -1878,9 +1540,8 @@ Use authorized streaming routes:
 ```text
 /documents/mentor/{user}/passport-photo
 /documents/entrepreneur/{user}/business-plan
-/admin/funded-companies/{company}/documents/{document}
-/admin/quarterly-assessments/{assessment}/download
-/mentor/reports/{report}/download
+/admin/users/{user}/documents/{document}
+/meetings/{meeting}/report/download
 ```
 
 Every document route must:

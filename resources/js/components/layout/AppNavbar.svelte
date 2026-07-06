@@ -219,13 +219,16 @@
                             .map((part) => part[0])
                             .slice(0, 2)
                             .join('')
-                            .toUpperCase() || auth.user.email.charAt(0).toUpperCase()}
+                            .toUpperCase() ||
+                            auth.user.email.charAt(0).toUpperCase()}
                     </div>
                     <div class="min-w-0 leading-tight">
                         <p class="truncate text-sm font-medium text-ink">
                             {auth.user.name}
                         </p>
-                        <p class="truncate text-xs text-faint">{auth.user.email}</p>
+                        <p class="truncate text-xs text-faint">
+                            {auth.user.email}
+                        </p>
                     </div>
                     <RoleBadge role={auth.role} class="ml-auto shrink-0" />
                 </div>

@@ -5,7 +5,7 @@
         Users,
         Calendar,
         Clock,
-        ClipboardList,
+        FileText,
     } from '@lucide/svelte';
     import AppHead from '@/components/AppHead.svelte';
     import AppNavbar from './AppNavbar.svelte';
@@ -18,11 +18,16 @@
         $props();
 
     const links = [
-        { label: 'Dashboard', href: '/mentor/dashboard', icon: LayoutGrid, enabled: true },
+        {
+            label: 'Dashboard',
+            href: '/mentor/dashboard',
+            icon: LayoutGrid,
+            enabled: true,
+        },
         { label: 'Mentees', href: '/mentor/mentees', icon: Users },
-        { label: 'Sessions', href: '/mentor/sessions', icon: Calendar },
+        { label: 'Meetings', href: '/mentor/meetings', icon: Calendar },
         { label: 'Availability', href: '/mentor/availability', icon: Clock },
-        { label: 'Reviews', href: '/mentor/reviews', icon: ClipboardList },
+        { label: 'Reports', href: '/mentor/reports', icon: FileText },
     ];
 </script>
 

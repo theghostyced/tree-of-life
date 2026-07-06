@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\InvitationController;
 use App\Http\Controllers\Admin\InvitationImportController;
 use App\Http\Controllers\Admin\UserController;
@@ -32,7 +33,7 @@ Route::post('/invitations/accept/{token}', [InvitationAcceptanceController::clas
  */
 Route::middleware('auth')->group(function () {
     Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
-        Route::inertia('/dashboard', 'admin/Dashboard')->name('dashboard');
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
         Route::get('/invitations', [InvitationController::class, 'index'])->name('invitations.index');
         Route::post('/invitations', [InvitationController::class, 'store'])->name('invitations.store');
         Route::post('/invitations/{invitation}/resend', [InvitationController::class, 'resend'])->name('invitations.resend');

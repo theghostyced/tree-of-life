@@ -6,39 +6,41 @@ product
 
 ## Users
 
-Tolfund is an invitation-only platform with three distinct roles, each in a different operational context:
+Tolfund is an invitation-only platform that connects entrepreneurs with mentors and supports that relationship through scheduled meetings and a report for every meeting. Three roles, each in a different operational context:
 
-- **Admins** — program operators who review applications, vet profiles, approve/reject accounts, set planned disbursements, release funds, and manage invitations. They work in review queues and need to move through many items quickly and confidently. Context: focused, repeated daily use; decisions carry financial and accountability weight.
-- **Entrepreneurs** — funded (or applying) founders who complete onboarding, browse funding programs, submit applications, manage milestones and progress updates, pay the mentorship subscription, pair with a mentor, and book sessions. Context: goal-oriented, milestone-driven, often less technical; needs clear guidance and status at every step.
-- **Mentors** — advisors who review entrepreneur milestones and progress, manage availability, and run mentorship sessions. Context: periodic, review-and-schedule oriented.
+- **Admins** — program operators who invite and vet people, manage accounts (revoke / restore / remove), pair entrepreneurs with mentors, and keep an eye on whether meetings are happening and reports are being captured. Context: focused, repeated daily use; they keep the program running and accountable.
+- **Entrepreneurs** — founders who complete a profile, get paired with a mentor, schedule meetings, and read the report from each meeting. Context: goal-oriented, often less technical; needs clear guidance and status at every step.
+- **Mentors** — advisors who complete a profile, set their availability, meet with paired entrepreneurs on a schedule, and write a short report after each meeting. Context: periodic, schedule-and-report oriented.
 
-The job to be done: move money and mentorship to entrepreneurs through an auditable, rule-bound workflow — application → award → milestones → disbursement, plus a paid mentorship track. Every actor needs to know *what state something is in* and *what they can do next*.
+The job to be done: connect the right mentor to each entrepreneur, make meetings easy to schedule and keep, and leave a clear record — a report — of every meeting, so the relationship is well supported and the program stays accountable. Every actor needs to know *what state something is in* and *what they can do next*.
+
+**Tolfund does not move money and runs no funding workflow.** It is a mentorship and meeting-support system only — no applications, awards, milestones, or disbursements.
 
 ## Product Purpose
 
-Tolfund administers a funding-and-mentorship program end to end: funding programs, applications, awards, milestones, disbursements, mentorship subscriptions, mentor pairing, availability, and sessions. It exists to make a high-stakes, multi-party workflow transparent, enforceable, and auditable — replacing spreadsheets and email with a single system of record where authorization and financial controls are enforced server-side. Success looks like: reviewers clear queues without ambiguity, entrepreneurs always know their next action and status, funds never over-disburse, and every high-value action is traceable.
+Tolfund runs a mentorship program end to end: onboarding, mentor–entrepreneur pairing, availability, scheduling, meetings, and a report for every meeting. It exists to make a multi-party working relationship transparent and accountable — replacing spreadsheets and email with a single system of record where authorization is enforced server-side. Success looks like: admins always know who is paired and whether meetings are happening, entrepreneurs and mentors always know their next meeting and next action, and every meeting leaves a durable, reviewable report.
 
 ## Brand Personality
 
 **Trustworthy · grounded · warm.**
 
-Serious about money and accountability, but human and encouraging. Tolfund is a supportive institution, not a cold bank or a faceless government portal. The voice is plain, direct, and reassuring — it tells people exactly where they stand and what to do next, without jargon or false cheer. Emotional goals: confidence (this is handled properly), clarity (I know my next step), and dignity (I'm supported, not processed). The warm cream/green/earth palette carries the human side; precision and strong status visibility carry the trust.
+Serious about people's time and growth, but human and encouraging. Tolfund is a supportive institution, not a cold portal. The voice is plain, direct, and reassuring — it tells people exactly where they stand and what to do next, without jargon or false cheer. Emotional goals: confidence (this is handled properly), clarity (I know my next step), and dignity (I'm supported, not processed). The warm cream/green/earth palette carries the human side; precision and strong status visibility carry the trust.
 
 ## Anti-references
 
 This should NOT look like:
 
 - **Generic SaaS dashboard** — no purple gradients, no hero-metric template (giant number + tiny label + supporting stats), no endless identical icon+heading+text card grids. Data should be shown in queues, tables, and timelines, not decorative tiles.
-- **Cold corporate bank** — no sterile navy-and-gray fintech coldness. The palette is warm on purpose; keep it human.
+- **Cold corporate portal** — no sterile navy-and-gray coldness. The palette is warm on purpose; keep it human.
 - **Cluttered government portal** — no dense, dated, hard-to-scan chrome; no unstyled 1998-era data tables; no weak hierarchy. Density must stay *legible*.
-- **Consumer/playful app** — no gamification, no emoji-driven UI, no over-rounded (24px+) cartoonish corners that undercut financial seriousness.
+- **Consumer/playful app** — no gamification, no emoji-driven UI, no over-rounded (24px+) cartoonish corners that undercut the serious, supportive tone.
 
 ## Design Principles
 
-1. **Status is the interface.** Every award, application, milestone, disbursement, and session has a state. The primary job of every screen is to make the current state and the next legal action unmistakable. Design around state machines, not around content.
-2. **Calm density.** Operators use this repeatedly under pressure. Prefer tables, queues, and timelines that pack information legibly over spacious marketing layouts. Density earns its keep only when hierarchy and contrast keep it scannable.
-3. **Trust through precision.** Money, deadlines, and authorization are exact. Numbers, amounts, dates, and permissions must read as deliberate and correct — alignment, formatting, and consistency signal that the system is careful with people's stakes.
-4. **Warmth without whimsy.** The human, encouraging tone lives in copy, color, and generosity of guidance — never in decoration that would undercut financial seriousness.
+1. **Status is the interface.** Every pairing, meeting, and report has a state. The primary job of every screen is to make the current state and the next legal action unmistakable. Design around state machines, not around content.
+2. **Calm density.** Operators use this repeatedly. Prefer tables, queues, and timelines that pack information legibly over spacious marketing layouts. Density earns its keep only when hierarchy and contrast keep it scannable.
+3. **Trust through precision.** Times, dates, and who-meets-whom are exact. Names, times, and permissions must read as deliberate and correct — alignment, formatting, and consistency signal that the system is careful with people's time.
+4. **Warmth without whimsy.** The human, encouraging tone lives in copy, color, and generosity of guidance — never in decoration that would undercut the supportive seriousness.
 5. **Role-true screens.** Admin, mentor, and entrepreneur see purpose-built chrome and navigation. Never a one-size shell with hidden controls; each role's most common task is the fastest path on their screen.
 
 ## Accessibility & Inclusion

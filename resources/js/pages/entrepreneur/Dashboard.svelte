@@ -1,8 +1,7 @@
 <script lang="ts">
     import { Link } from '@inertiajs/svelte';
-    import { ArrowRight, ListChecks, LineChart } from '@lucide/svelte';
+    import { ArrowRight, ListChecks } from '@lucide/svelte';
     import EntrepreneurLayout from '@/components/layout/EntrepreneurLayout.svelte';
-    import { EmptyState } from '@/components/ui/empty-state';
     import { cn } from '@/lib/utils';
 
     type Onboarding = {
@@ -32,7 +31,7 @@
                 Dashboard
             </h1>
             <p class="mt-1.5 text-[15px] text-muted">
-                Your funding and mentorship workspace at a glance.
+                Your mentorship workspace at a glance.
             </p>
         </div>
 
@@ -89,15 +88,19 @@
 
     <!-- Placeholder content region -->
     <div
-        class="mt-8 flex flex-1 items-center justify-center border-t border-line"
+        class="mt-8 flex flex-1 flex-col items-center justify-center border-t border-line px-6 py-16 text-center"
     >
-        <EmptyState
-            title="Your workspace is taking shape"
-            description="Your funding programs, applications, and milestones will appear here as the programme gets underway."
-        >
-            {#snippet icon()}
-                <LineChart class="size-6" strokeWidth={1.75} />
-            {/snippet}
-        </EmptyState>
+        <img
+            src="/images/illustrations/social-talk.svg"
+            alt=""
+            class="mb-6 size-36 opacity-90"
+        />
+        <h3 class="text-lg font-semibold text-ink">
+            Your workspace is taking shape
+        </h3>
+        <p class="mt-2 max-w-sm text-[15px] text-muted">
+            Your mentor, meetings, and reports will appear here as the programme
+            gets underway.
+        </p>
     </div>
 </EntrepreneurLayout>

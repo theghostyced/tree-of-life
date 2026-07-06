@@ -1,12 +1,6 @@
 <script lang="ts">
     import type { Snippet } from 'svelte';
-    import {
-        LayoutGrid,
-        FolderKanban,
-        ClipboardList,
-        Flag,
-        Users,
-    } from '@lucide/svelte';
+    import { LayoutGrid, UserRound, Calendar, FileText } from '@lucide/svelte';
     import AppHead from '@/components/AppHead.svelte';
     import AppNavbar from './AppNavbar.svelte';
 
@@ -18,11 +12,15 @@
         $props();
 
     const links = [
-        { label: 'Dashboard', href: '/entrepreneur/dashboard', icon: LayoutGrid, enabled: true },
-        { label: 'Programs', href: '/entrepreneur/programs', icon: FolderKanban },
-        { label: 'Applications', href: '/entrepreneur/applications', icon: ClipboardList },
-        { label: 'Milestones', href: '/entrepreneur/milestones', icon: Flag },
-        { label: 'Mentorship', href: '/entrepreneur/mentorship', icon: Users },
+        {
+            label: 'Dashboard',
+            href: '/entrepreneur/dashboard',
+            icon: LayoutGrid,
+            enabled: true,
+        },
+        { label: 'My mentor', href: '/entrepreneur/mentor', icon: UserRound },
+        { label: 'Meetings', href: '/entrepreneur/meetings', icon: Calendar },
+        { label: 'Reports', href: '/entrepreneur/reports', icon: FileText },
     ];
 </script>
 

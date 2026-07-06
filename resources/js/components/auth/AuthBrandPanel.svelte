@@ -31,12 +31,12 @@
         <h1
             class="mb-6 text-5xl leading-[1.1] font-semibold tracking-tight text-balance text-white"
         >
-            Back the builders,<br />fund the milestones.
+            Where founders<br />meet their mentors.
         </h1>
         <p class="max-w-md text-lg leading-relaxed text-muted">
-            An invitation only workspace where funding and mentorship empower
-            founders, especially women, from their first application through
-            funded milestones and beyond.
+            An invitation-only workspace that pairs entrepreneurs with mentors,
+            schedules their meetings, and keeps a clear report of every one —
+            especially for the women building what's next.
         </p>
 
         <div class="mt-12 flex items-center gap-4">

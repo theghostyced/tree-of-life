@@ -1,6 +1,6 @@
 ---
 name: Tolfund
-description: A warm, status-driven funding-and-mentorship platform — trustworthy, grounded, human.
+description: A warm, status-driven mentorship and meeting-support platform — trustworthy, grounded, human.
 colors:
   primary: "#024017"
   primary-deep: "#013012"
@@ -100,18 +100,18 @@ components:
 
 **Creative North Star: "The Greenhouse"**
 
-Tolfund is a greenhouse for entrepreneurs: a warm, structured, well-lit place where funded ventures are cultivated, tracked, and brought to maturity. The green primary (`#024017`, a deep cultivated leaf) is the growth; the cream background (`#ffecc2`, warm morning light through glass) is the shelter; the earth-brown ink (`#401602`) is the soil everything is rooted in. This is not a bank and not a government portal — it is a supportive institution that happens to move real money, and the interface must feel like it is *handling this properly* while still treating people with warmth and dignity.
+Tolfund is a greenhouse for entrepreneurs: a warm, structured, well-lit place where mentor–entrepreneur relationships are cultivated, tracked, and brought to maturity. The green primary (`#024017`, a deep cultivated leaf) is the growth; the cream background (`#ffecc2`, warm morning light through glass) is the shelter; the earth-brown ink (`#401602`) is the soil everything is rooted in. This is not a bank and not a government portal — it is a supportive institution that is careful with people's time and growth, and the interface must feel like it is *handling this properly* while still treating people with warmth and dignity.
 
 The system is built for operators under repeated daily pressure. Its first job on every screen is to make the current **state** and the next **legal action** unmistakable — status is the interface, not decoration on top of it. Density is a feature: reviewers clear queues in tables and timelines, not in spacious marketing layouts. But density only earns its keep when warmth, hierarchy, and contrast keep it legible. The warm palette carries the human side; exact numbers, aligned columns, and strong status visibility carry the trust.
 
-This system explicitly rejects the **generic SaaS dashboard** (no purple gradients, no hero-metric template, no endless identical icon-card grids), the **cold corporate bank** (no sterile navy-and-gray fintech chill), the **cluttered government portal** (no dated, weak-hierarchy chrome, no 1998-era unstyled tables), and the **consumer/playful app** (no gamification, no emoji-driven UI, no cartoonish 24px+ corners that undercut financial seriousness).
+This system explicitly rejects the **generic SaaS dashboard** (no purple gradients, no hero-metric template, no endless identical icon-card grids), the **cold corporate bank** (no sterile navy-and-gray fintech chill), the **cluttered government portal** (no dated, weak-hierarchy chrome, no 1998-era unstyled tables), and the **consumer/playful app** (no gamification, no emoji-driven UI, no cartoonish 24px+ corners that undercut the serious, supportive tone).
 
 **Key Characteristics:**
 
 - **Warm, not cold.** Cream + green + earth. Warmth lives in color, copy, and generosity of guidance — never in decoration.
-- **Status-first.** Every award, application, milestone, disbursement, and session shows its state and next action before anything else.
+- **Status-first.** Every pairing, meeting, and report shows its state and next action before anything else.
 - **Calm density.** Tables, queues, and timelines over spacious cards. Legible under pressure.
-- **Precise.** Money, dates, and permissions read as deliberate and correct — alignment and formatting signal care.
+- **Precise.** Times, dates, and permissions read as deliberate and correct — alignment and formatting signal care.
 - **Role-true.** Admin, mentor, and entrepreneur get purpose-built chrome, never a one-size shell with hidden controls.
 
 ## 2. Colors
@@ -139,7 +139,7 @@ A warm earth palette: deep cultivated green as the voice of action and trust, a 
 - **Dark Border** (`#5a2811` · `hsl(19, 68%, 21%)`): Strong borders, focus outlines on light surfaces, emphasis rules.
 
 ### Semantic Status
-- **Success Green** (`#2f7f33` · `hsl(123, 46%, 34%)`): Approved, completed, paid, active-in-good-standing. Note it is *brighter and cooler* than the brand primary, so "success" never blurs with "brand."
+- **Success Green** (`#2f7f33` · `hsl(123, 46%, 34%)`): Approved, completed, active-in-good-standing. Note it is *brighter and cooler* than the brand primary, so "success" never blurs with "brand."
 - **Warning Yellow** (`#e0bf00` · = Harvest Yellow): Needs attention, expiring, changes requested.
 - **Error Red** (`#c72929` · `hsl(0, 66%, 47%)`): Rejected, failed, overdue, blocked, destructive confirmation.
 
@@ -157,7 +157,7 @@ A warm earth palette: deep cultivated green as the voice of action and trust, a 
 **Character:** One warm humanist sans carries everything — headings, data, labels, body. Instrument Sans is friendly enough to hold the warmth but neutral and legible enough to pack a dense review queue without noise. This is a product UI: one well-tuned family beats a display/body pairing.
 
 ### Hierarchy
-- **Display** (600, 1.75rem / 28px, line-height 1.2): Page titles — "Applications," "Award #1042." One per screen. Fixed rem, never fluid clamp; a page title should not shrink inside a sidebar.
+- **Display** (600, 1.75rem / 28px, line-height 1.2): Page titles — "Meetings," "Report #1042." One per screen. Fixed rem, never fluid clamp; a page title should not shrink inside a sidebar.
 - **Headline** (600, 1.375rem / 22px, line-height 1.25): Section headers within a page, panel titles.
 - **Title** (600, 1.125rem / 18px, line-height 1.3): Card titles, table group headers, dialog titles.
 - **Body** (400, 0.9375rem / 15px, line-height 1.5): Default reading text and form values. Cap prose at 65–75ch; data and table cells may run denser.
@@ -195,10 +195,10 @@ For each component: character first, then shape, color, states, and behavior. Ev
 ### Chips (Status)
 - **Style:** Pill (`{rounded.pill}`), 12px uppercase Label type, 2px × 10px padding. This is the signature component — status is the interface.
 - **Never color-only.** Every status chip pairs its semantic color with a **text label** (and where useful an icon or shape): "Approved," "Pending," "Changes Requested," "Rejected." Color-blind users and glance-scanning operators both depend on the word, not just the hue.
-- **Mapping:** Success Green = approved / completed / paid / active. Warning Yellow = needs attention / expiring / changes requested. Error Red = rejected / failed / overdue. Sky Blue = info / draft-in-review. Muted Earth = neutral/inactive (draft, deactivated). Filled chip for active states, tinted-background + colored-text chip for quieter states.
+- **Mapping:** Success Green = approved / completed / active. Warning Yellow = needs attention / expiring / changes requested. Error Red = rejected / failed / overdue. Sky Blue = info / draft-in-review. Muted Earth = neutral/inactive (draft, deactivated). Filled chip for active states, tinted-background + colored-text chip for quieter states.
 
 ### Cards / Containers
-- **Corner Style:** 12px (`{rounded.lg}`). Cards are for *repeated items* (a program tile, a list row expanded) or genuinely framed tools — not as decoration around every block. Never nest a card inside a card.
+- **Corner Style:** 12px (`{rounded.lg}`). Cards are for *repeated items* (a pairing tile, a list row expanded) or genuinely framed tools — not as decoration around every block. Never nest a card inside a card.
 - **Background:** Surface White on the cream field.
 - **Shadow Strategy:** Flat by default (border-defined). Field Lift shadow only when a card must clearly float above the field. See Elevation.
 - **Border:** 1px Light Border. Dark Border only for an emphasized/selected card.
@@ -218,12 +218,12 @@ For each component: character first, then shape, color, states, and behavior. Ev
 - **Mobile:** Side nav collapses to a drawer; the bar stays. Structural responsive behavior, not fluid type.
 
 ### Data Table (Signature)
-The primary surface for admins and mentors — review queues, applications, disbursements, sessions.
+The primary surface for admins and mentors — review queues, pairings, meetings, reports.
 - Surface White plane on the cream field; Light Border row rules; Label-style uppercase column headers.
-- Right-align all money and numeric columns; tabular figures; consistent date formatting. Precision is the trust signal.
+- Right-align all numeric columns; tabular figures; consistent date and time formatting. Precision is the trust signal.
 - Row hover → faint cream tint. Selected row → Light Border-dark left edge + tint.
 - Status column always uses a Status Chip, never bare colored text.
-- **Skeleton rows** on load (not a centered spinner). **Empty state** teaches the next action ("No applications awaiting review — you're clear"), never a bare "Nothing here."
+- **Skeleton rows** on load (not a centered spinner). **Empty state** teaches the next action ("No meetings awaiting a report — you're clear"), never a bare "Nothing here."
 
 ## 6. Do's and Don'ts
 
@@ -241,7 +241,7 @@ The primary surface for admins and mentors — review queues, applications, disb
 - **Don't** build a **generic SaaS dashboard** — no purple gradients, no hero-metric template (giant number + tiny label + supporting stats), no endless identical icon+heading+text card grids.
 - **Don't** drift toward a **cold corporate bank** — no sterile navy-and-gray fintech coldness. The palette is warm on purpose; keep it human.
 - **Don't** ship a **cluttered government portal** — no dense, dated, hard-to-scan chrome; no unstyled 1998-era data tables; no weak hierarchy.
-- **Don't** make it a **consumer/playful app** — no gamification, no emoji-driven UI, no over-rounded (24px+) cartoonish corners that undercut financial seriousness.
+- **Don't** make it a **consumer/playful app** — no gamification, no emoji-driven UI, no over-rounded (24px+) cartoonish corners that undercut the serious, supportive tone.
 - **Don't** use a `border-left`/`border-right` colored stripe greater than 1px as decoration on cards, list items, or callouts. (The single exception: a nav active-item indicator.)
 - **Don't** pair a 1px border with a wide soft drop shadow on the same resting card — pick one.
 - **Don't** use pure white as a page background or cream as a content plane. Don't use `rgba(0,0,0,...)` shadows on the warm field.
