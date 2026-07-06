@@ -55,13 +55,19 @@ export function relative(ms: number): string {
     const diff = ms - Date.now();
     const past = diff < 0;
     const d = Math.round(Math.abs(diff) / DAY);
-    if (d === 0) return 'today';
+
+    if (d === 0) {
+        return 'Today';
+    }
+
     const unit = d === 1 ? 'day' : 'days';
+
     return past ? `${d} ${unit} ago` : `in ${d} ${unit}`;
 }
 
 export function initials(inv: Invitation): string {
     const base = inv.name ?? inv.email;
     const parts = base.split(/[\s.@]+/).filter(Boolean);
+
     return ((parts[0]?.[0] ?? '') + (parts[1]?.[0] ?? '')).toUpperCase();
 }

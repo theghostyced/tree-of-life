@@ -1,12 +1,12 @@
 <script lang="ts">
     import { Link, page, router } from '@inertiajs/svelte';
     import { ArrowLeft, ChevronRight, Send } from '@lucide/svelte';
+    import DataTable from '@/components/invitations/data-table.svelte';
     import AdminLayout from '@/components/layout/AdminLayout.svelte';
+    import { createColumns } from '@/components/users/columns';
+    import type { UserRow } from '@/components/users/types';
     import { cn } from '@/lib/utils';
     import type { Auth } from '@/types/auth';
-    import { createColumns } from '@/components/users/columns';
-    import DataTable from '@/components/invitations/data-table.svelte';
-    import type { UserRow } from '@/components/users/types';
 
     let { users = [] }: { users: UserRow[] } = $props();
 
@@ -34,7 +34,11 @@
             mentor: 0,
             employee: 0,
         };
-        for (const u of users) c[u.role]++;
+
+        for (const u of users) {
+            c[u.role]++;
+        }
+
         return c;
     });
 
@@ -127,9 +131,8 @@
                     Users
                 </h1>
                 <p class="mt-1 max-w-xl text-sm text-muted">
-                    Everyone with an account on Tolfund. Manage access — revoke,
-                    restore, or remove — and open a profile for the full
-                    picture.
+                    Everyone with an account on Tolfund. Revoke, restore, or
+                    remove access, and open a profile for the full picture.
                 </p>
             </div>
             <Link
@@ -183,7 +186,7 @@
             {columns}
             noun={{ one: 'user', many: 'users' }}
             defaultSort={{ id: 'joinedAt', desc: true }}
-            emptyMessage="No users match your search."
+            emptyMessage="No users to show here."
         />
     </div>
 
@@ -191,6 +194,7 @@
     {#if toast}
         <div class="fixed bottom-6 left-1/2 z-[60] -translate-x-1/2">
             <div
+                role="status"
                 class="flex items-center gap-2.5 rounded-lg border border-line-strong bg-elevated px-4 py-2.5 text-sm text-ink shadow-card"
             >
                 {toast}

@@ -41,7 +41,7 @@ export function relative(ms: number): string {
     const d = Math.round(Math.abs(diff) / DAY);
 
     if (d === 0) {
-        return 'today';
+        return 'Today';
     }
 
     const unit = d === 1 ? 'day' : 'days';

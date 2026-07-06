@@ -63,7 +63,7 @@
     const asList = (v: unknown) =>
         Array.isArray(v) && v.length ? v.join(', ') : null;
 
-    type Field = { label: string; value: string | null };
+    type Field = { label: string; value: string | null; emptyLabel?: string };
     const profileFields = $derived.by<Field[]>(() => {
         const p = user.profile;
 
@@ -119,11 +119,12 @@
 
     const accountRows = $derived<Field[]>([
         { label: 'Phone', value: user.phone },
-        { label: 'Company', value: user.company },
+        { label: 'Company', value: user.company, emptyLabel: 'None' },
         { label: 'Joined', value: relative(user.joinedAt) },
         {
             label: 'Status changed',
             value: user.statusChangedAt ? relative(user.statusChangedAt) : null,
+            emptyLabel: 'Never',
         },
     ]);
 
@@ -294,7 +295,7 @@
                                     row.value ? 'text-ink' : 'text-muted',
                                 )}
                             >
-                                {row.value ?? '—'}
+                                {row.value ?? row.emptyLabel ?? 'Not provided'}
                             </dd>
                         </div>
                     {/each}
@@ -314,9 +315,7 @@
                                 <dd
                                     class={cn(
                                         'mt-0.5 text-[15px] whitespace-pre-line',
-                                        field.value
-                                            ? 'text-ink'
-                                            : 'text-muted',
+                                        field.value ? 'text-ink' : 'text-muted',
                                     )}
                                 >
                                     {field.value ?? 'Not provided'}
