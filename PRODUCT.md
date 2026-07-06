@@ -8,8 +8,8 @@ product
 
 Tolfund is an invitation-only platform that connects entrepreneurs with mentors and supports that relationship through scheduled meetings and a report for every meeting. Three roles, each in a different operational context:
 
-- **Admins** — program operators who invite and vet people, manage accounts (revoke / restore / remove), pair entrepreneurs with mentors, and keep an eye on whether meetings are happening and reports are being captured. Context: focused, repeated daily use; they keep the program running and accountable.
-- **Entrepreneurs** — founders who complete a profile, get paired with a mentor, schedule meetings, and read the report from each meeting. Context: goal-oriented, often less technical; needs clear guidance and status at every step.
+- **Admins** — program operators who invite and vet people, manage accounts (revoke / restore / remove), monitor mentor–entrepreneur pairings, and keep an eye on whether meetings are happening and reports are being captured. Context: focused, repeated daily use; they keep the program running and accountable.
+- **Entrepreneurs** — founders who complete a profile, choose a mentor from the approved mentors in the system, schedule meetings, and read the report from each meeting. Context: goal-oriented, often less technical; needs clear guidance and status at every step.
 - **Mentors** — advisors who complete a profile, set their availability, meet with paired entrepreneurs on a schedule, and write a short report after each meeting. Context: periodic, schedule-and-report oriented.
 
 The job to be done: connect the right mentor to each entrepreneur, make meetings easy to schedule and keep, and leave a clear record — a report — of every meeting, so the relationship is well supported and the program stays accountable. Every actor needs to know *what state something is in* and *what they can do next*.

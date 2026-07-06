@@ -313,7 +313,7 @@ Use single-purpose action classes for meaningful workflow operations:
 ```text
 app/Actions/Invitations/CreateUserInvitation.php
 app/Actions/Invitations/AcceptUserInvitation.php
-app/Actions/Pairing/PairEntrepreneurWithMentor.php
+app/Actions/Pairing/SelectMentor.php
 app/Actions/Mentorship/SetMentorAvailability.php
 app/Actions/Meetings/ScheduleMeeting.php
 app/Actions/Meetings/RescheduleMeeting.php
@@ -328,7 +328,7 @@ Actions make workflow rules testable without forcing tests through full HTTP lay
 Use data objects, API resources, or View Models when pages need assembled, formatted data:
 
 ```text
-app/Data/ViewModels/AdminPairingViewModel.php
+app/Data/ViewModels/MentorSelectionViewModel.php
 app/Data/ViewModels/EntrepreneurMeetingsDashboardViewModel.php
 app/Data/ViewModels/MentorBookingDashboardViewModel.php
 app/Data/ViewModels/AdminMeetingReportsViewModel.php
@@ -1369,9 +1369,11 @@ If missing:
 
 > **Out of scope.** Tolfund does not move money and runs no payment or subscription workflow. The former annual subscription and any payment gate have been removed entirely.
 
-### 10.11 Mentor Discovery and Pairing
+### 10.11 Mentor Discovery and Selection
 
-Admins pair entrepreneurs with mentors. Discovery tooling can help admins choose a good match:
+Entrepreneurs choose their own mentor. After signing in with an approved
+account, an entrepreneur browses the mentors in the system and selects the one
+they want to be mentored by. Discovery tooling helps them choose a good match:
 
 - Browse approved mentors.
 - View relevance based on sector overlap and expertise.
@@ -1379,16 +1381,17 @@ Admins pair entrepreneurs with mentors. Discovery tooling can help admins choose
 Pairing rules:
 
 - There is no pairing fee and no payment gate of any kind.
-- Pairing is an admin action; an admin assigns a mentor to an entrepreneur.
+- Pairing is an entrepreneur action; the entrepreneur selects a mentor from
+  the list of approved mentors. Admins do not pair; they monitor pairings.
 - An entrepreneur has one active mentor at a time unless admins explicitly allow more.
-- Draft, pending, rejected, or deactivated users can neither be paired nor pair.
+- Draft, pending, rejected, or deactivated users can neither select nor be selected.
 
 Recommended implementation:
 
 ```text
 RankMentorsForEntrepreneur
-PairEntrepreneurWithMentor
-UnpairEntrepreneurFromMentor
+SelectMentor
+EndMentorship
 ```
 
 ### 10.12 Mentor Availability and Bookings
@@ -1715,7 +1718,7 @@ Use browser tests for the most valuable end-to-end flows:
 - Admin invites entrepreneur -> entrepreneur accepts invite -> profile submission -> admin approval.
 - Admin invites mentor -> mentor accepts invite -> profile submission -> admin approval.
 - Admin invites admin -> admin accepts invite -> admin dashboard access.
-- Admin pairs entrepreneur with mentor -> both see the pairing.
+- Entrepreneur selects a mentor -> both see the pairing.
 - Mentor sets availability -> entrepreneur schedules a meeting -> conflict rejection works.
 - Meeting takes place -> mentor submits report -> report appears on both dashboards.
 - Entrepreneur requests reschedule -> mentor accepts -> meeting time updates.

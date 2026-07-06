@@ -25,8 +25,9 @@ detail page (mentors show their entrepreneurs, entrepreneurs show their
 mentor).
 
 **Out (later specs):** entrepreneur booking flow, availability management UI,
-pairing pages, the in-app live chat, admin pairing screens, Google
-Calendar/Meet integration, notifications and reminders.
+pairing pages, the in-app live chat, the entrepreneur mentor-selection flow
+(entrepreneurs browse approved mentors and choose one; admins do not pair),
+Google Calendar/Meet integration, notifications and reminders.
 
 **Forward compatibility for known upcoming features:**
 - **Google Meet bookings.** Booking (later spec) will create a Google Meet
@@ -50,13 +51,14 @@ All tables new; all status columns are string-backed PHP enums following
 | `entrepreneur_user_id` | FK users, cascadeOnDelete |
 | `mentor_user_id` | FK users, cascadeOnDelete |
 | `status` | enum `PairingStatus`: `active` / `ended`, default active |
-| `paired_by` | FK users (admin), nullOnDelete |
 | `ended_at` | timestamp nullable |
 | timestamps | |
 
-Rule: at most one **active** pairing per entrepreneur (enforced in the future
-admin pairing action; the schema carries an index on
-`(entrepreneur_user_id, status)`).
+Pairings are created by the entrepreneur selecting a mentor (the future
+`SelectMentor` action per guide §10.11); no admin-provenance column is
+needed since `entrepreneur_user_id` is the selector. Rule: at most one
+**active** pairing per entrepreneur (enforced in `SelectMentor`; the schema
+carries an index on `(entrepreneur_user_id, status)`).
 
 ### `mentor_availability_slots`
 | column | type |
@@ -176,8 +178,9 @@ incomplete. Sections in priority order, per the actions-first decision:
    name, day/time in the mentor's timezone, session type, and a Join link
    when `meeting_link` is set. Empty state: "No meetings booked this week."
 3. **Your mentees** — active pairings with entrepreneur name, company, last
-   and next meeting. Empty state teaches: pairings are created by the program
-   admins; no action for the mentor to take yet.
+   and next meeting. Empty state teaches: entrepreneurs choose their mentor
+   when they join, and new mentees appear here automatically; no action for
+   the mentor to take.
 4. **Availability** — quiet strip: active slot count and the weekly slots.
    Empty state notes availability setup is coming and that admins can help
    meanwhile (no dead buttons to a page that does not exist).
@@ -202,8 +205,9 @@ section between Profile and Documents, fed by a new `pairings` prop from
   mentor's page). Ended pairings list beneath in a quieter tone with their
   ended date.
 - For admins/employees, or when no pairings exist, the section shows a
-  teaching empty state ("No mentorship pairings yet. Pairings are created by
-  program admins."); creating pairings stays out of scope for this spec.
+  teaching empty state ("No mentorship pairings yet. Entrepreneurs choose
+  their mentor when they join."); creating pairings stays out of scope for
+  this spec.
 
 The section reuses the existing card/dl idiom of the page and the
 `components/users` conventions; rows link with the standard focus ring.
