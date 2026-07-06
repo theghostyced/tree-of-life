@@ -27,6 +27,7 @@ class MentorAvailabilitySlot extends Model
     protected function casts(): array
     {
         return [
+            'day_of_week' => 'integer',
             'is_active' => 'boolean',
         ];
     }
