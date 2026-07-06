@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -97,16 +98,18 @@ class User extends Authenticatable
         return $this->hasMany(UserDocument::class);
     }
 
-    /** The mentor an entrepreneur has chosen. @return HasOne<MentorPairing, $this> */
-    public function mentorPairing(): HasOne
+    /** The mentors an entrepreneur has chosen. @return BelongsToMany<User, $this> */
+    public function mentors(): BelongsToMany
     {
-        return $this->hasOne(MentorPairing::class, 'entrepreneur_id');
+        return $this->belongsToMany(User::class, 'mentor_pairings', 'entrepreneur_id', 'mentor_id')
+            ->withTimestamps();
     }
 
-    /** The entrepreneurs paired to a mentor. @return HasMany<MentorPairing, $this> */
-    public function menteePairings(): HasMany
+    /** The entrepreneurs paired to a mentor. @return BelongsToMany<User, $this> */
+    public function mentees(): BelongsToMany
     {
-        return $this->hasMany(MentorPairing::class, 'mentor_id');
+        return $this->belongsToMany(User::class, 'mentor_pairings', 'mentor_id', 'entrepreneur_id')
+            ->withTimestamps();
     }
 
     /**

@@ -1,10 +1,9 @@
 <?php
 
-use App\Models\MentorPairing;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
 
-test('the directory lists available mentors and their focus areas', function () {
+test('the hub lists available mentors and their focus areas', function () {
     $entrepreneur = completeEntrepreneur();
 
     availableMentor('Grace Mentor')->mentorProfile
@@ -19,13 +18,26 @@ test('the directory lists available mentors and their focus areas', function () 
             ->component('entrepreneur/Mentors')
             ->has('mentors.data', 2)
             ->where('mentors.total', 2)
-            // Focus areas are the de-duplicated, sorted union across the pool.
-            ->where('focusAreas', ['Agriculture', 'Manufacturing'])
-            // An unpaired entrepreneur drives the "Mentors" nav.
-            ->where('auth.hasMentor', false));
+            ->has('yourMentors', 0)
+            ->where('focusAreas', ['Agriculture', 'Manufacturing']));
 });
 
-test('the directory filters by search server-side', function () {
+test('the directory excludes mentors the entrepreneur already works with', function () {
+    $entrepreneur = completeEntrepreneur();
+    $chosen = availableMentor('Grace Mentor');
+    availableMentor('Noah Guide');
+    $entrepreneur->mentors()->attach($chosen->id);
+
+    $this->actingAs($entrepreneur)->get('/entrepreneur/mentors')
+        ->assertInertia(fn (Assert $page) => $page
+            // Grace is under "your mentors"; only Noah is left to add.
+            ->has('yourMentors', 1)
+            ->where('yourMentors.0.name', 'Grace Mentor')
+            ->has('mentors.data', 1)
+            ->where('mentors.data.0.name', 'Noah Guide'));
+});
+
+test('the hub filters by search server-side', function () {
     $entrepreneur = completeEntrepreneur();
     availableMentor('Grace Mentor'); // expertise 'Trade finance'
     availableMentor('Noah Guide')->mentorProfile
@@ -37,7 +49,7 @@ test('the directory filters by search server-side', function () {
             ->where('mentors.data.0.name', 'Noah Guide'));
 });
 
-test('the directory filters by focus area server-side', function () {
+test('the hub filters by focus area server-side', function () {
     $entrepreneur = completeEntrepreneur();
     availableMentor('Grace')->mentorProfile->update(['industry_focus' => ['Agriculture']]);
     availableMentor('Noah')->mentorProfile->update(['industry_focus' => ['Manufacturing']]);
@@ -48,7 +60,7 @@ test('the directory filters by focus area server-side', function () {
             ->where('mentors.data.0.name', 'Noah'));
 });
 
-test('the directory paginates the mentor pool', function () {
+test('the hub paginates the mentor pool', function () {
     $entrepreneur = completeEntrepreneur();
     foreach (range(1, 13) as $i) {
         availableMentor(sprintf('Mentor %02d', $i));
@@ -64,19 +76,10 @@ test('the directory paginates the mentor pool', function () {
         ->assertInertia(fn (Assert $page) => $page->has('mentors.data', 1));
 });
 
-test('the directory redirects an entrepreneur who has not finished onboarding', function () {
+test('the hub redirects an entrepreneur who has not finished onboarding', function () {
     $entrepreneur = User::factory()->entrepreneur()->approved()->create();
     availableMentor();
 
     $this->actingAs($entrepreneur)->get('/entrepreneur/mentors')
         ->assertRedirect('/entrepreneur/dashboard');
-});
-
-test('the directory redirects an entrepreneur who is already paired to their mentor', function () {
-    $entrepreneur = completeEntrepreneur();
-    $mentor = availableMentor();
-    MentorPairing::create(['entrepreneur_id' => $entrepreneur->id, 'mentor_id' => $mentor->id]);
-
-    $this->actingAs($entrepreneur)->get('/entrepreneur/mentors')
-        ->assertRedirect('/entrepreneur/mentor');
 });

@@ -1,27 +1,25 @@
 <?php
 
-use App\Models\MentorPairing;
 use Inertia\Testing\AssertableInertia as Assert;
 
-test('the detail page shows the entrepreneur their chosen mentor', function () {
+test('the detail page shows one of the entrepreneur’s chosen mentors', function () {
     $entrepreneur = completeEntrepreneur();
     $mentor = availableMentor('Grace Mentor');
-    MentorPairing::create(['entrepreneur_id' => $entrepreneur->id, 'mentor_id' => $mentor->id]);
+    $entrepreneur->mentors()->attach($mentor->id);
 
-    $this->actingAs($entrepreneur)->get('/entrepreneur/mentor')
+    $this->actingAs($entrepreneur)->get("/entrepreneur/mentors/{$mentor->id}")
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->component('entrepreneur/Mentor')
             ->where('mentor.name', 'Grace Mentor')
             ->where('mentor.expertise', 'Trade finance')
-            ->whereNot('pairedAt', null)
-            // A paired entrepreneur drives the "My mentor" nav.
-            ->where('auth.hasMentor', true));
+            ->whereNot('pairedAt', null));
 });
 
-test('the detail page redirects an entrepreneur who has no mentor', function () {
+test('the detail page redirects for a mentor the entrepreneur has not chosen', function () {
     $entrepreneur = completeEntrepreneur();
+    $stranger = availableMentor('Not Mine');
 
-    $this->actingAs($entrepreneur)->get('/entrepreneur/mentor')
+    $this->actingAs($entrepreneur)->get("/entrepreneur/mentors/{$stranger->id}")
         ->assertRedirect('/entrepreneur/mentors');
 });

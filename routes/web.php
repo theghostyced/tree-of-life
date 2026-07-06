@@ -58,7 +58,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard', [EntrepreneurDashboardController::class, 'index'])->middleware('account.active')->name('dashboard');
         Route::patch('/profile', [EntrepreneurProfileController::class, 'update'])->name('profile.update');
         Route::get('/mentors', [EntrepreneurMentorController::class, 'index'])->middleware('account.active')->name('mentors.index');
-        Route::get('/mentor', [EntrepreneurMentorController::class, 'show'])->middleware('account.active')->name('mentor.show');
+        Route::get('/mentors/{mentor}', [EntrepreneurMentorController::class, 'show'])->middleware('account.active')->name('mentors.show');
         Route::post('/pairings', [EntrepreneurPairingController::class, 'store'])->middleware('account.active')->name('pairings.store');
         Route::post('/employees', [EmployeeInvitationController::class, 'store'])->name('employees.store');
     });

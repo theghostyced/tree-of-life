@@ -17,7 +17,8 @@ class MentorController extends Controller
     private const PER_PAGE = 12;
 
     /**
-     * The mentor directory — browse, search, filter and choose.
+     * The mentors hub — the entrepreneur's chosen mentors plus a directory to
+     * find and add more.
      */
     public function index(Request $request): Response|RedirectResponse
     {
@@ -27,16 +28,14 @@ class MentorController extends Controller
             return redirect()->route('entrepreneur.dashboard');
         }
 
-        // Already paired — send them to their mentor's page instead.
-        if ($user->mentorPairing()->exists()) {
-            return redirect()->route('entrepreneur.mentor.show');
-        }
+        $chosenIds = $user->mentors()->pluck('users.id');
 
         $search = trim((string) $request->query('search', ''));
         $focus = trim((string) $request->query('focus', ''));
 
         $mentors = User::query()
             ->availableMentor()
+            ->whereNotIn('id', $chosenIds)
             ->when($search !== '', fn (Builder $q) => $q->where(
                 fn (Builder $inner) => $inner
                     ->where('name', 'like', "%{$search}%")
@@ -57,30 +56,37 @@ class MentorController extends Controller
         return Inertia::render('entrepreneur/Mentors', [
             'mentors' => $mentors,
             'filters' => ['search' => $search, 'focus' => $focus],
-            // Lazy: the facet scan only runs on a full page load, not on the
-            // partial reloads that search / filter / paginate trigger.
+            // Lazy: these only run on a full page load, not on the partial
+            // reloads that search / filter / paginate the directory.
+            'yourMentors' => fn () => $user->mentors()
+                ->with('mentorProfile')
+                ->orderBy('name')
+                ->get()
+                ->map(fn (User $mentor) => MentorCard::forUser($mentor)->toArray())
+                ->values(),
             'focusAreas' => fn () => $this->focusAreas(),
         ]);
     }
 
     /**
-     * The entrepreneur's chosen mentor — a dedicated detail page.
+     * One of the entrepreneur's chosen mentors — a dedicated detail page.
      */
-    public function show(Request $request): Response|RedirectResponse
+    public function show(Request $request, User $mentor): Response|RedirectResponse
     {
-        $pairing = $request->user()
-            ->mentorPairing()
-            ->with('mentor.mentorProfile')
+        $chosen = $request->user()
+            ->mentors()
+            ->with('mentorProfile')
+            ->whereKey($mentor->id)
             ->first();
 
-        // Not paired yet — send them to the directory to choose one.
-        if ($pairing === null) {
+        // Not one of their mentors — send them back to the hub.
+        if ($chosen === null) {
             return redirect()->route('entrepreneur.mentors.index');
         }
 
         return Inertia::render('entrepreneur/Mentor', [
-            'mentor' => MentorCard::forUser($pairing->mentor)->toArray(),
-            'pairedAt' => $pairing->created_at?->toIso8601String(),
+            'mentor' => MentorCard::forUser($chosen)->toArray(),
+            'pairedAt' => $chosen->pivot->created_at?->toIso8601String(),
         ]);
     }
 

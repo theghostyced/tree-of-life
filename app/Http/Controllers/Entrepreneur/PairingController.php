@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Entrepreneur;
 
 use App\Data\OnboardingProgress;
 use App\Http\Controllers\Controller;
-use App\Models\MentorPairing;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -26,12 +25,6 @@ class PairingController extends Controller
             ]);
         }
 
-        if ($user->mentorPairing()->exists()) {
-            throw ValidationException::withMessages([
-                'mentor_id' => 'You have already chosen a mentor.',
-            ]);
-        }
-
         $mentor = User::query()
             ->availableMentor()
             ->whereKey($validated['mentor_id'])
@@ -43,12 +36,15 @@ class PairingController extends Controller
             ]);
         }
 
-        MentorPairing::create([
-            'entrepreneur_id' => $user->id,
-            'mentor_id' => $mentor->id,
-        ]);
+        if ($user->mentors()->whereKey($mentor->id)->exists()) {
+            throw ValidationException::withMessages([
+                'mentor_id' => "You're already working with {$mentor->name}.",
+            ]);
+        }
 
-        return redirect()->route('entrepreneur.dashboard')
-            ->with('status', "You're now paired with {$mentor->name}.");
+        $user->mentors()->attach($mentor->id);
+
+        return redirect()->route('entrepreneur.mentors.index')
+            ->with('status', "You're now working with {$mentor->name}.");
     }
 }

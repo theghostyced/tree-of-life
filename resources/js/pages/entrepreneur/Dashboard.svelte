@@ -1,9 +1,8 @@
 <script lang="ts">
     import { Link } from '@inertiajs/svelte';
-    import { ArrowRight, ListChecks, BadgeCheck } from '@lucide/svelte';
+    import { ArrowRight, ListChecks, ChevronRight } from '@lucide/svelte';
     import EntrepreneurLayout from '@/components/layout/EntrepreneurLayout.svelte';
     import { Toaster } from '@/components/ui/sonner';
-    import { YEAR_RANGES } from '@/lib/onboarding-options';
     import { cn } from '@/lib/utils';
 
     type Onboarding = {
@@ -25,10 +24,10 @@
 
     let {
         onboarding,
-        mentor = null,
+        mentors = [],
     }: {
         onboarding: Onboarding;
-        mentor: Mentor | null;
+        mentors: Mentor[];
     } = $props();
 
     const pct = $derived(
@@ -48,11 +47,6 @@
             .map((w) => w[0])
             .join('')
             .toUpperCase();
-
-    const yearsLabel = (v: number | null) =>
-        v == null
-            ? null
-            : (YEAR_RANGES.find((r) => r.value === v)?.label ?? null);
 </script>
 
 <EntrepreneurLayout title="Dashboard">
@@ -69,66 +63,52 @@
             </p>
         </div>
 
-        {#if mentor}
-            <!-- ── Paired ──────────────────────────────────────────────── -->
+        {#if mentors.length}
+            <!-- ── Working with one or more mentors ────────────────────── -->
             <section class="mt-8">
-                <div
-                    class="rounded-2xl border border-line bg-panel/40 p-6 sm:p-7"
-                >
-                    <div class="flex flex-col gap-5 sm:flex-row sm:items-start">
-                        <div
-                            class="flex size-14 shrink-0 items-center justify-center rounded-full bg-accent-soft text-lg font-semibold text-accent"
+                <div class="flex items-center justify-between">
+                    <h2 class="text-lg font-semibold text-ink">Your mentors</h2>
+                    <Link
+                        href="/entrepreneur/mentors"
+                        class={cn(
+                            'inline-flex items-center gap-1 rounded-md text-sm text-muted transition-colors hover:text-ink',
+                            focusRing,
+                        )}
+                    >
+                        Manage
+                        <ArrowRight class="size-4" strokeWidth={1.75} />
+                    </Link>
+                </div>
+
+                <div class="mt-4 grid gap-3 sm:grid-cols-2">
+                    {#each mentors as m (m.id)}
+                        <Link
+                            href={`/entrepreneur/mentors/${m.id}`}
+                            class="group flex items-center gap-3 rounded-xl border border-line bg-panel/40 p-4 transition-colors hover:border-line-strong"
                         >
-                            {initials(mentor.name)}
-                        </div>
-                        <div class="min-w-0 flex-1">
-                            <span
-                                class="inline-flex items-center gap-1 rounded-full bg-accent-soft px-2.5 py-1 text-xs font-medium text-accent"
+                            <div
+                                class="flex size-11 shrink-0 items-center justify-center rounded-full bg-accent-soft text-sm font-semibold text-accent"
                             >
-                                <BadgeCheck class="size-3.5" strokeWidth={2} />
-                                Your mentor
-                            </span>
-                            <h2
-                                class="mt-2 text-xl font-semibold tracking-tight text-ink"
-                            >
-                                {mentor.name}
-                            </h2>
-                            {#if mentor.expertise}
-                                <p class="text-[15px] text-accent">
-                                    {mentor.expertise}
-                                </p>
-                            {/if}
-                            {#if mentor.bio}
+                                {initials(m.name)}
+                            </div>
+                            <div class="min-w-0">
                                 <p
-                                    class="mt-3 max-w-2xl text-[15px] text-muted"
+                                    class="truncate text-sm font-semibold text-ink"
                                 >
-                                    {mentor.bio}
+                                    {m.name}
                                 </p>
-                            {/if}
-                            <dl class="mt-4 flex flex-wrap gap-x-10 gap-y-3">
-                                {#if yearsLabel(mentor.yearsExperience)}
-                                    <div>
-                                        <dt class="text-xs text-muted">
-                                            Experience
-                                        </dt>
-                                        <dd class="text-[15px] text-ink">
-                                            {yearsLabel(mentor.yearsExperience)}
-                                        </dd>
-                                    </div>
+                                {#if m.expertise}
+                                    <p class="truncate text-xs text-muted">
+                                        {m.expertise}
+                                    </p>
                                 {/if}
-                                {#if mentor.availability}
-                                    <div>
-                                        <dt class="text-xs text-muted">
-                                            Availability
-                                        </dt>
-                                        <dd class="text-[15px] text-ink">
-                                            {mentor.availability}
-                                        </dd>
-                                    </div>
-                                {/if}
-                            </dl>
-                        </div>
-                    </div>
+                            </div>
+                            <ChevronRight
+                                class="ml-auto size-4 shrink-0 text-faint transition-colors group-hover:text-muted"
+                                strokeWidth={1.75}
+                            />
+                        </Link>
+                    {/each}
                 </div>
 
                 <div
@@ -146,8 +126,8 @@
                             </span>
                         </div>
                         <p class="mt-2 max-w-md text-sm text-muted">
-                            Scheduling meetings with {mentor.name.split(' ')[0]}
-                            and reading your meeting reports arrives here next.
+                            Scheduling meetings with your mentors and reading
+                            the report from each one arrives here next.
                         </p>
                     </div>
                     <img
@@ -177,7 +157,7 @@
                             </p>
                             <p class="mt-1 text-[15px] text-muted">
                                 {onboarding.remaining} of {onboarding.total} items
-                                left — then you can choose your mentor.
+                                left — then you can choose your mentors.
                             </p>
                         </div>
                     </div>
@@ -207,18 +187,18 @@
                 </div>
             </div>
         {:else}
-            <!-- ── Onboarded, no mentor yet: send them to the directory ── -->
+            <!-- ── Onboarded, no mentors yet: send them to the directory ── -->
             <div
                 class="mt-8 flex flex-col gap-6 rounded-2xl border border-line bg-panel/50 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-7"
             >
                 <div class="max-w-md">
                     <h2 class="text-xl font-semibold tracking-tight text-ink">
-                        Choose your mentor
+                        Choose your mentors
                     </h2>
                     <p class="mt-2 text-[15px] text-muted">
                         Your profile is complete. Browse the mentors in the
-                        programme and pick the one who best fits your business —
-                        you'll pair with one.
+                        programme and choose the ones who best fit your business
+                        — you can work with more than one.
                     </p>
                     <Link
                         href="/entrepreneur/mentors"

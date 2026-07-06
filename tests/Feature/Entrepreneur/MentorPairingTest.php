@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\MentorPairing;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
 
@@ -10,21 +9,44 @@ test('an entrepreneur can choose an available mentor', function () {
 
     $this->actingAs($entrepreneur)
         ->post('/entrepreneur/pairings', ['mentor_id' => $mentor->id])
-        ->assertRedirect('/entrepreneur/dashboard');
+        ->assertRedirect('/entrepreneur/mentors');
 
-    expect(MentorPairing::where('entrepreneur_id', $entrepreneur->id)
-        ->where('mentor_id', $mentor->id)->exists())->toBeTrue();
+    expect($entrepreneur->mentors()->whereKey($mentor->id)->exists())->toBeTrue();
 });
 
-test('the chosen mentor appears on the dashboard', function () {
+test('an entrepreneur can work with more than one mentor', function () {
     $entrepreneur = completeEntrepreneur();
-    $mentor = availableMentor('Grace Mentor');
-    MentorPairing::create(['entrepreneur_id' => $entrepreneur->id, 'mentor_id' => $mentor->id]);
+    $first = availableMentor('Grace');
+    $second = availableMentor('Noah');
+
+    $this->actingAs($entrepreneur)->post('/entrepreneur/pairings', ['mentor_id' => $first->id]);
+    $this->actingAs($entrepreneur)->post('/entrepreneur/pairings', ['mentor_id' => $second->id]);
+
+    expect($entrepreneur->mentors()->count())->toBe(2);
+});
+
+test('an entrepreneur cannot choose the same mentor twice', function () {
+    $entrepreneur = completeEntrepreneur();
+    $mentor = availableMentor();
+    $entrepreneur->mentors()->attach($mentor->id);
+
+    $this->actingAs($entrepreneur)->from('/entrepreneur/mentors')
+        ->post('/entrepreneur/pairings', ['mentor_id' => $mentor->id])
+        ->assertSessionHasErrors('mentor_id');
+
+    expect($entrepreneur->mentors()->count())->toBe(1);
+});
+
+test('the chosen mentors appear on the dashboard', function () {
+    $entrepreneur = completeEntrepreneur();
+    $entrepreneur->mentors()->attach(availableMentor('Grace Mentor')->id);
+    $entrepreneur->mentors()->attach(availableMentor('Noah Guide')->id);
 
     $this->actingAs($entrepreneur)->get('/entrepreneur/dashboard')
         ->assertInertia(fn (Assert $page) => $page
             ->component('entrepreneur/Dashboard')
-            ->where('mentor.name', 'Grace Mentor'));
+            ->has('mentors', 2)
+            ->where('mentors.0.name', 'Grace Mentor'));
 });
 
 test('an entrepreneur cannot choose a mentor before finishing onboarding', function () {
@@ -35,29 +57,16 @@ test('an entrepreneur cannot choose a mentor before finishing onboarding', funct
         ->post('/entrepreneur/pairings', ['mentor_id' => $mentor->id])
         ->assertSessionHasErrors('mentor_id');
 
-    expect(MentorPairing::count())->toBe(0);
+    expect($entrepreneur->mentors()->count())->toBe(0);
 });
 
 test('an entrepreneur cannot pair with a non-mentor', function () {
     $entrepreneur = completeEntrepreneur();
     $notMentor = User::factory()->entrepreneur()->approved()->create();
 
-    $this->actingAs($entrepreneur)->from('/entrepreneur/dashboard')
+    $this->actingAs($entrepreneur)->from('/entrepreneur/mentors')
         ->post('/entrepreneur/pairings', ['mentor_id' => $notMentor->id])
         ->assertSessionHasErrors('mentor_id');
 
-    expect(MentorPairing::count())->toBe(0);
-});
-
-test('an entrepreneur cannot choose a second mentor', function () {
-    $entrepreneur = completeEntrepreneur();
-    $first = availableMentor('Grace');
-    $second = availableMentor('Noah');
-    MentorPairing::create(['entrepreneur_id' => $entrepreneur->id, 'mentor_id' => $first->id]);
-
-    $this->actingAs($entrepreneur)->from('/entrepreneur/dashboard')
-        ->post('/entrepreneur/pairings', ['mentor_id' => $second->id])
-        ->assertSessionHasErrors('mentor_id');
-
-    expect(MentorPairing::where('entrepreneur_id', $entrepreneur->id)->count())->toBe(1);
+    expect($entrepreneur->mentors()->count())->toBe(0);
 });

@@ -2,7 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use App\Enums\UserRole;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -46,10 +45,6 @@ class HandleInertiaRequests extends Middleware
                     'email' => $request->user()->email,
                 ] : null,
                 'role' => $request->user()?->role?->value,
-                // Drives the entrepreneur nav (Mentors ↔ My mentor). Lazy so the
-                // lookup only runs on full page loads, not partial reloads.
-                'hasMentor' => fn () => $request->user()?->role === UserRole::Entrepreneur
-                    && $request->user()->mentorPairing()->exists(),
             ],
         ];
     }

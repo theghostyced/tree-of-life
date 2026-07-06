@@ -1,5 +1,6 @@
 <script lang="ts">
-    import { BadgeCheck } from '@lucide/svelte';
+    import { Link } from '@inertiajs/svelte';
+    import { BadgeCheck, ChevronLeft } from '@lucide/svelte';
     import EntrepreneurLayout from '@/components/layout/EntrepreneurLayout.svelte';
     import { YEAR_RANGES } from '@/lib/onboarding-options';
 
@@ -52,7 +53,14 @@
     <div class="mx-auto w-full max-w-4xl px-6 py-8">
         <!-- Header -->
         <div>
-            <h1 class="text-2xl font-semibold tracking-tight text-ink">
+            <Link
+                href="/entrepreneur/mentors"
+                class="inline-flex items-center gap-1 text-sm text-muted transition-colors outline-none hover:text-ink focus-visible:text-ink"
+            >
+                <ChevronLeft class="size-4" strokeWidth={1.75} />
+                Mentors
+            </Link>
+            <h1 class="mt-2 text-2xl font-semibold tracking-tight text-ink">
                 My mentor
             </h1>
             <p class="mt-1.5 text-[15px] text-muted">
