@@ -145,3 +145,16 @@ test('a missing file marks the import failed', function () {
 
     expect($import->refresh()->status)->toBe(InvitationImportStatus::Failed);
 });
+
+test('the failed hook marks the import failed and removes the file', function () {
+    $import = InvitationImport::factory()->create(['total_rows' => 1]);
+    Storage::disk('local')->put($import->storagePath(), "email,role,name\nx@example.com,mentor,\n");
+
+    (new ProcessInvitationImport($import))->failed(new RuntimeException('worker killed'));
+
+    $import->refresh();
+    expect($import->status)->toBe(InvitationImportStatus::Failed)
+        ->and($import->row_errors)->toHaveCount(1)
+        ->and($import->row_errors[0]['reason'])->toBe('import stopped unexpectedly');
+    Storage::disk('local')->assertMissing($import->storagePath());
+});

@@ -23,7 +23,9 @@ class InvitationImportController extends Controller
             ."kwame@example.com,mentor,\n";
 
         return response()->streamDownload(
-            fn () => print ($content),
+            function () use ($content): void {
+                echo $content;
+            },
             'invitations-template.csv',
             ['Content-Type' => 'text/csv'],
         );
@@ -35,9 +37,9 @@ class InvitationImportController extends Controller
 
         // Count data rows (non-blank lines below the header) for progress totals.
         $stream = fopen($file->getRealPath(), 'rb');
-        fgetcsv($stream);
+        fgetcsv($stream, escape: '');
         $totalRows = 0;
-        while (($cells = fgetcsv($stream)) !== false) {
+        while (($cells = fgetcsv($stream, escape: '')) !== false) {
             if (! ProcessInvitationImport::isBlankRow($cells)) {
                 $totalRows++;
             }

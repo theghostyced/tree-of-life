@@ -54,11 +54,11 @@ class ProcessInvitationImport implements ShouldQueue
                 throw new \RuntimeException('Import file is missing.');
             }
 
-            fgetcsv($stream); // header, validated at upload time
+            fgetcsv($stream, escape: ''); // header, validated at upload time
             $processed = 0;
             $seen = [];
 
-            while (($cells = fgetcsv($stream)) !== false) {
+            while (($cells = fgetcsv($stream, escape: '')) !== false) {
                 $line++;
 
                 if (self::isBlankRow($cells)) {
@@ -94,6 +94,25 @@ class ProcessInvitationImport implements ShouldQueue
 
             $disk->delete($this->import->storagePath());
         }
+    }
+
+    /**
+     * A timeout hard-kill skips handle()'s catch/finally entirely; without
+     * this hook the import would sit at Processing forever while every
+     * admin's browser keeps polling it.
+     */
+    public function failed(?Throwable $exception): void
+    {
+        $import = $this->import->fresh() ?? $this->import;
+
+        $errors = $import->row_errors ?? [];
+        $errors[] = ['row' => 0, 'email' => '', 'reason' => 'import stopped unexpectedly'];
+
+        $import->row_errors = $errors;
+        $import->status = InvitationImportStatus::Failed;
+        $import->save();
+
+        Storage::disk('local')->delete($import->storagePath());
     }
 
     /**

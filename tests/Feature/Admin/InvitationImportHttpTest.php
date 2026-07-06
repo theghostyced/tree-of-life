@@ -114,3 +114,11 @@ test('non-admins cannot reach the import endpoints', function () {
         ->post('/admin/invitations/import', ['file' => csvUpload("email,role,name\na@b.com,mentor,\n")])
         ->assertForbidden();
 });
+
+test('uploads over the size limit are rejected', function () {
+    $this->actingAs($this->admin)
+        ->post('/admin/invitations/import', [
+            'file' => UploadedFile::fake()->create('big.csv', 11000, 'text/csv'),
+        ])
+        ->assertSessionHasErrors('file');
+});

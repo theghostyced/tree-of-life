@@ -39,10 +39,10 @@ class StoreInvitationImportRequest extends FormRequest
                 }
 
                 $stream = fopen($this->file('file')->getRealPath(), 'rb');
-                $header = fgetcsv($stream);
+                $header = fgetcsv($stream, escape: '');
                 $hasDataRow = false;
 
-                while (($cells = fgetcsv($stream)) !== false) {
+                while (($cells = fgetcsv($stream, escape: '')) !== false) {
                     if (! ProcessInvitationImport::isBlankRow($cells)) {
                         $hasDataRow = true;
                         break;
