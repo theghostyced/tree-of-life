@@ -25,6 +25,12 @@
 
     const form = useForm<{ summary: string }>({ summary: '' });
 
+    let summaryEl = $state<HTMLTextAreaElement | null>(null);
+
+    $effect(() => {
+        summaryEl?.focus();
+    });
+
     function submit(e: Event) {
         e.preventDefault();
         form.post(`/mentor/meetings/${meeting.meetingId}/report`, {
@@ -37,11 +43,21 @@
     }
 </script>
 
+<svelte:window
+    onkeydown={(e) => {
+        if (e.key === 'Escape' && !form.processing) {
+            onClose();
+        }
+    }}
+/>
+
 <div class="fixed inset-0 z-50">
     <button
         type="button"
         aria-label="Close report panel"
         onclick={onClose}
+        tabindex="-1"
+        disabled={form.processing}
         transition:fade={{ duration: reduce ? 0 : 180 }}
         class="absolute inset-0 bg-black/50"
     ></button>
@@ -67,8 +83,9 @@
                 type="button"
                 onclick={onClose}
                 aria-label="Close"
+                disabled={form.processing}
                 class={cn(
-                    'rounded-lg p-1.5 text-muted transition-colors hover:bg-elevated hover:text-ink',
+                    'rounded-lg p-1.5 text-muted transition-colors hover:bg-elevated hover:text-ink disabled:pointer-events-none disabled:opacity-50',
                     focusRing,
                 )}
             >
@@ -82,6 +99,7 @@
                     What happened in this meeting?
                 </span>
                 <textarea
+                    bind:this={summaryEl}
                     bind:value={form.summary}
                     rows="8"
                     maxlength="5000"
@@ -101,8 +119,9 @@
                 <button
                     type="button"
                     onclick={onClose}
+                    disabled={form.processing}
                     class={cn(
-                        'rounded-lg px-4 py-2.5 text-sm font-medium text-muted transition-colors hover:bg-elevated hover:text-ink',
+                        'rounded-lg px-4 py-2.5 text-sm font-medium text-muted transition-colors hover:bg-elevated hover:text-ink disabled:pointer-events-none disabled:opacity-50',
                         focusRing,
                     )}
                 >
