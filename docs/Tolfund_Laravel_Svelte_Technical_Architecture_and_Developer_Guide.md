@@ -1559,11 +1559,7 @@ Recommended path conventions:
 ```text
 registrations/mentor/{userId}/
 registrations/entrepreneur/{userId}/
-funded-companies/{companyId}/
-support-programs/{programId}/
-support-reports/{companyId}/
-quarterly-assessments/{assessmentId}/
-mentorship-reports/{mentorUserId}/
+meeting-reports/{meetingId}/
 ```
 
 Store relative paths only.
@@ -1594,10 +1590,10 @@ Required mail types:
 - Email verification (only when an email is changed later; invited users are verified on acceptance).
 - Password reset.
 - Account approved/rejected.
-- Support/onboarding status notices.
-- Mentorship session reminders.
+- Onboarding status notices.
+- Pairing notices.
+- Meeting reminders.
 - Report submission reminders.
-- Critical subscription notices.
 
 ### 13.2 Email Verification
 
@@ -1620,46 +1616,7 @@ Queue jobs should be monitored in production. Failed jobs must be visible operat
 
 ## 14. Payments and Financial Controls
 
-### 14.1 Current Payment Model
-
-The previous product model uses recorded payment references rather than a fully integrated provider.
-
-The annual subscription is the platform's only payment. Financing amounts are disbursed offline by TLF and never move through the platform. There is no mentor pairing fee.
-
-Preserve support for:
-
-- Annual subscription payment, through the portal or recorded from an offsite payment.
-- Admin-configurable fees via `platform_settings`.
-
-### 14.2 Long-Term Payment Abstraction
-
-Design a payment abstraction early:
-
-```text
-app/Contracts/PaymentGateway.php
-app/Services/Payments/ManualPaymentGateway.php
-app/Services/Payments/StripePaymentGateway.php
-app/Services/Payments/FlutterwavePaymentGateway.php
-```
-
-Even if the first implementation is manual/reference-based, the domain should not hardcode a single provider.
-
-### 14.3 Financial Audit Rules
-
-Subscription payments should be auditable.
-
-Record:
-
-- Amount.
-- Currency.
-- Payment reference.
-- Provider reference when available.
-- Actor.
-- Timestamp.
-- Status.
-- Expiration.
-
-Never update payment records destructively in ways that erase history. Prefer status changes and audit comments.
+> **Out of scope.** The funding workflow (applications/awards/milestones/disbursements/payments) has been removed from Tolfund's scope. Tolfund does not move money and runs no payment, subscription, or fee workflow — there is no payment gateway, no financial controls, and no payment audit surface. The system now covers mentor–entrepreneur pairing, scheduling, meetings, and per-meeting reports; that domain's data model is still to be designed. General audit/auditability guidance for non-financial actions lives in Section 19.
 
 ---
 
@@ -1729,11 +1686,9 @@ Testing should focus on business correctness, not just controller happy paths.
 Use unit tests for:
 
 - Status enum helpers.
-- Subscription fee and expiry calculations.
 - Mentor ranking.
 - Date/time occurrence generation.
 - Booking conflict detection.
-- Quarterly report period grouping.
 
 ### 16.2 Feature Tests
 
@@ -1744,13 +1699,9 @@ Use Laravel feature tests for:
 - Registration and verification through valid invitations only.
 - Profile submission requirements.
 - Admin approval/rejection.
-- Funded company creation and external funding decision recording.
-- Support status lifecycle transitions.
-- Milestone review chain.
-- Support report submission from both entrepreneur and instructor sides.
-- Quarterly assessment preparation and publication.
-- Subscription gate (no access without active support and paid subscription).
-- Instructor request/assignment rules.
+- Mentor–entrepreneur pairing rules.
+- Mentorship access gate (no access without an approved account and an active pairing).
+- Meeting report submission.
 - Booking creation and conflict rejection.
 - Reschedule flow.
 - File download authorization.
@@ -1764,11 +1715,10 @@ Use browser tests for the most valuable end-to-end flows:
 - Admin invites entrepreneur -> entrepreneur accepts invite -> profile submission -> admin approval.
 - Admin invites mentor -> mentor accepts invite -> profile submission -> admin approval.
 - Admin invites admin -> admin accepts invite -> admin dashboard access.
-- Admin creates funded company -> records external funding decision -> support becomes active.
-- Entrepreneur creates milestone -> mentor reviews -> admin approves.
-- Entrepreneur submits 100% update -> mentor approves -> milestone completes.
-- Entrepreneur subscribes -> requests instructor -> books session.
-- Both sides submit reports -> reports appear on both dashboards -> admin collates quarterly assessment.
+- Admin pairs entrepreneur with mentor -> both see the pairing.
+- Mentor sets availability -> entrepreneur schedules a meeting -> conflict rejection works.
+- Meeting takes place -> mentor submits report -> report appears on both dashboards.
+- Entrepreneur requests reschedule -> mentor accepts -> meeting time updates.
 
 ### 16.4 Svelte Tests
 
@@ -1776,7 +1726,7 @@ Use Svelte component tests selectively for:
 
 - Complex multi-step forms.
 - Booking calendar interactions.
-- Milestone review UI state.
+- Meeting scheduling UI state.
 - Notification store behavior.
 
 Avoid over-investing in brittle tests for purely presentational components.
@@ -1788,15 +1738,10 @@ Factories should exist for:
 - Admin users.
 - Mentor users with profile states.
 - Entrepreneur users with profile states.
-- Support programs.
-- Funded companies with support states.
-- Company memberships.
-- Milestones.
-- Support reports.
-- Quarterly assessments.
-- Subscriptions.
+- Mentor–entrepreneur pairings.
 - Availability slots.
-- Sessions.
+- Meetings.
+- Meeting reports.
 
 Use named factory states:
 
@@ -1804,10 +1749,10 @@ Use named factory states:
 User::factory()->admin()
 User::factory()->mentor()->approved()
 User::factory()->entrepreneur()->pending()
-FundedCompany::factory()->activeSupport()
-SupportReport::factory()->submitted()
-Milestone::factory()->mentorReview()
-EntrepreneurSubscription::factory()->paid()
+Pairing::factory()->active()
+MentorAvailabilitySlot::factory()->open()
+Meeting::factory()->scheduled()
+MeetingReport::factory()->submitted()
 ```
 
 ---
@@ -1908,11 +1853,9 @@ php artisan queue:restart
 
 Use Laravel scheduler for:
 
-- Session reminders.
-- Subscription expiry reminders.
+- Meeting reminders.
 - Report submission reminders (per configured cadence).
-- Quarter-end assessment preparation reminders for admins.
-- Support program end-date checks if explicit closure records are needed.
+- Pairing reminders.
 - Cleanup of temporary uploads.
 
 ### 18.4 Observability
@@ -1938,7 +1881,7 @@ Production should provide:
 - Do not expose public registration routes.
 - Require valid, single-use, non-expired invitation tokens for all account creation.
 - Store invitation token hashes only; never store raw invitation tokens.
-- Never trust role, status, amount, or ownership from the client.
+- Never trust role, status, pairing, or ownership from the client.
 - Never expose private storage paths.
 - Validate all uploads.
 - Rate-limit auth, invitation acceptance, invitation resend, verification resend, password reset, and sensitive mutation endpoints.
@@ -1963,12 +1906,9 @@ Add audit logs for high-value actions:
 
 - Account approval/rejection.
 - Invitation creation, resend, revocation, expiry, and acceptance.
-- External funding decision recording and changes.
-- Funded company support status changes.
-- Subscription/payment status changes.
-- Mentor (instructor) assignment.
-- Session completion.
-- Quarterly assessment preparation and publication.
+- Mentor–entrepreneur pairing and unpairing.
+- Meeting scheduling, rescheduling, and completion.
+- Meeting report submission.
 
 This can start as structured domain records and later move to a dedicated `audit_logs` table if needed.
 
@@ -1987,7 +1927,7 @@ This can start as structured domain records and later move to a dedicated `audit
 - Use explicit Inertia page data objects or View Models for page payloads.
 - Keep role layout composition in Svelte layouts, not Blade templates.
 - Prefer Inertia forms, redirects, flash messages, and validation error bags over custom `fetch` flows.
-- Use database settings for live-configurable fees.
+- Use database settings for live-configurable values.
 - Use private document streaming.
 - Use transactions around workflow changes involving multiple records.
 
@@ -2000,13 +1940,11 @@ This can start as structured domain records and later move to a dedicated `audit
 - Repeating shared auth/account props in every controller instead of using Inertia middleware.
 - Turning every form into a bespoke JSON endpoint instead of using Inertia forms.
 - Letting Svelte decide business permissions.
-- Hardcoding fee amounts.
-- Collecting, reviewing, or deciding financing applications inside the platform.
-- Attaching money movement to milestones; financing is disbursed offline by TLF.
+- Reintroducing any funding, payment, subscription, or money-movement workflow; Tolfund does not move money.
 - Storing public URLs for private documents.
 - Duplicating account access rules across many components.
 - Encoding important statuses as unvalidated strings.
-- Approving milestones or changing support status outside a transaction when multiple records are touched.
+- Performing multi-record state transitions (pairing, scheduling, reporting) outside a transaction when multiple records are touched.
 - Adding broad real-time channels with sensitive payloads.
 - Adding public registration for any role.
 - Trusting invitation details from hidden form fields instead of reloading the invitation server-side.
@@ -2050,15 +1988,9 @@ Keep these as compatibility routes only. Do not use the misspelling internally.
 8. Add migration if existing records need transformation.
 9. Add tests for transitions and forbidden paths.
 
-### 21.3 Adding a New Payment Provider
+### 21.3 Payments
 
-1. Implement `PaymentGateway`.
-2. Add provider config.
-3. Add webhook controller.
-4. Validate webhook signatures.
-5. Store provider references.
-6. Make payment completion idempotent.
-7. Add tests for duplicate webhook delivery.
+> **Out of scope.** Tolfund does not move money and runs no payment workflow, so there is no payment-provider integration to add. This pattern has been removed.
 
 ### 21.4 Adding a New Document Type
 
@@ -2080,14 +2012,10 @@ Keep the core business model:
 
 - Roles.
 - Account vetting.
-- Support programs.
-- Funded companies with external financing references.
-- Milestones.
-- Support reports and quarterly assessments.
-- Annual subscriptions.
-- Instructor assignment.
-- Bookings.
-- Reschedules.
+- Mentor–entrepreneur pairing.
+- Mentor availability.
+- Meetings (bookings) and reschedules.
+- Per-meeting reports.
 - Feedback.
 - Notifications.
 - Platform settings.
@@ -2097,8 +2025,7 @@ Keep the strong parts of the previous implementation:
 - Middleware gates.
 - Secure file streaming.
 - Reverb-based notifications.
-- Platform settings for fees.
-- Milestone review chain.
+- Live-configurable platform settings.
 - Booking conflict detection.
 - Tests around business flows.
 
@@ -2111,8 +2038,8 @@ Change:
 - Browser Sanctum token session removed.
 - Next.js middleware removed.
 - Next.js API route handlers removed.
-- In-platform funding application, award, and disbursement pipeline removed; financing is applied for offline and decided by the Investment Committee, and the platform records the outcome only.
-- Mentor pairing fee removed; the annual subscription is the only payment gate.
+- Entire funding workflow removed — applications, awards, milestones, disbursements, funded companies/support programs, quarterly investor/regulator assessments, and offline financing records. Tolfund no longer records any funding outcome.
+- All payments removed — annual subscription, mentor pairing fee, payment gateway, and any money movement. Tolfund does not move money.
 - Frontend route spelling corrected to `/entrepreneur`.
 - Business logic moved out of large controllers into Actions/services.
 - Response transformation moved into explicit Inertia page data objects, View Models, or resources.
@@ -2123,16 +2050,13 @@ Change:
 1. Scaffold Laravel 13 app with the Svelte starter kit, Inertia 3, Svelte 5, TypeScript, Tailwind 4, and shadcn-svelte.
 2. Establish auth, roles, sessions, invitation-only registration, verification, and layouts.
 3. Build invitation administration, users, profiles, document upload, and admin vetting.
-4. Build support programs and funded company records with external funding decisions.
-5. Build milestones and the review chain.
-6. Build annual subscription payment and gating.
-7. Build instructor discovery, requests, and assignment.
-8. Build mentor availability and booking.
-9. Build the dedicated training page and support reports.
-10. Build quarterly assessments and the collated investor/regulator report.
-11. Build notifications and Reverb integration.
-12. Build feedback.
-13. Harden tests, audit logs, and deployment setup.
+4. Build mentor discovery and admin pairing of entrepreneurs with mentors.
+5. Build mentor availability and meeting booking (with conflict detection).
+6. Build the dedicated pairing page and per-meeting reports.
+7. Build rescheduling and meeting completion.
+8. Build notifications and Reverb integration.
+9. Build feedback.
+10. Harden tests, audit logs, and deployment setup.
 
 ### 22.4 Quality Bar
 
@@ -2151,6 +2075,6 @@ For each feature, do not consider it complete until it has:
 
 ## End of Guide
 
-This architecture intentionally moves Tolfund toward a cohesive Laravel-centered application with Svelte as a focused interactive layer. The most important principle is that Laravel owns the business truth: identity, authorization, funded company support state, mentorship eligibility, subscription payments, reports, files, and audit history.
+This architecture intentionally moves Tolfund toward a cohesive Laravel-centered application with Svelte as a focused interactive layer. The most important principle is that Laravel owns the business truth: identity, authorization, mentor–entrepreneur pairing, mentorship eligibility, meetings, per-meeting reports, files, and audit history.
 
-Svelte should make the product faster and more pleasant to use, but it should not duplicate or weaken the domain model. For a platform that handles externally funded companies, private documents, instructor relationships, and subscription-gated workflows, this separation is the right long-term foundation.
+Svelte should make the product faster and more pleasant to use, but it should not duplicate or weaken the domain model. For a platform that handles invitation-only accounts, private documents, mentor–entrepreneur relationships, and scheduled meetings with reports, this separation is the right long-term foundation.
