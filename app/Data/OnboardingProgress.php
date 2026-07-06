@@ -2,8 +2,8 @@
 
 namespace App\Data;
 
-use App\Actions\SubmitProfileForReview;
 use App\Models\User;
+use App\Support\ProfileCompleteness;
 use Illuminate\Contracts\Support\Arrayable;
 
 /**
@@ -25,9 +25,9 @@ class OnboardingProgress implements Arrayable
 
     public static function forUser(User $user): self
     {
-        $action = app(SubmitProfileForReview::class);
-        $missing = array_values($action->missingItems($user));
-        $total = $action->requiredCount($user);
+        $completeness = app(ProfileCompleteness::class);
+        $missing = array_values($completeness->missingItems($user));
+        $total = $completeness->requiredCount($user);
         $remaining = count($missing);
 
         return new self(

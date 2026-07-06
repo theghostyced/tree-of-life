@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Admin\InvitationController;
-use App\Http\Controllers\Admin\UserReviewController;
 use App\Http\Controllers\Auth\InvitationAcceptanceController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Entrepreneur\DashboardController as EntrepreneurDashboardController;
@@ -10,7 +9,6 @@ use App\Http\Controllers\Entrepreneur\ProfileController as EntrepreneurProfileCo
 use App\Http\Controllers\Mentor\DashboardController as MentorDashboardController;
 use App\Http\Controllers\Mentor\ProfileController as MentorProfileController;
 use App\Http\Controllers\Onboarding\DocumentController;
-use App\Http\Controllers\Onboarding\SubmissionController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');
@@ -37,8 +35,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/invitations', [InvitationController::class, 'store'])->name('invitations.store');
         Route::post('/invitations/{invitation}/resend', [InvitationController::class, 'resend'])->name('invitations.resend');
         Route::delete('/invitations/{invitation}', [InvitationController::class, 'revoke'])->name('invitations.revoke');
-        Route::post('/users/{user}/approve', [UserReviewController::class, 'approve'])->name('users.approve');
-        Route::post('/users/{user}/reject', [UserReviewController::class, 'reject'])->name('users.reject');
     });
 
     Route::prefix('entrepreneur')->name('entrepreneur.')->middleware('role:entrepreneur')->group(function () {
@@ -55,9 +51,9 @@ Route::middleware('auth')->group(function () {
     });
 
     /*
-     * Onboarding: profile documents and submission for review (entrepreneurs and mentors).
+     * Onboarding: profile document uploads (entrepreneurs and mentors). Profile
+     * fields are saved incrementally via each role's profile.update route.
      */
     Route::post('/onboarding/documents', [DocumentController::class, 'store'])->name('onboarding.documents.store');
     Route::get('/onboarding/documents/{document}', [DocumentController::class, 'show'])->name('onboarding.documents.show');
-    Route::post('/onboarding/submit', [SubmissionController::class, 'store'])->name('onboarding.submit');
 });

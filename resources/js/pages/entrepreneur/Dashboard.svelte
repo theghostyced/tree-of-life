@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Link } from '@inertiajs/svelte';
-    import { ArrowRight, Clock, ListChecks, LineChart } from '@lucide/svelte';
+    import { ArrowRight, ListChecks, LineChart } from '@lucide/svelte';
     import EntrepreneurLayout from '@/components/layout/EntrepreneurLayout.svelte';
     import { EmptyState } from '@/components/ui/empty-state';
     import { cn } from '@/lib/utils';
@@ -37,25 +37,7 @@
             </p>
         </div>
 
-        {#if onboarding.status === 'pending'}
-            <div
-                class="mt-8 flex items-start gap-4 rounded-2xl border border-line bg-accent-soft p-6"
-            >
-                <Clock
-                    class="mt-0.5 size-6 shrink-0 text-accent"
-                    strokeWidth={1.75}
-                />
-                <div>
-                    <p class="text-lg font-semibold text-ink">
-                        Your profile is under review
-                    </p>
-                    <p class="mt-1 text-[15px] text-muted">
-                        We'll email you once an admin has reviewed it. In the
-                        meantime, feel free to look around.
-                    </p>
-                </div>
-            </div>
-        {:else if onboarding.status !== 'approved'}
+        {#if !onboarding.isComplete}
             <div
                 class="mt-8 rounded-2xl border border-line bg-panel/50 p-6 sm:p-7"
             >
@@ -70,14 +52,11 @@
                         </div>
                         <div>
                             <p class="text-lg font-semibold text-ink">
-                                {onboarding.isComplete
-                                    ? 'Your profile is ready to submit'
-                                    : 'Complete your profile'}
+                                Complete your profile
                             </p>
                             <p class="mt-1 text-[15px] text-muted">
-                                {onboarding.isComplete
-                                    ? 'Submit it for an admin to review and unlock full access.'
-                                    : `${onboarding.remaining} of ${onboarding.total} steps left before you can submit for review.`}
+                                {onboarding.remaining} of {onboarding.total} items
+                                left to finish setting up your business profile.
                             </p>
                         </div>
                     </div>
@@ -88,9 +67,7 @@
                             focusRing,
                         )}
                     >
-                        {onboarding.isComplete
-                            ? 'Review & submit'
-                            : 'Continue onboarding'}
+                        Continue onboarding
                         <ArrowRight class="size-4" strokeWidth={2} />
                     </Link>
                 </div>
@@ -117,7 +94,7 @@
     >
         <EmptyState
             title="Your workspace is taking shape"
-            description="Once you're approved, your funding programs, applications, and milestones will appear here."
+            description="Your funding programs, applications, and milestones will appear here as the programme gets underway."
         >
             {#snippet icon()}
                 <LineChart class="size-6" strokeWidth={1.75} />

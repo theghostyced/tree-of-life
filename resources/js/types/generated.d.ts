@@ -11,6 +11,8 @@ declare namespace App {
             | 'passport_photo'
             | 'identification_card'
             | 'certification';
+        export type InvitationImportStatus =
+            'pending' | 'processing' | 'completed' | 'failed';
         export type InvitationStatus =
             'pending' | 'accepted' | 'revoked' | 'expired';
         export type UserRole = 'admin' | 'mentor' | 'entrepreneur' | 'employee';

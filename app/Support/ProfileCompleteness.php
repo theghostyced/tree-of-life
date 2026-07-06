@@ -1,34 +1,18 @@
 <?php
 
-namespace App\Actions;
+namespace App\Support;
 
-use App\Enums\AccountStatus;
 use App\Enums\DocumentType;
 use App\Enums\UserRole;
 use App\Models\User;
-use Illuminate\Validation\ValidationException;
 
-class SubmitProfileForReview
+/**
+ * Computes how much of a role's onboarding profile is filled in. This is a pure
+ * read-only calculation: the invitation is the approval, so completeness only
+ * drives the dashboard nudge and feature-readiness — it never changes status.
+ */
+class ProfileCompleteness
 {
-    /**
-     * Submit a completed profile for admin review. Throws a validation error
-     * listing what is still missing; on success moves draft/rejected -> pending.
-     */
-    public function handle(User $user): void
-    {
-        $missing = $this->missingItems($user);
-
-        if ($missing !== []) {
-            throw ValidationException::withMessages(['profile' => $missing]);
-        }
-
-        $user->forceFill([
-            'account_status' => AccountStatus::Pending,
-            'profile_submitted_at' => now(),
-            'account_status_changed_at' => now(),
-        ])->save();
-    }
-
     /**
      * Total number of items (fields + required documents) a role must supply.
      */
@@ -42,6 +26,8 @@ class SubmitProfileForReview
     }
 
     /**
+     * Human-readable list of what the user still needs to provide.
+     *
      * @return array<int, string>
      */
     public function missingItems(User $user): array

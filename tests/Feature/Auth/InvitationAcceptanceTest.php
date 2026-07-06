@@ -47,9 +47,10 @@ test('accepting a valid invitation creates the user with the invited email and r
 
     $user = User::firstWhere('email', 'invitee@example.com');
 
+    // The invitation is the approval, so accepting it yields an approved account.
     expect($user)->not->toBeNull()
         ->and($user->role)->toBe(UserRole::Entrepreneur)
-        ->and($user->account_status)->toBe(AccountStatus::Draft)
+        ->and($user->account_status)->toBe(AccountStatus::Approved)
         ->and(Hash::check('sup3r-secret-pw', $user->password))->toBeTrue();
 
     $this->assertAuthenticatedAs($user);

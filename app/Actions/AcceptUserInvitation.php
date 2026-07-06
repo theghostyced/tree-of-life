@@ -20,17 +20,14 @@ class AcceptUserInvitation
         return DB::transaction(function () use ($invitation, $name, $password) {
             $role = $invitation->role;
 
-            $status = match ($role) {
-                UserRole::Admin, UserRole::Employee => AccountStatus::Approved,
-                default => AccountStatus::Draft,
-            };
-
+            // The invitation *is* the approval: an admin only sends one after an
+            // offline background check, so every accepted user starts approved.
             $user = User::create([
                 'name' => $name,
                 'email' => $invitation->email,
                 'password' => $password,
                 'role' => $role,
-                'account_status' => $status,
+                'account_status' => AccountStatus::Approved,
                 'company_id' => $invitation->company_id,
                 'account_status_changed_at' => now(),
             ]);

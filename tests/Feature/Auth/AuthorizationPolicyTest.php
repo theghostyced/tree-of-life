@@ -68,12 +68,3 @@ test('a document may be deleted by its owner but not by a stranger', function ()
     expect($owner->can('delete', $document))->toBeTrue()
         ->and(User::factory()->entrepreneur()->create()->can('delete', $document))->toBeFalse();
 });
-
-/*
- * review-accounts gate — approving/rejecting accounts is an approved-admin ability.
- */
-test('only an approved admin may review accounts', function () {
-    expect(User::factory()->admin()->approved()->create()->can('review-accounts'))->toBeTrue()
-        ->and(User::factory()->admin()->pending()->create()->can('review-accounts'))->toBeFalse()
-        ->and(User::factory()->entrepreneur()->approved()->create()->can('review-accounts'))->toBeFalse();
-});
