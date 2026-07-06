@@ -48,6 +48,19 @@ test('a valid upload stores the file, creates a pending import, and dispatches t
     Queue::assertPushed(ProcessInvitationImport::class, fn ($job) => $job->import->is($import));
 });
 
+test('rows with an empty email cell still count toward total rows', function () {
+    Queue::fake();
+
+    $csv = "email,role,name\n,mentor,Someone\n";
+
+    $this->actingAs($this->admin)
+        ->post('/admin/invitations/import', ['file' => csvUpload($csv)])
+        ->assertRedirect()
+        ->assertSessionHasNoErrors();
+
+    expect(InvitationImport::sole()->total_rows)->toBe(1);
+});
+
 test('uploads with a wrong header are rejected', function () {
     $csv = "name,email,role\nOne,one@example.com,entrepreneur\n";
 

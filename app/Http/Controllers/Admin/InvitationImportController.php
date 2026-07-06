@@ -38,7 +38,7 @@ class InvitationImportController extends Controller
         fgetcsv($stream);
         $totalRows = 0;
         while (($cells = fgetcsv($stream)) !== false) {
-            if ($cells !== [null] && trim((string) ($cells[0] ?? '')) !== '') {
+            if (! ProcessInvitationImport::isBlankRow($cells)) {
                 $totalRows++;
             }
         }

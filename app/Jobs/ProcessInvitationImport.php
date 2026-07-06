@@ -27,6 +27,18 @@ class ProcessInvitationImport implements ShouldQueue
 
     public function __construct(public InvitationImport $import) {}
 
+    /**
+     * A line fgetcsv yields for a blank row: [null], or a single empty cell.
+     * The upload endpoint and validator must count rows by this same rule
+     * so total_rows always matches what the job will process.
+     *
+     * @param  array<int, string|null>  $cells
+     */
+    public static function isBlankRow(array $cells): bool
+    {
+        return $cells === [null] || (count($cells) === 1 && trim((string) $cells[0]) === '');
+    }
+
     public function handle(CreateUserInvitation $createInvitation): void
     {
         $this->import->update(['status' => InvitationImportStatus::Processing]);
@@ -49,8 +61,7 @@ class ProcessInvitationImport implements ShouldQueue
             while (($cells = fgetcsv($stream)) !== false) {
                 $line++;
 
-                // fgetcsv yields [null] for blank lines.
-                if ($cells === [null] || (count($cells) === 1 && trim((string) $cells[0]) === '')) {
+                if (self::isBlankRow($cells)) {
                     continue;
                 }
 

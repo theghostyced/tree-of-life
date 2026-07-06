@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Jobs\ProcessInvitationImport;
 use App\Models\UserInvitation;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
@@ -42,7 +43,7 @@ class StoreInvitationImportRequest extends FormRequest
                 $hasDataRow = false;
 
                 while (($cells = fgetcsv($stream)) !== false) {
-                    if ($cells !== [null] && trim((string) ($cells[0] ?? '')) !== '') {
+                    if (! ProcessInvitationImport::isBlankRow($cells)) {
                         $hasDataRow = true;
                         break;
                     }
