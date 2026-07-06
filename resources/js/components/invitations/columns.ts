@@ -36,7 +36,8 @@ export function createColumns(handlers: Handlers): ColumnDef<Invitation>[] {
         {
             id: 'invitee',
             accessorFn: (row) => `${row.name ?? ''} ${row.email}`,
-            meta: { width: '23%' },
+            // No fixed width: flexes to absorb leftover space so the checkbox
+            // column stays narrow under table-fixed.
             header: ({ column }) =>
                 renderComponent(SortableHeader, { label: 'Invitee', column }),
             cell: ({ row }) =>

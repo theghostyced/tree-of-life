@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Actions\CreateUserInvitation;
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\BulkInvitationActionRequest;
 use App\Http\Requests\Admin\StoreInvitationRequest;
 use App\Mail\UserInvitationMail;
 use App\Models\InvitationImport;
@@ -91,5 +92,45 @@ class InvitationController extends Controller
         $invitation->update(['revoked_at' => now()]);
 
         return back()->with('status', 'Invitation to '.$invitation->email.' revoked.');
+    }
+
+    /**
+     * Resend or revoke many invitations at once. Each is checked against the
+     * policy, so invitations that are no longer pending are silently skipped.
+     */
+    public function bulk(BulkInvitationActionRequest $request): RedirectResponse
+    {
+        $action = $request->validated('action');
+        $actor = $request->user();
+        $invitations = UserInvitation::query()
+            ->whereIn('id', $request->validated('ids'))
+            ->get();
+
+        $affected = 0;
+        foreach ($invitations as $invitation) {
+            if (! $actor->can($action, $invitation)) {
+                continue;
+            }
+
+            if ($action === 'resend') {
+                $token = Str::random(64);
+                $invitation->update([
+                    'token_hash' => hash('sha256', $token),
+                    'expires_at' => now()->addDays(7),
+                ]);
+                Mail::to($invitation->email)->queue(new UserInvitationMail($invitation, $token));
+            } else {
+                $invitation->update(['revoked_at' => now()]);
+            }
+
+            $affected++;
+        }
+
+        $verb = $action === 'resend' ? 'Resent' : 'Revoked';
+
+        return back()->with(
+            'status',
+            "{$verb} {$affected} ".str('invitation')->plural($affected).'.',
+        );
     }
 }

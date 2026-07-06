@@ -9,6 +9,8 @@
         Upload,
         Download,
         FileText,
+        RotateCw,
+        Ban,
     } from '@lucide/svelte';
     import { cubicOut } from 'svelte/easing';
     import { fly, fade, scale } from 'svelte/transition';
@@ -95,6 +97,44 @@
         });
     }
     const columns = createColumns({ onResend: resend, onRevoke: revoke });
+
+    // ── Selection + bulk actions (pending invitations only) ────────────
+    let rowSelection = $state<Record<string, boolean>>({});
+    const selectedIds = $derived(
+        Object.keys(rowSelection)
+            .filter((k) => rowSelection[k])
+            .map(Number),
+    );
+    const selectedCount = $derived(selectedIds.length);
+
+    let confirmingBulkRevoke = $state(false);
+    let bulkTimer: ReturnType<typeof setTimeout> | undefined;
+    function askBulkRevoke() {
+        confirmingBulkRevoke = true;
+        clearTimeout(bulkTimer);
+        bulkTimer = setTimeout(() => (confirmingBulkRevoke = false), 4000);
+    }
+
+    function runBulk(action: 'resend' | 'revoke') {
+        const count = selectedCount;
+        router.post(
+            '/admin/invitations/bulk',
+            { action, ids: selectedIds },
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    rowSelection = {};
+                    confirmingBulkRevoke = false;
+                    const noun = count === 1 ? 'invitation' : 'invitations';
+                    const verb = action === 'resend' ? 'Resent' : 'Revoked';
+                    toastMsg(`${verb} ${count} ${noun}`);
+                },
+            },
+        );
+    }
+
+    const bulkBtn =
+        'inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:outline-none';
 
     // ── Invite slide-over ──────────────────────────────────────────────
     let inviteOpen = $state(false);
@@ -460,7 +500,72 @@
                 </button>
             </div>
         {:else}
-            <DataTable data={visible} {columns} />
+            {#if selectedCount > 0}
+                <div
+                    class="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-accent/30 bg-accent-soft/40 px-4 py-2.5"
+                >
+                    <span class="text-sm font-medium text-ink">
+                        {selectedCount} selected
+                    </span>
+                    <div class="flex items-center gap-1.5">
+                        <button
+                            type="button"
+                            onclick={() => runBulk('resend')}
+                            class={cn(
+                                bulkBtn,
+                                'text-muted hover:bg-elevated hover:text-ink',
+                            )}
+                        >
+                            <RotateCw class="size-3.5" strokeWidth={1.75} />
+                            Resend
+                        </button>
+                        {#if confirmingBulkRevoke}
+                            <button
+                                type="button"
+                                onclick={() => runBulk('revoke')}
+                                class={cn(
+                                    bulkBtn,
+                                    'bg-danger/12 font-semibold text-danger-strong hover:bg-danger/20',
+                                )}
+                            >
+                                <Ban class="size-3.5" strokeWidth={2} />
+                                Confirm revoke {selectedCount}
+                            </button>
+                        {:else}
+                            <button
+                                type="button"
+                                onclick={askBulkRevoke}
+                                class={cn(
+                                    bulkBtn,
+                                    'text-muted hover:bg-elevated hover:text-danger-strong',
+                                )}
+                            >
+                                <Ban class="size-3.5" strokeWidth={1.75} />
+                                Revoke
+                            </button>
+                        {/if}
+                        <button
+                            type="button"
+                            onclick={() => (rowSelection = {})}
+                            class={cn(
+                                'ml-1 inline-flex items-center gap-1 rounded-md px-2 py-1.5 text-xs text-muted transition-colors hover:text-ink',
+                                focusRing,
+                            )}
+                        >
+                            <X class="size-3.5" strokeWidth={1.75} />
+                            Clear
+                        </button>
+                    </div>
+                </div>
+            {/if}
+            <DataTable
+                data={visible}
+                {columns}
+                selectable
+                getRowId={(i) => String(i.id)}
+                canSelectRow={(i) => i.status === 'pending'}
+                bind:rowSelection
+            />
         {/if}
     </div>
 

@@ -36,6 +36,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
         Route::get('/invitations', [InvitationController::class, 'index'])->name('invitations.index');
         Route::post('/invitations', [InvitationController::class, 'store'])->name('invitations.store');
+        Route::post('/invitations/bulk', [InvitationController::class, 'bulk'])->name('invitations.bulk');
         Route::post('/invitations/{invitation}/resend', [InvitationController::class, 'resend'])->name('invitations.resend');
         Route::delete('/invitations/{invitation}', [InvitationController::class, 'revoke'])->name('invitations.revoke');
         Route::get('/invitations/import/template', [InvitationImportController::class, 'template'])->name('invitations.import.template');

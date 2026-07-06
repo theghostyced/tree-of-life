@@ -14,6 +14,9 @@ declare namespace App {
             'pending' | 'processing' | 'completed' | 'failed';
         export type InvitationStatus =
             'pending' | 'accepted' | 'revoked' | 'expired';
+        export type MeetingStatus = 'confirmed' | 'completed' | 'cancelled';
+        export type PairingStatus = 'active' | 'ended';
+        export type RescheduleStatus = 'pending' | 'accepted' | 'declined';
         export type UserRole = 'admin' | 'mentor' | 'entrepreneur' | 'employee';
     }
 }
