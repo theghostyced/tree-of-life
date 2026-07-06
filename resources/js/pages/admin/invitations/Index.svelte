@@ -191,7 +191,7 @@
             forceFormData: true,
             preserveScroll: true,
             onSuccess: () => {
-                toastMsg('CSV processed — see the summary below.');
+                toastMsg('Import started — progress shows below.');
                 importForm.reset();
                 closeImport();
             },
@@ -419,6 +419,13 @@
                                     >
                                 </li>
                             {/each}
+                            {#if activeImport.skippedCount + activeImport.invalidCount > activeImport.rowErrors.length}
+                                <li class="text-faint">
+                                    …and {activeImport.skippedCount +
+                                        activeImport.invalidCount -
+                                        activeImport.rowErrors.length} more
+                                </li>
+                            {/if}
                         </ul>
                     </details>
                 {/if}
@@ -685,7 +692,10 @@
                         </h2>
                         <p class="mt-1 text-sm text-muted">
                             Bulk-invite people from a spreadsheet. Each valid
-                            row gets a single-use link.
+                            row gets a single-use link. Rows whose email
+                            already belongs to a user or has an active
+                            invitation are skipped — you&rsquo;ll get a report,
+                            not errors.
                         </p>
                     </div>
                     <button
