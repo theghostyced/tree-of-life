@@ -129,3 +129,22 @@ test('entrepreneurs and admins get 403s on the mentor endpoints', function () {
         $this->actingAs($user)->post("/mentor/reschedules/{$reschedule->id}/accept")->assertForbidden();
     }
 });
+
+test('a stale reschedule instance cannot be reviewed twice', function () {
+    $reschedule = pendingRescheduleFor($this->pairing);
+    $stale = App\Models\MeetingReschedule::find($reschedule->id);
+
+    app(App\Actions\Mentorship\ReviewMeetingReschedule::class)
+        ->handle($reschedule, $this->mentor, accept: true);
+
+    app(App\Actions\Mentorship\ReviewMeetingReschedule::class)
+        ->handle($stale, $this->mentor, accept: false);
+})->throws(Symfony\Component\HttpKernel\Exception\HttpException::class);
+
+test('a duplicate report submission aborts instead of erroring', function () {
+    $meeting = App\Models\Meeting::factory()->completed()->create(['pairing_id' => $this->pairing->id]);
+    App\Models\MeetingReport::factory()->create(['meeting_id' => $meeting->id]);
+
+    app(App\Actions\Mentorship\SubmitMeetingReport::class)
+        ->handle($meeting, $this->mentor, 'duplicate');
+})->throws(Symfony\Component\HttpKernel\Exception\HttpException::class);

@@ -16,16 +16,23 @@ class ReviewMeetingReschedule
     public function handle(MeetingReschedule $reschedule, User $reviewer, bool $accept): void
     {
         DB::transaction(function () use ($reschedule, $reviewer, $accept) {
-            $reschedule->update([
+            $locked = MeetingReschedule::query()
+                ->whereKey($reschedule->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            abort_unless($locked->status === RescheduleStatus::Pending, 403);
+
+            $locked->update([
                 'status' => $accept ? RescheduleStatus::Accepted : RescheduleStatus::Declined,
                 'reviewed_by_user_id' => $reviewer->id,
                 'reviewed_at' => now(),
             ]);
 
             if ($accept) {
-                $reschedule->meeting->update([
-                    'starts_at' => $reschedule->new_starts_at,
-                    'ends_at' => $reschedule->new_ends_at,
+                $locked->meeting->update([
+                    'starts_at' => $locked->new_starts_at,
+                    'ends_at' => $locked->new_ends_at,
                 ]);
             }
         });
