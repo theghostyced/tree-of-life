@@ -15,7 +15,6 @@ class OnboardingProgress implements Arrayable
      * @param  array<int, string>  $missing
      */
     public function __construct(
-        public string $status,
         public int $total,
         public int $completed,
         public int $remaining,
@@ -31,7 +30,6 @@ class OnboardingProgress implements Arrayable
         $remaining = count($missing);
 
         return new self(
-            status: $user->account_status->value,
             total: $total,
             completed: max(0, $total - $remaining),
             remaining: $remaining,
@@ -46,7 +44,6 @@ class OnboardingProgress implements Arrayable
     public function toArray(): array
     {
         return [
-            'status' => $this->status,
             'total' => $this->total,
             'completed' => $this->completed,
             'remaining' => $this->remaining,

@@ -21,8 +21,8 @@ test('non-admins may not manage invitations', function (string $factory) {
         ->and($user->can('create', UserInvitation::class))->toBeFalse();
 })->with(['entrepreneur', 'mentor', 'employee']);
 
-test('an unapproved admin may not manage invitations', function () {
-    $admin = User::factory()->admin()->pending()->create();
+test('a deactivated admin may not manage invitations', function () {
+    $admin = User::factory()->admin()->deactivated()->create();
 
     expect($admin->can('create', UserInvitation::class))->toBeFalse();
 });

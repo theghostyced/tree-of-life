@@ -3,7 +3,7 @@
 use App\Models\User;
 
 test('a draft entrepreneur can save profile fields incrementally', function () {
-    $user = User::factory()->entrepreneur()->draft()->create();
+    $user = User::factory()->entrepreneur()->create();
 
     $this->actingAs($user)->patch('/entrepreneur/profile', [
         'business_name' => 'Acme Textiles',
@@ -19,7 +19,7 @@ test('the business email must be a unique, valid email', function () {
     $existing = User::factory()->entrepreneur()->create();
     $existing->entrepreneurProfile()->update(['business_email' => 'taken@biz.com']);
 
-    $user = User::factory()->entrepreneur()->draft()->create();
+    $user = User::factory()->entrepreneur()->create();
 
     $this->actingAs($user)->from('/entrepreneur/onboarding')
         ->patch('/entrepreneur/profile', ['business_email' => 'taken@biz.com'])
@@ -31,7 +31,7 @@ test('the business email must be a unique, valid email', function () {
 });
 
 test('the business phone must be unique and differ from the personal phone', function () {
-    $user = User::factory()->entrepreneur()->draft()->create(['phone_number' => '+254700000001']);
+    $user = User::factory()->entrepreneur()->create(['phone_number' => '+254700000001']);
 
     $this->actingAs($user)->from('/entrepreneur/onboarding')
         ->patch('/entrepreneur/profile', ['business_phone_number' => '+254700000001'])
@@ -39,7 +39,7 @@ test('the business phone must be unique and differ from the personal phone', fun
 });
 
 test('operating-history numbers must be non-negative integers', function (array $payload) {
-    $user = User::factory()->entrepreneur()->draft()->create();
+    $user = User::factory()->entrepreneur()->create();
 
     $this->actingAs($user)->from('/entrepreneur/onboarding')
         ->patch('/entrepreneur/profile', $payload)
@@ -50,7 +50,7 @@ test('operating-history numbers must be non-negative integers', function (array 
 ]);
 
 test('a mentor cannot edit an entrepreneur profile', function () {
-    $mentor = User::factory()->mentor()->draft()->create();
+    $mentor = User::factory()->mentor()->create();
 
     $this->actingAs($mentor)
         ->patch('/entrepreneur/profile', ['business_name' => 'Not Mine'])

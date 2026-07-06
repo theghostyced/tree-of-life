@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('role')->default('entrepreneur')->after('email');
-            $table->string('account_status')->default('draft')->after('role');
+            $table->string('account_status')->default('approved')->after('role');
             $table->string('phone_number')->nullable()->unique()->after('account_status');
             $table->unsignedBigInteger('company_id')->nullable()->after('phone_number');
             $table->timestamp('account_status_changed_at')->nullable();

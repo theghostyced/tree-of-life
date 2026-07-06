@@ -47,15 +47,15 @@ test('an entrepreneur cannot escalate by inviting a non-employee role', function
     expect($invitation?->role)->not->toBe(UserRole::from($role));
 })->with(['admin', 'mentor', 'entrepreneur']);
 
-test('an unapproved entrepreneur cannot invite employees', function (string $status) {
-    $entrepreneur = User::factory()->entrepreneur()->{$status}()->create();
+test('a deactivated entrepreneur cannot invite employees', function () {
+    $entrepreneur = User::factory()->entrepreneur()->deactivated()->create();
 
     $this->actingAs($entrepreneur)
         ->post('/entrepreneur/employees', ['email' => 'x@example.com'])
         ->assertForbidden();
 
     expect(UserInvitation::count())->toBe(0);
-})->with(['draft', 'pending', 'rejected', 'deactivated']);
+});
 
 test('mentors and employees cannot invite employees', function (string $factory) {
     $user = User::factory()->{$factory}()->approved()->create();

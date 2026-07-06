@@ -17,7 +17,6 @@ class EntrepreneurOnboardingData implements Arrayable
      * @param  array<int, DocumentRequirement>  $requiredDocuments
      */
     public function __construct(
-        public string $status,
         public EntrepreneurProfileFields $profile,
         public array $requiredDocuments,
         public OnboardingProgress $progress,
@@ -35,7 +34,6 @@ class EntrepreneurOnboardingData implements Arrayable
             ))->all();
 
         return new self(
-            status: $user->account_status->value,
             profile: EntrepreneurProfileFields::fromProfile($user->entrepreneurProfile),
             requiredDocuments: $requiredDocuments,
             progress: OnboardingProgress::forUser($user),
@@ -48,7 +46,6 @@ class EntrepreneurOnboardingData implements Arrayable
     public function toArray(): array
     {
         return [
-            'status' => $this->status,
             'profile' => $this->profile->toArray(),
             'requiredDocuments' => array_map(
                 fn (DocumentRequirement $doc): array => $doc->toArray(),

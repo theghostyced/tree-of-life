@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Storage;
 
 test('an entrepreneur uploads a required document to the private disk', function () {
     Storage::fake('local');
-    $user = User::factory()->entrepreneur()->draft()->create();
+    $user = User::factory()->entrepreneur()->create();
 
     $this->actingAs($user)->post('/onboarding/documents', [
         'document_type' => 'business_plan',
@@ -28,7 +28,7 @@ test('an entrepreneur uploads a required document to the private disk', function
 
 test('an oversized document is rejected and nothing is stored', function () {
     Storage::fake('local');
-    $user = User::factory()->entrepreneur()->draft()->create();
+    $user = User::factory()->entrepreneur()->create();
 
     // business_plan cap is 5 MB
     $this->actingAs($user)->from('/entrepreneur/onboarding')
@@ -43,7 +43,7 @@ test('an oversized document is rejected and nothing is stored', function () {
 
 test('a disallowed file type is rejected', function () {
     Storage::fake('local');
-    $user = User::factory()->entrepreneur()->draft()->create();
+    $user = User::factory()->entrepreneur()->create();
 
     $this->actingAs($user)->from('/entrepreneur/onboarding')
         ->post('/onboarding/documents', [
@@ -56,7 +56,7 @@ test('a disallowed file type is rejected', function () {
 
 test('a user cannot upload a document type outside their role', function () {
     Storage::fake('local');
-    $user = User::factory()->entrepreneur()->draft()->create();
+    $user = User::factory()->entrepreneur()->create();
 
     // passport_photo is a mentor document type
     $this->actingAs($user)->from('/entrepreneur/onboarding')
@@ -70,7 +70,7 @@ test('a user cannot upload a document type outside their role', function () {
 
 test('re-uploading a required document replaces the previous one and deletes its file', function () {
     Storage::fake('local');
-    $user = User::factory()->entrepreneur()->draft()->create();
+    $user = User::factory()->entrepreneur()->create();
 
     $this->actingAs($user)->post('/onboarding/documents', [
         'document_type' => 'business_plan',

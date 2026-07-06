@@ -3,7 +3,7 @@
 use App\Models\User;
 
 test('a draft mentor can save profile fields incrementally', function () {
-    $user = User::factory()->mentor()->draft()->create();
+    $user = User::factory()->mentor()->create();
 
     $this->actingAs($user)->patch('/mentor/profile', [
         'primary_expertise' => 'Trade finance',
@@ -18,7 +18,7 @@ test('a draft mentor can save profile fields incrementally', function () {
 });
 
 test('industry focus must be a list of strings', function () {
-    $user = User::factory()->mentor()->draft()->create();
+    $user = User::factory()->mentor()->create();
 
     $this->actingAs($user)->from('/mentor/onboarding')
         ->patch('/mentor/profile', ['industry_focus' => 'not-an-array'])
@@ -26,7 +26,7 @@ test('industry focus must be a list of strings', function () {
 });
 
 test('years of experience must be a non-negative integer', function () {
-    $user = User::factory()->mentor()->draft()->create();
+    $user = User::factory()->mentor()->create();
 
     $this->actingAs($user)->from('/mentor/onboarding')
         ->patch('/mentor/profile', ['years_experience' => -3])
@@ -34,7 +34,7 @@ test('years of experience must be a non-negative integer', function () {
 });
 
 test('an entrepreneur cannot edit a mentor profile', function () {
-    $entrepreneur = User::factory()->entrepreneur()->draft()->create();
+    $entrepreneur = User::factory()->entrepreneur()->create();
 
     $this->actingAs($entrepreneur)
         ->patch('/mentor/profile', ['primary_expertise' => 'Nope'])

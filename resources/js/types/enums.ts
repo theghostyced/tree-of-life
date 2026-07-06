@@ -31,9 +31,6 @@ export const invitationStatusLabel: Record<InvitationStatus, string> = {
 };
 
 export const accountStatusLabel: Record<AccountStatus, string> = {
-    draft: 'Draft',
-    pending: 'Pending',
     approved: 'Approved',
-    rejected: 'Rejected',
     deactivated: 'Deactivated',
 };

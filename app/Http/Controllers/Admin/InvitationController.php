@@ -7,6 +7,7 @@ use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreInvitationRequest;
 use App\Mail\UserInvitationMail;
+use App\Models\InvitationImport;
 use App\Models\UserInvitation;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
@@ -34,8 +35,20 @@ class InvitationController extends Controller
                 'expiresAt' => $invitation->expires_at->getTimestampMs(),
             ]);
 
+        $latestImport = InvitationImport::query()->latest('id')->first();
+
         return Inertia::render('admin/invitations/Index', [
             'invitations' => $invitations,
+            'activeImport' => $latestImport === null ? null : [
+                'id' => $latestImport->id,
+                'filename' => $latestImport->filename,
+                'status' => $latestImport->status->value,
+                'totalRows' => $latestImport->total_rows,
+                'invitedCount' => $latestImport->invited_count,
+                'skippedCount' => $latestImport->skipped_count,
+                'invalidCount' => $latestImport->invalid_count,
+                'rowErrors' => $latestImport->row_errors ?? [],
+            ],
         ]);
     }
 

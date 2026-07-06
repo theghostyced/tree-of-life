@@ -1,7 +1,6 @@
 declare namespace App {
     namespace Enums {
-        export type AccountStatus =
-            'draft' | 'pending' | 'approved' | 'rejected' | 'deactivated';
+        export type AccountStatus = 'approved' | 'deactivated';
         export type DocumentType =
             | 'business_certificate'
             | 'business_registration_documents'

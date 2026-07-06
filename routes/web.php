@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\InvitationController;
+use App\Http\Controllers\Admin\InvitationImportController;
 use App\Http\Controllers\Auth\InvitationAcceptanceController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Entrepreneur\DashboardController as EntrepreneurDashboardController;
@@ -35,6 +36,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/invitations', [InvitationController::class, 'store'])->name('invitations.store');
         Route::post('/invitations/{invitation}/resend', [InvitationController::class, 'resend'])->name('invitations.resend');
         Route::delete('/invitations/{invitation}', [InvitationController::class, 'revoke'])->name('invitations.revoke');
+        Route::get('/invitations/import/template', [InvitationImportController::class, 'template'])->name('invitations.import.template');
+        Route::post('/invitations/import', [InvitationImportController::class, 'store'])->name('invitations.import.store');
     });
 
     Route::prefix('entrepreneur')->name('entrepreneur.')->middleware('role:entrepreneur')->group(function () {

@@ -77,8 +77,8 @@ test('a non-admin cannot create invitations', function (string $factory) {
     expect(UserInvitation::count())->toBe(0);
 })->with(['entrepreneur', 'mentor']);
 
-test('an unapproved admin cannot create invitations', function () {
-    $admin = User::factory()->admin()->pending()->create();
+test('a deactivated admin cannot create invitations', function () {
+    $admin = User::factory()->admin()->deactivated()->create();
 
     $this->actingAs($admin)
         ->post('/admin/invitations', ['email' => 'x@example.com', 'role' => 'entrepreneur'])

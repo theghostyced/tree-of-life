@@ -6,7 +6,6 @@
     import { cn } from '@/lib/utils';
 
     type Onboarding = {
-        status: string;
         total: number;
         completed: number;
         remaining: number;

@@ -11,8 +11,8 @@ use Symfony\Component\HttpFoundation\Response;
 class EnsureAccountActive
 {
     /**
-     * Deactivated accounts are shut out entirely. Draft, pending, and rejected
-     * users keep access to their area (their dashboard shows an onboarding
+     * Deactivated accounts are shut out entirely. Everyone else is approved and
+     * keeps access to their area (an incomplete profile only shows an onboarding
      * banner) — completing onboarding is not a prerequisite for signing in.
      *
      * @param  Closure(Request): Response  $next

@@ -75,21 +75,6 @@ class UserFactory extends Factory
         return $this->state(fn () => ['account_status' => AccountStatus::Approved]);
     }
 
-    public function pending(): static
-    {
-        return $this->state(fn () => ['account_status' => AccountStatus::Pending]);
-    }
-
-    public function draft(): static
-    {
-        return $this->state(fn () => ['account_status' => AccountStatus::Draft]);
-    }
-
-    public function rejected(): static
-    {
-        return $this->state(fn () => ['account_status' => AccountStatus::Rejected]);
-    }
-
     public function deactivated(): static
     {
         return $this->state(fn () => ['account_status' => AccountStatus::Deactivated]);

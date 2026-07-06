@@ -27,27 +27,13 @@ test('the invitation matrix encodes who may invite whom', function (string $invi
     'employee -> anyone' => ['employee', 'employee', false],
 ]);
 
-test('only the approved status grants full access', function (string $status, bool $full) {
-    expect(AccountStatus::from($status)->hasFullAccess())->toBe($full);
-})->with([
-    'draft' => ['draft', false],
-    'pending' => ['pending', false],
-    'approved' => ['approved', true],
-    'rejected' => ['rejected', false],
-    'deactivated' => ['deactivated', false],
-]);
-
 test('account status transitions follow the lifecycle', function (string $from, string $to, bool $allowed) {
     expect(AccountStatus::from($from)->canTransitionTo(AccountStatus::from($to)))->toBe($allowed);
 })->with([
-    'draft -> pending' => ['draft', 'pending', true],
-    'pending -> approved' => ['pending', 'approved', true],
-    'pending -> rejected' => ['pending', 'rejected', true],
     'approved -> deactivated' => ['approved', 'deactivated', true],
-    'rejected -> pending' => ['rejected', 'pending', true],
-    'draft -> approved' => ['draft', 'approved', false],
-    'approved -> pending' => ['approved', 'pending', false],
-    'rejected -> approved' => ['rejected', 'approved', false],
+    'deactivated -> approved' => ['deactivated', 'approved', true],
+    'approved -> approved' => ['approved', 'approved', false],
+    'deactivated -> deactivated' => ['deactivated', 'deactivated', false],
 ]);
 
 test('invitation status is derived from its timestamps', function () {

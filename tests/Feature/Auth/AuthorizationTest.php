@@ -37,13 +37,6 @@ test('approved accounts reach their dashboard', function () {
         ->get('/mentor/dashboard')->assertSuccessful();
 });
 
-test('unapproved accounts can still reach their dashboard and onboarding', function (string $status) {
-    $user = User::factory()->entrepreneur()->{$status}()->create();
-
-    $this->actingAs($user)->get('/entrepreneur/dashboard')->assertSuccessful();
-    $this->actingAs($user)->get('/entrepreneur/onboarding')->assertSuccessful();
-})->with(['draft', 'pending', 'rejected']);
-
 test('a deactivated account is shut out and signed off', function () {
     $user = User::factory()->entrepreneur()->deactivated()->create();
 

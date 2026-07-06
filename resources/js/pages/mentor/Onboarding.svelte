@@ -29,7 +29,6 @@
         availability: string | null;
     };
     type Progress = {
-        status: string;
         total: number;
         completed: number;
         remaining: number;
