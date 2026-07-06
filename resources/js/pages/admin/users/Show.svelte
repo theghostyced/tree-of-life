@@ -39,8 +39,23 @@
         profile: Record<string, unknown> | null;
         documents: Doc[];
     };
+    type PairingEntry = {
+        id: number;
+        userId: number;
+        name: string;
+        company: string | null;
+        since: number;
+        lastMeetingAt: number | null;
+        endedAt: number | null;
+    };
 
-    let { user }: { user: User } = $props();
+    let {
+        user,
+        pairings,
+    }: {
+        user: User;
+        pairings: { active: PairingEntry[]; ended: PairingEntry[] };
+    } = $props();
 
     const auth = $derived(page.props.auth as Auth);
     const isSelf = $derived(user.id === (auth.user?.id ?? 0));
@@ -325,6 +340,66 @@
                     </dl>
                 </section>
             {/if}
+
+            <!-- Mentorship -->
+            <section class="rounded-xl border border-line bg-panel/40 p-6">
+                <h2 class="text-sm font-semibold text-ink">Mentorship</h2>
+                {#if pairings.active.length || pairings.ended.length}
+                    {#if pairings.active.length}
+                        <ul class="mt-4 divide-y divide-line">
+                            {#each pairings.active as entry (entry.id)}
+                                <li class="flex items-center gap-3 py-3">
+                                    <div class="min-w-0 flex-1">
+                                        <Link
+                                            href={`/admin/users/${entry.userId}`}
+                                            class={cn(
+                                                'truncate text-sm font-medium text-ink transition-colors hover:text-accent',
+                                                focusRing,
+                                            )}
+                                        >
+                                            {entry.name}
+                                        </Link>
+                                        <p class="mt-0.5 text-xs text-muted">
+                                            {entry.company ? `${entry.company} · ` : ''}Paired {relative(entry.since)}
+                                        </p>
+                                    </div>
+                                    <p class="shrink-0 text-xs text-muted">
+                                        {entry.lastMeetingAt
+                                            ? `Last met ${relative(entry.lastMeetingAt)}`
+                                            : 'No meetings yet'}
+                                    </p>
+                                </li>
+                            {/each}
+                        </ul>
+                    {/if}
+                    {#if pairings.ended.length}
+                        <p class="mt-4 text-xs text-faint">Ended</p>
+                        <ul class="mt-1 divide-y divide-line">
+                            {#each pairings.ended as entry (entry.id)}
+                                <li class="flex items-center gap-3 py-2.5">
+                                    <Link
+                                        href={`/admin/users/${entry.userId}`}
+                                        class={cn(
+                                            'min-w-0 flex-1 truncate text-sm text-muted transition-colors hover:text-ink',
+                                            focusRing,
+                                        )}
+                                    >
+                                        {entry.name}
+                                    </Link>
+                                    <p class="shrink-0 text-xs text-faint">
+                                        {entry.endedAt ? `Ended ${relative(entry.endedAt)}` : 'Ended'}
+                                    </p>
+                                </li>
+                            {/each}
+                        </ul>
+                    {/if}
+                {:else}
+                    <p class="mt-4 text-sm text-muted">
+                        No mentorship pairings yet. Entrepreneurs choose their mentor when
+                        they join.
+                    </p>
+                {/if}
+            </section>
 
             <!-- Documents -->
             {#if user.documents.length}

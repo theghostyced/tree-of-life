@@ -96,3 +96,41 @@ test('a non-admin cannot perform user lifecycle actions', function () {
 
     expect($target->fresh()->account_status)->toBe(AccountStatus::Approved);
 });
+
+test('a mentors detail page lists their entrepreneurs', function () {
+    $admin = User::factory()->admin()->approved()->create();
+    $pairing = App\Models\Pairing::factory()->create();
+    App\Models\Pairing::factory()->ended()->create([
+        'mentor_user_id' => $pairing->mentor_user_id,
+    ]);
+
+    $this->actingAs($admin)
+        ->get("/admin/users/{$pairing->mentor_user_id}")
+        ->assertInertia(fn (Assert $page) => $page
+            ->count('pairings.active', 1)
+            ->count('pairings.ended', 1)
+            ->where('pairings.active.0.name', $pairing->entrepreneur->name)
+            ->where('pairings.active.0.userId', $pairing->entrepreneur_user_id));
+});
+
+test('an entrepreneurs detail page lists their mentor', function () {
+    $admin = User::factory()->admin()->approved()->create();
+    $pairing = App\Models\Pairing::factory()->create();
+
+    $this->actingAs($admin)
+        ->get("/admin/users/{$pairing->entrepreneur_user_id}")
+        ->assertInertia(fn (Assert $page) => $page
+            ->count('pairings.active', 1)
+            ->where('pairings.active.0.name', $pairing->mentor->name)
+            ->where('pairings.active.0.userId', $pairing->mentor_user_id));
+});
+
+test('users without pairings share empty pairing lists', function () {
+    $admin = User::factory()->admin()->approved()->create();
+
+    $this->actingAs($admin)
+        ->get("/admin/users/{$admin->id}")
+        ->assertInertia(fn (Assert $page) => $page
+            ->count('pairings.active', 0)
+            ->count('pairings.ended', 0));
+});

@@ -6,9 +6,12 @@ use App\Data\EntrepreneurProfileFields;
 use App\Data\MentorProfileFields;
 use App\Enums\AccountStatus;
 use App\Enums\DocumentType;
+use App\Enums\MeetingStatus;
+use App\Enums\PairingStatus;
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\BulkUserActionRequest;
+use App\Models\Pairing;
 use App\Models\User;
 use App\Models\UserDocument;
 use Illuminate\Http\RedirectResponse;
@@ -59,6 +62,7 @@ class UserController extends Controller
                 'profile' => $this->profileFor($user),
                 'documents' => $this->documentsFor($user),
             ],
+            'pairings' => $this->pairingsFor($user),
         ]);
     }
 
@@ -167,5 +171,52 @@ class UserController extends Controller
                 'label' => $type->label(),
                 'uploaded' => $documents->get($type->value)?->original_name,
             ])->all();
+    }
+
+    /**
+     * Pairings shaped relative to the viewed user: a mentor's page lists
+     * their entrepreneurs, an entrepreneur's page lists their mentors.
+     *
+     * @return array{active: array<int, array<string, mixed>>, ended: array<int, array<string, mixed>>}
+     */
+    private function pairingsFor(User $user): array
+    {
+        $pairings = Pairing::query()
+            ->where(fn ($q) => $q
+                ->where('mentor_user_id', $user->id)
+                ->orWhere('entrepreneur_user_id', $user->id))
+            ->with([
+                'mentor:id,name',
+                'entrepreneur:id,name,company_id',
+                'entrepreneur.company:id,name',
+            ])
+            ->latest()
+            ->get();
+
+        $shape = function (Pairing $pairing) use ($user): array {
+            $counterpart = $pairing->mentor_user_id === $user->id
+                ? $pairing->entrepreneur
+                : $pairing->mentor;
+
+            $lastMeeting = $pairing->meetings()
+                ->where('status', MeetingStatus::Completed)
+                ->latest('ends_at')
+                ->first();
+
+            return [
+                'id' => $pairing->id,
+                'userId' => $counterpart->id,
+                'name' => $counterpart->name,
+                'company' => $pairing->entrepreneur->company?->name,
+                'since' => $pairing->created_at->getTimestampMs(),
+                'lastMeetingAt' => $lastMeeting?->ends_at->getTimestampMs(),
+                'endedAt' => $pairing->ended_at?->getTimestampMs(),
+            ];
+        };
+
+        return [
+            'active' => $pairings->where('status', PairingStatus::Active)->map($shape)->values()->all(),
+            'ended' => $pairings->where('status', PairingStatus::Ended)->map($shape)->values()->all(),
+        ];
     }
 }
