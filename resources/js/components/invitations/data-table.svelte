@@ -16,9 +16,20 @@
     let {
         data,
         columns,
-    }: { data: TData[]; columns: ColumnDef<TData, TValue>[] } = $props();
+        noun = { one: 'invitation', many: 'invitations' },
+        defaultSort = { id: 'sentAt', desc: true },
+        searchPlaceholder = 'Search name or email',
+        emptyMessage = 'No invitations match your search.',
+    }: {
+        data: TData[];
+        columns: ColumnDef<TData, TValue>[];
+        noun?: { one: string; many: string };
+        defaultSort?: { id: string; desc: boolean };
+        searchPlaceholder?: string;
+        emptyMessage?: string;
+    } = $props();
 
-    let sorting = $state<SortingState>([{ id: 'sentAt', desc: true }]);
+    let sorting = $state<SortingState>([defaultSort]);
     let pagination = $state<PaginationState>({ pageIndex: 0, pageSize: 20 });
     let globalFilter = $state('');
 
@@ -72,15 +83,15 @@
                 type="search"
                 value={globalFilter}
                 oninput={(e) => table.setGlobalFilter(e.currentTarget.value)}
-                placeholder="Search name or email"
+                placeholder={searchPlaceholder}
                 class="h-9 w-full rounded-lg border border-line bg-surface pr-3 pl-9 text-sm text-ink transition-colors placeholder:text-faint hover:border-line-strong focus:border-accent focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none"
             />
         </div>
         <p class="hidden shrink-0 text-xs text-faint sm:block">
             {table.getFilteredRowModel().rows.length}
             {table.getFilteredRowModel().rows.length === 1
-                ? 'invitation'
-                : 'invitations'}
+                ? noun.one
+                : noun.many}
         </p>
     </div>
 
@@ -153,7 +164,7 @@
                             colspan={columns.length}
                             class="h-28 text-center text-sm text-muted"
                         >
-                            No invitations match your search.
+                            {emptyMessage}
                         </Table.Cell>
                     </Table.Row>
                 {/each}

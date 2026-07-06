@@ -25,7 +25,7 @@
         { label: 'Awards', href: '/admin/awards', icon: Award },
         { label: 'Milestones', href: '/admin/milestones', icon: Flag },
         { label: 'Programs', href: '/admin/programs', icon: FolderKanban },
-        { label: 'Users', href: '/admin/users', icon: Users },
+        { label: 'Users', href: '/admin/users', icon: Users, enabled: true },
         { label: 'Invitations', href: '/admin/invitations', icon: Send, enabled: true },
     ];
 </script>

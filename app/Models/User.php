@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -40,7 +41,7 @@ use Illuminate\Support\Carbon;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, MustVerifyEmail, Notifiable;
+    use HasFactory, MustVerifyEmail, Notifiable, SoftDeletes;
 
     /**
      * Get the attributes that should be cast.
@@ -118,5 +119,10 @@ class User extends Authenticatable
     public function isApproved(): bool
     {
         return $this->account_status === AccountStatus::Approved;
+    }
+
+    public function isDeactivated(): bool
+    {
+        return $this->account_status === AccountStatus::Deactivated;
     }
 }
