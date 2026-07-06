@@ -73,11 +73,15 @@ test('mentees, availability, and stats are shaped', function () {
         'is_active' => false,
     ]);
 
+    $company = App\Models\Company::factory()->create();
+    $pairing->entrepreneur->update(['company_id' => $company->id]);
+
     $this->actingAs($this->mentor)
         ->get('/mentor/dashboard')
         ->assertInertia(fn (Assert $page) => $page
             ->count('mentees', 1)
             ->where('mentees.0.name', $pairing->entrepreneur->name)
+            ->where('mentees.0.company', $company->name)
             ->where('availability.activeCount', 1)
             ->count('availability.slots', 1)
             ->where('stats.menteeCount', 1)

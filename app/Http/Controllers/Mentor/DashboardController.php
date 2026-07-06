@@ -114,7 +114,7 @@ class DashboardController extends Controller
         return Pairing::query()
             ->where('mentor_user_id', $mentor->id)
             ->where('status', PairingStatus::Active)
-            ->with(['entrepreneur:id,name', 'entrepreneur.company:id,owner_user_id,name'])
+            ->with(['entrepreneur:id,name,company_id', 'entrepreneur.company:id,name'])
             ->get()
             ->map(function (Pairing $pairing): array {
                 $last = $pairing->meetings()
