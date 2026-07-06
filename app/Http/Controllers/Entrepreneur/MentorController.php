@@ -14,16 +14,22 @@ use Inertia\Response;
 
 class MentorController extends Controller
 {
-    private const PER_PAGE = 9;
+    private const PER_PAGE = 12;
 
+    /**
+     * The mentor directory — browse, search, filter and choose.
+     */
     public function index(Request $request): Response|RedirectResponse
     {
         $user = $request->user();
 
-        // The directory is only meaningful once onboarding is done and the
-        // entrepreneur has not already chosen a mentor.
-        if (! OnboardingProgress::forUser($user)->isComplete || $user->mentorPairing()->exists()) {
+        if (! OnboardingProgress::forUser($user)->isComplete) {
             return redirect()->route('entrepreneur.dashboard');
+        }
+
+        // Already paired — send them to their mentor's page instead.
+        if ($user->mentorPairing()->exists()) {
+            return redirect()->route('entrepreneur.mentor.show');
         }
 
         $search = trim((string) $request->query('search', ''));
@@ -54,6 +60,27 @@ class MentorController extends Controller
             // Lazy: the facet scan only runs on a full page load, not on the
             // partial reloads that search / filter / paginate trigger.
             'focusAreas' => fn () => $this->focusAreas(),
+        ]);
+    }
+
+    /**
+     * The entrepreneur's chosen mentor — a dedicated detail page.
+     */
+    public function show(Request $request): Response|RedirectResponse
+    {
+        $pairing = $request->user()
+            ->mentorPairing()
+            ->with('mentor.mentorProfile')
+            ->first();
+
+        // Not paired yet — send them to the directory to choose one.
+        if ($pairing === null) {
+            return redirect()->route('entrepreneur.mentors.index');
+        }
+
+        return Inertia::render('entrepreneur/Mentor', [
+            'mentor' => MentorCard::forUser($pairing->mentor)->toArray(),
+            'pairedAt' => $pairing->created_at?->toIso8601String(),
         ]);
     }
 

@@ -144,7 +144,7 @@
 <EntrepreneurLayout title="Find a mentor">
     <Toaster position="top-center" />
 
-    <div class="mx-auto w-full max-w-5xl px-6 py-8">
+    <div class="mx-auto w-full max-w-7xl px-6 py-8">
         <!-- Header -->
         <div>
             <h1 class="text-2xl font-semibold tracking-tight text-ink">
@@ -233,7 +233,7 @@
             {#if mentors.data.length}
                 <div
                     class={cn(
-                        'mt-6 grid gap-5 transition-opacity sm:grid-cols-2',
+                        'mt-6 grid gap-5 transition-opacity sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
                         loading && 'pointer-events-none opacity-60',
                     )}
                 >

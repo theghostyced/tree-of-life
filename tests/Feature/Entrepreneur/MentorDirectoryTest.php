@@ -20,7 +20,9 @@ test('the directory lists available mentors and their focus areas', function () 
             ->has('mentors.data', 2)
             ->where('mentors.total', 2)
             // Focus areas are the de-duplicated, sorted union across the pool.
-            ->where('focusAreas', ['Agriculture', 'Manufacturing']));
+            ->where('focusAreas', ['Agriculture', 'Manufacturing'])
+            // An unpaired entrepreneur drives the "Mentors" nav.
+            ->where('auth.hasMentor', false));
 });
 
 test('the directory filters by search server-side', function () {
@@ -48,15 +50,15 @@ test('the directory filters by focus area server-side', function () {
 
 test('the directory paginates the mentor pool', function () {
     $entrepreneur = completeEntrepreneur();
-    foreach (range(1, 10) as $i) {
+    foreach (range(1, 13) as $i) {
         availableMentor(sprintf('Mentor %02d', $i));
     }
 
     $this->actingAs($entrepreneur)->get('/entrepreneur/mentors')
         ->assertInertia(fn (Assert $page) => $page
-            ->where('mentors.total', 10)
+            ->where('mentors.total', 13)
             ->where('mentors.last_page', 2)
-            ->has('mentors.data', 9));
+            ->has('mentors.data', 12));
 
     $this->actingAs($entrepreneur)->get('/entrepreneur/mentors?page=2')
         ->assertInertia(fn (Assert $page) => $page->has('mentors.data', 1));
@@ -70,11 +72,11 @@ test('the directory redirects an entrepreneur who has not finished onboarding', 
         ->assertRedirect('/entrepreneur/dashboard');
 });
 
-test('the directory redirects an entrepreneur who is already paired', function () {
+test('the directory redirects an entrepreneur who is already paired to their mentor', function () {
     $entrepreneur = completeEntrepreneur();
     $mentor = availableMentor();
     MentorPairing::create(['entrepreneur_id' => $entrepreneur->id, 'mentor_id' => $mentor->id]);
 
     $this->actingAs($entrepreneur)->get('/entrepreneur/mentors')
-        ->assertRedirect('/entrepreneur/dashboard');
+        ->assertRedirect('/entrepreneur/mentor');
 });
