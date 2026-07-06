@@ -1,6 +1,15 @@
 <script lang="ts">
     import { Link, router, useForm } from '@inertiajs/svelte';
-    import { ArrowLeft, ChevronRight, Plus, X, Send } from '@lucide/svelte';
+    import {
+        ArrowLeft,
+        ChevronRight,
+        Plus,
+        X,
+        Send,
+        Upload,
+        Download,
+        FileText,
+    } from '@lucide/svelte';
     import { cubicOut } from 'svelte/easing';
     import { fly, fade, scale } from 'svelte/transition';
     import AdminLayout from '@/components/layout/AdminLayout.svelte';
@@ -9,12 +18,29 @@
     import { invitableRoles, userRoleLabel } from '@/types/enums';
     import { createColumns } from '@/components/invitations/columns';
     import DataTable from '@/components/invitations/data-table.svelte';
-    import type { Invitation, Role, Status } from '@/components/invitations/types';
+    import type {
+        Invitation,
+        Role,
+        Status,
+    } from '@/components/invitations/types';
+
+    type ActiveImport = {
+        id: number;
+        filename: string;
+        status: 'pending' | 'processing' | 'completed' | 'failed';
+        totalRows: number;
+        invitedCount: number;
+        skippedCount: number;
+        invalidCount: number;
+        rowErrors: { row: number; email: string; reason: string }[];
+    };
 
     let {
         invitations = [],
+        activeImport = null,
     }: {
         invitations: Invitation[];
+        activeImport?: ActiveImport | null;
     } = $props();
 
     const focusRing =
@@ -113,6 +139,56 @@
         });
     }
 
+    // ── CSV import slide-over ──────────────────────────────────────────
+    let importOpen = $state(false);
+    let importDismissed = $state(false);
+    let dragging = $state(false);
+    const importForm = useForm<{ file: File | null }>({ file: null });
+
+    function openImport() {
+        importForm.reset();
+        importForm.clearErrors();
+        importDismissed = false;
+        importOpen = true;
+    }
+    function closeImport() {
+        importOpen = false;
+    }
+    function pickFile(file: File | null | undefined) {
+        importForm.file = file ?? null;
+        importForm.clearErrors('file');
+    }
+    function onDrop(e: DragEvent) {
+        e.preventDefault();
+        dragging = false;
+        pickFile(e.dataTransfer?.files?.[0]);
+    }
+    function submitImport(e: Event) {
+        e.preventDefault();
+        importForm.post('/admin/invitations/import', {
+            forceFormData: true,
+            preserveScroll: true,
+            onSuccess: () => {
+                toastMsg('CSV processed — see the summary below.');
+                importForm.reset();
+                closeImport();
+            },
+        });
+    }
+
+    const importTone: Record<ActiveImport['status'], string> = {
+        pending: 'bg-glow-amber',
+        processing: 'bg-glow-amber',
+        completed: 'bg-accent',
+        failed: 'bg-error',
+    };
+    const importStatusLabel: Record<ActiveImport['status'], string> = {
+        pending: 'Queued',
+        processing: 'Processing…',
+        completed: 'Completed',
+        failed: 'Failed',
+    };
+
     // ── Toast ──────────────────────────────────────────────────────────
     let toast = $state<string | null>(null);
     let toastTimer: ReturnType<typeof setTimeout> | undefined;
@@ -123,9 +199,9 @@
     }
 
     function onKeydown(e: KeyboardEvent) {
-        if (e.key === 'Escape' && inviteOpen) {
-            closeInvite();
-        }
+        if (e.key !== 'Escape') return;
+        if (inviteOpen) closeInvite();
+        if (importOpen) closeImport();
     }
 </script>
 
@@ -173,17 +249,30 @@
                     admins by email, and track who has joined.
                 </p>
             </div>
-            <button
-                type="button"
-                onclick={openInvite}
-                class={cn(
-                    'inline-flex shrink-0 items-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-on-accent shadow-btn transition-all hover:-translate-y-px hover:bg-accent-strong active:translate-y-0',
-                    focusRing,
-                )}
-            >
-                <Plus class="size-4" strokeWidth={2.25} />
-                Invite people
-            </button>
+            <div class="flex shrink-0 items-center gap-2.5">
+                <button
+                    type="button"
+                    onclick={openImport}
+                    class={cn(
+                        'inline-flex items-center gap-2 rounded-lg border border-line bg-surface px-4 py-2.5 text-sm font-semibold text-ink transition-colors hover:border-accent hover:text-accent',
+                        focusRing,
+                    )}
+                >
+                    <Upload class="size-4" strokeWidth={2} />
+                    Import CSV
+                </button>
+                <button
+                    type="button"
+                    onclick={openInvite}
+                    class={cn(
+                        'inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-on-accent shadow-btn transition-all hover:-translate-y-px hover:bg-accent-strong active:translate-y-0',
+                        focusRing,
+                    )}
+                >
+                    <Plus class="size-4" strokeWidth={2.25} />
+                    Invite people
+                </button>
+            </div>
         </div>
 
         <!-- Status filter tabs (square, no radius) -->
@@ -220,6 +309,91 @@
 
     <!-- Content -->
     <div class="flex flex-1 flex-col px-6 pt-6 pb-10">
+        {#if activeImport && !importDismissed}
+            <div
+                class="mb-6 rounded-xl border border-line bg-panel/50 p-4 sm:p-5"
+            >
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex min-w-0 items-center gap-3">
+                        <span
+                            class={cn(
+                                'size-2 shrink-0 rounded-full',
+                                importTone[activeImport.status],
+                                activeImport.status === 'processing' &&
+                                    'animate-pulse',
+                            )}
+                        ></span>
+                        <div class="min-w-0">
+                            <p class="truncate text-sm font-semibold text-ink">
+                                {activeImport.filename}
+                            </p>
+                            <p class="text-xs text-muted">
+                                {importStatusLabel[activeImport.status]} · {activeImport.totalRows}
+                                rows
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4 text-sm tabular-nums">
+                        <span class="text-muted"
+                            ><span class="font-semibold text-ink"
+                                >{activeImport.invitedCount}</span
+                            > invited</span
+                        >
+                        <span class="text-muted"
+                            ><span class="font-semibold text-ink"
+                                >{activeImport.skippedCount}</span
+                            > skipped</span
+                        >
+                        <span class="text-muted"
+                            ><span class="font-semibold text-ink"
+                                >{activeImport.invalidCount}</span
+                            > invalid</span
+                        >
+                        <button
+                            type="button"
+                            onclick={() => (importDismissed = true)}
+                            aria-label="Dismiss import summary"
+                            class={cn(
+                                'rounded-md p-1 text-muted transition-colors hover:bg-elevated hover:text-ink',
+                                focusRing,
+                            )}
+                        >
+                            <X class="size-4" strokeWidth={1.75} />
+                        </button>
+                    </div>
+                </div>
+                {#if activeImport.rowErrors.length > 0}
+                    <details class="mt-3 border-t border-line pt-3">
+                        <summary
+                            class="cursor-pointer text-xs font-medium text-muted transition-colors hover:text-ink"
+                        >
+                            {activeImport.rowErrors.length} row{activeImport
+                                .rowErrors.length === 1
+                                ? ''
+                                : 's'} skipped or invalid — view details
+                        </summary>
+                        <ul
+                            class="custom-scrollbar mt-3 max-h-56 space-y-1.5 overflow-y-auto text-xs"
+                        >
+                            {#each activeImport.rowErrors as err (err.row)}
+                                <li class="flex gap-2">
+                                    <span
+                                        class="shrink-0 tabular-nums text-faint"
+                                        >Row {err.row}</span
+                                    >
+                                    <span class="truncate text-ink"
+                                        >{err.email || '—'}</span
+                                    >
+                                    <span class="text-muted"
+                                        >— {err.reason}</span
+                                    >
+                                </li>
+                            {/each}
+                        </ul>
+                    </details>
+                {/if}
+            </div>
+        {/if}
         {#if invitations.length === 0}
             <div
                 class="flex flex-1 flex-col items-center justify-center py-16 text-center"
@@ -441,6 +615,175 @@
                         >
                             <Send class="size-4" strokeWidth={2} />
                             Send invitation
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    {/if}
+
+    <!-- Import modal -->
+    {#if importOpen}
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div
+                class="absolute inset-0 bg-black/50"
+                transition:fade={{ duration: fadeMs }}
+                onclick={closeImport}
+                aria-hidden="true"
+            ></div>
+            <div
+                class="relative z-10 flex w-full max-w-lg flex-col overflow-hidden rounded-xl border border-line bg-panel shadow-card"
+                transition:scale={{
+                    start: 0.97,
+                    opacity: 0,
+                    duration: flyMs,
+                    easing: cubicOut,
+                }}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="import-title"
+            >
+                <div
+                    class="flex shrink-0 items-start justify-between border-b border-line px-6 py-5"
+                >
+                    <div>
+                        <h2
+                            id="import-title"
+                            class="text-lg font-semibold text-ink"
+                        >
+                            Import from CSV
+                        </h2>
+                        <p class="mt-1 text-sm text-muted">
+                            Bulk-invite people from a spreadsheet. Each valid
+                            row gets a single-use link.
+                        </p>
+                    </div>
+                    <button
+                        type="button"
+                        onclick={closeImport}
+                        aria-label="Close"
+                        class={cn(
+                            'rounded-lg p-1.5 text-muted transition-colors hover:bg-elevated hover:text-ink',
+                            focusRing,
+                        )}
+                    >
+                        <X class="size-5" strokeWidth={1.75} />
+                    </button>
+                </div>
+
+                <form onsubmit={submitImport} class="flex flex-col">
+                    <div class="space-y-5 px-6 py-6">
+                        <a
+                            href="/admin/invitations/import/template"
+                            class={cn(
+                                'flex items-center gap-3 rounded-lg border border-line bg-surface px-4 py-3 text-sm transition-colors hover:border-accent',
+                                focusRing,
+                            )}
+                        >
+                            <Download
+                                class="size-4 shrink-0 text-accent"
+                                strokeWidth={2}
+                            />
+                            <span class="flex-1 text-ink"
+                                >Download the CSV template</span
+                            >
+                            <span class="text-xs text-faint"
+                                >email, role, name</span
+                            >
+                        </a>
+
+                        <label
+                            ondragover={(e) => {
+                                e.preventDefault();
+                                dragging = true;
+                            }}
+                            ondragleave={() => (dragging = false)}
+                            ondrop={onDrop}
+                            class={cn(
+                                'flex cursor-pointer flex-col items-center gap-2 rounded-xl border border-dashed px-4 py-8 text-center transition-colors',
+                                dragging
+                                    ? 'border-accent bg-accent-soft'
+                                    : 'border-line bg-surface hover:border-accent',
+                            )}
+                        >
+                            {#if importForm.file}
+                                <FileText
+                                    class="size-6 text-accent"
+                                    strokeWidth={1.75}
+                                />
+                                <span class="text-sm font-medium text-ink"
+                                    >{importForm.file.name}</span
+                                >
+                                <span class="text-xs text-faint"
+                                    >{(importForm.file.size / 1024).toFixed(0)} KB
+                                    · click to replace</span
+                                >
+                            {:else}
+                                <Upload
+                                    class="size-6 text-muted"
+                                    strokeWidth={1.75}
+                                />
+                                <span class="text-sm font-medium text-ink"
+                                    >Choose a CSV file or drag it here</span
+                                >
+                                <span class="text-xs text-faint"
+                                    >CSV up to 10 MB</span
+                                >
+                            {/if}
+                            <input
+                                type="file"
+                                accept=".csv,text/csv"
+                                class="hidden"
+                                onchange={(e) =>
+                                    pickFile(
+                                        (e.target as HTMLInputElement)
+                                            .files?.[0],
+                                    )}
+                            />
+                        </label>
+                        {#if importForm.errors.file}
+                            <p class="text-xs text-error">
+                                {importForm.errors.file}
+                            </p>
+                        {/if}
+                        {#if importForm.progress}
+                            <div
+                                class="h-1.5 overflow-hidden rounded-full bg-elevated"
+                            >
+                                <div
+                                    class="h-full rounded-full bg-accent transition-all"
+                                    style="width: {importForm.progress
+                                        .percentage}%"
+                                ></div>
+                            </div>
+                        {/if}
+                    </div>
+
+                    <div
+                        class="flex shrink-0 items-center justify-end gap-3 border-t border-line px-6 py-4"
+                    >
+                        <button
+                            type="button"
+                            onclick={closeImport}
+                            class={cn(
+                                'rounded-lg px-4 py-2.5 text-sm font-medium text-muted transition-colors hover:text-ink',
+                                focusRing,
+                            )}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            disabled={!importForm.file || importForm.processing}
+                            class={cn(
+                                'inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-on-accent shadow-btn transition-all hover:-translate-y-px hover:bg-accent-strong active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-50',
+                                focusRing,
+                            )}
+                        >
+                            <Upload class="size-4" strokeWidth={2} />
+                            {importForm.processing
+                                ? 'Importing…'
+                                : 'Start import'}
                         </button>
                     </div>
                 </form>
