@@ -36,6 +36,14 @@
     --color-warning: hsl(51, 100%, 44%);
     --color-error: hsl(0, 66%, 47%);
 
+    /* Dark-canvas status tones — the brand success/error values above are
+       tuned for light surfaces and lack contrast on the near-black canvas.
+       "-strong" is the brighter text-weight step (same idea as accent-strong). */
+    --color-positive: #6fbe74; /* success fills, dots */
+    --color-positive-strong: #93cf97; /* success text on dark */
+    --color-danger: #cf8b8b; /* destructive fills, dots */
+    --color-danger-strong: #d7a1a1; /* destructive text on dark */
+
     /* Sage ramp — muted sage-green grays for the dark auth surfaces.
        sage-400 (#A3B18A) is the auth accent; the ramp brightens above it
        and dims below it. Additive; does not touch the warm brand tokens. */

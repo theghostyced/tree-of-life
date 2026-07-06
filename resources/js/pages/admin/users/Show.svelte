@@ -14,10 +14,10 @@
     import RoleBadge from '@/components/ui/role-badge/role-badge.svelte';
     import AccountStatusChip from '@/components/users/account-status.svelte';
     import { initials, relative } from '@/components/users/types';
+    import { YEAR_RANGES, EMPLOYEE_RANGES } from '@/lib/onboarding-options';
     import { cn } from '@/lib/utils';
     import type { Auth } from '@/types/auth';
     import type { AccountStatus, UserRole } from '@/types/enums';
-    import { YEAR_RANGES, EMPLOYEE_RANGES } from '@/lib/onboarding-options';
 
     type Doc = {
         id: number | null;
@@ -53,7 +53,10 @@
         ranges: { value: number; label: string }[],
         v: unknown,
     ): string | null {
-        if (v == null) return null;
+        if (v == null) {
+            return null;
+        }
+
         return ranges.find((r) => r.value === v)?.label ?? String(v);
     }
     const asText = (v: unknown) => (v ? String(v) : null);
@@ -63,7 +66,11 @@
     type Field = { label: string; value: string | null };
     const profileFields = $derived.by<Field[]>(() => {
         const p = user.profile;
-        if (!p) return [];
+
+        if (!p) {
+            return [];
+        }
+
         if (user.role === 'entrepreneur') {
             return [
                 { label: 'Business name', value: asText(p.business_name) },
@@ -87,6 +94,7 @@
                 },
             ];
         }
+
         if (user.role === 'mentor') {
             return [
                 {
@@ -105,6 +113,7 @@
                 },
             ];
         }
+
         return [];
     });
 
@@ -120,32 +129,35 @@
 
     // ── Actions ────────────────────────────────────────────────────────
     let confirmingDelete = $state(false);
+    let acting = $state(false);
     let timer: ReturnType<typeof setTimeout> | undefined;
+
+    $effect(() => () => clearTimeout(timer));
+
     function askDelete() {
         confirmingDelete = true;
         clearTimeout(timer);
         timer = setTimeout(() => (confirmingDelete = false), 4000);
     }
+
+    const inFlight = {
+        preserveScroll: true,
+        onStart: () => (acting = true),
+        onFinish: () => (acting = false),
+    };
+
     function deactivate() {
-        router.post(
-            `/admin/users/${user.id}/deactivate`,
-            {},
-            { preserveScroll: true },
-        );
+        router.post(`/admin/users/${user.id}/deactivate`, {}, inFlight);
     }
     function reactivate() {
-        router.post(
-            `/admin/users/${user.id}/reactivate`,
-            {},
-            { preserveScroll: true },
-        );
+        router.post(`/admin/users/${user.id}/reactivate`, {}, inFlight);
     }
     function remove() {
-        router.delete(`/admin/users/${user.id}`);
+        router.delete(`/admin/users/${user.id}`, inFlight);
     }
 
     const actionBtn =
-        'inline-flex items-center gap-2 rounded-lg border px-3.5 py-2 text-sm font-medium transition-colors';
+        'inline-flex items-center gap-2 rounded-lg border px-3.5 py-2 text-sm font-medium transition-colors disabled:pointer-events-none disabled:opacity-50';
 </script>
 
 <AdminLayout title={user.name}>
@@ -207,7 +219,7 @@
                                 Verified
                             </span>
                         {:else}
-                            <span class="text-xs text-faint">· Unverified</span>
+                            <span class="text-xs text-muted">Unverified</span>
                         {/if}
                     </p>
                 </div>
@@ -219,6 +231,7 @@
                         <button
                             type="button"
                             onclick={deactivate}
+                            disabled={acting}
                             class={cn(
                                 actionBtn,
                                 'border-line bg-surface text-muted hover:border-line-strong hover:text-ink',
@@ -232,6 +245,7 @@
                         <button
                             type="button"
                             onclick={reactivate}
+                            disabled={acting}
                             class={cn(
                                 actionBtn,
                                 'border-line bg-surface text-accent hover:border-accent',
@@ -242,33 +256,25 @@
                             Restore access
                         </button>
                     {/if}
-                    {#if confirmingDelete}
-                        <button
-                            type="button"
-                            onclick={remove}
-                            class={cn(
-                                actionBtn,
-                                'border-[#cf8b8b]/30 bg-[#cf8b8b]/12 font-semibold text-[#d7a1a1] hover:bg-[#cf8b8b]/20',
-                                focusRing,
-                            )}
-                        >
-                            <Trash2 class="size-4" strokeWidth={2} />
-                            Confirm delete
-                        </button>
-                    {:else}
-                        <button
-                            type="button"
-                            onclick={askDelete}
-                            class={cn(
-                                actionBtn,
-                                'border-line bg-surface text-muted hover:border-[#cf8b8b]/40 hover:text-[#d7a1a1]',
-                                focusRing,
-                            )}
-                        >
-                            <Trash2 class="size-4" strokeWidth={1.75} />
-                            Delete
-                        </button>
-                    {/if}
+                    <!-- One element for both steps so keyboard focus survives the swap. -->
+                    <button
+                        type="button"
+                        onclick={confirmingDelete ? remove : askDelete}
+                        disabled={acting}
+                        class={cn(
+                            actionBtn,
+                            confirmingDelete
+                                ? 'border-danger/30 bg-danger/12 font-semibold text-danger-strong hover:bg-danger/20'
+                                : 'border-line bg-surface text-muted hover:border-danger/40 hover:text-danger-strong',
+                            focusRing,
+                        )}
+                    >
+                        <Trash2
+                            class="size-4"
+                            strokeWidth={confirmingDelete ? 2 : 1.75}
+                        />
+                        {confirmingDelete ? 'Confirm delete' : 'Delete'}
+                    </button>
                 </div>
             {/if}
         </div>
@@ -276,13 +282,18 @@
         <!-- Cards -->
         <div class="mt-8 space-y-5">
             <!-- Account -->
-            <section class="rounded-2xl border border-line bg-panel/40 p-6">
+            <section class="rounded-xl border border-line bg-panel/40 p-6">
                 <h2 class="text-sm font-semibold text-ink">Account</h2>
                 <dl class="mt-4 grid gap-x-8 gap-y-4 sm:grid-cols-2">
                     {#each accountRows as row (row.label)}
                         <div>
                             <dt class="text-xs text-muted">{row.label}</dt>
-                            <dd class="mt-0.5 text-[15px] text-ink">
+                            <dd
+                                class={cn(
+                                    'mt-0.5 text-[15px]',
+                                    row.value ? 'text-ink' : 'text-muted',
+                                )}
+                            >
                                 {row.value ?? '—'}
                             </dd>
                         </div>
@@ -292,7 +303,7 @@
 
             <!-- Profile -->
             {#if profileFields.length}
-                <section class="rounded-2xl border border-line bg-panel/40 p-6">
+                <section class="rounded-xl border border-line bg-panel/40 p-6">
                     <h2 class="text-sm font-semibold text-ink">Profile</h2>
                     <dl class="mt-4 space-y-4">
                         {#each profileFields as field (field.label)}
@@ -301,8 +312,12 @@
                                     {field.label}
                                 </dt>
                                 <dd
-                                    class="mt-0.5 text-[15px] whitespace-pre-line text-ink"
-                                    class:text-faint={!field.value}
+                                    class={cn(
+                                        'mt-0.5 text-[15px] whitespace-pre-line',
+                                        field.value
+                                            ? 'text-ink'
+                                            : 'text-muted',
+                                    )}
                                 >
                                     {field.value ?? 'Not provided'}
                                 </dd>
@@ -314,7 +329,7 @@
 
             <!-- Documents -->
             {#if user.documents.length}
-                <section class="rounded-2xl border border-line bg-panel/40 p-6">
+                <section class="rounded-xl border border-line bg-panel/40 p-6">
                     <h2 class="text-sm font-semibold text-ink">Documents</h2>
                     <ul class="mt-4 divide-y divide-line">
                         {#each user.documents as doc (doc.type)}

@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Ban, RotateCcw, Trash2 } from '@lucide/svelte';
-    import type { UserRow } from './types';
     import { cn } from '@/lib/utils';
+    import type { UserRow } from './types';
 
     let {
         user,
@@ -26,6 +26,8 @@
         clearTimeout(timer);
         timer = setTimeout(() => (confirming = false), 4000);
     }
+
+    $effect(() => () => clearTimeout(timer));
 
     const btn =
         'inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:outline-none';
@@ -57,30 +59,19 @@
                 Restore
             </button>
         {/if}
-        {#if confirming}
-            <button
-                type="button"
-                onclick={() => onDelete(user)}
-                class={cn(
-                    btn,
-                    'bg-[#cf8b8b]/12 font-semibold text-[#d7a1a1] hover:bg-[#cf8b8b]/20',
-                )}
-            >
-                <Trash2 class="size-3.5" strokeWidth={2} />
-                Confirm
-            </button>
-        {:else}
-            <button
-                type="button"
-                onclick={askDelete}
-                class={cn(
-                    btn,
-                    'text-muted hover:bg-elevated hover:text-[#d7a1a1]',
-                )}
-            >
-                <Trash2 class="size-3.5" strokeWidth={1.75} />
-                Delete
-            </button>
-        {/if}
+        <!-- One element for both steps so keyboard focus survives the swap. -->
+        <button
+            type="button"
+            onclick={confirming ? () => onDelete(user) : askDelete}
+            class={cn(
+                btn,
+                confirming
+                    ? 'bg-danger/12 font-semibold text-danger-strong hover:bg-danger/20'
+                    : 'text-muted hover:bg-elevated hover:text-danger-strong',
+            )}
+        >
+            <Trash2 class="size-3.5" strokeWidth={confirming ? 2 : 1.75} />
+            {confirming ? 'Confirm' : 'Delete'}
+        </button>
     </div>
 {/if}
