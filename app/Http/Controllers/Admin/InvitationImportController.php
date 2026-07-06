@@ -23,7 +23,7 @@ class InvitationImportController extends Controller
             ."kwame@example.com,mentor,\n";
 
         return response()->streamDownload(
-            fn () => print($content),
+            fn () => print ($content),
             'invitations-template.csv',
             ['Content-Type' => 'text/csv'],
         );
