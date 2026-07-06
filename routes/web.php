@@ -8,6 +8,8 @@ use App\Http\Controllers\Auth\InvitationAcceptanceController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Entrepreneur\DashboardController as EntrepreneurDashboardController;
 use App\Http\Controllers\Entrepreneur\EmployeeInvitationController;
+use App\Http\Controllers\Entrepreneur\MentorController as EntrepreneurMentorController;
+use App\Http\Controllers\Entrepreneur\PairingController as EntrepreneurPairingController;
 use App\Http\Controllers\Entrepreneur\ProfileController as EntrepreneurProfileController;
 use App\Http\Controllers\Mentor\DashboardController as MentorDashboardController;
 use App\Http\Controllers\Mentor\MeetingReportController;
@@ -55,6 +57,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/onboarding', [EntrepreneurProfileController::class, 'edit'])->name('onboarding');
         Route::get('/dashboard', [EntrepreneurDashboardController::class, 'index'])->middleware('account.active')->name('dashboard');
         Route::patch('/profile', [EntrepreneurProfileController::class, 'update'])->name('profile.update');
+        Route::get('/mentors', [EntrepreneurMentorController::class, 'index'])->middleware('account.active')->name('mentors.index');
+        Route::post('/pairings', [EntrepreneurPairingController::class, 'store'])->middleware('account.active')->name('pairings.store');
         Route::post('/employees', [EmployeeInvitationController::class, 'store'])->name('employees.store');
     });
 

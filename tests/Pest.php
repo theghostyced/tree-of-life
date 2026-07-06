@@ -1,5 +1,9 @@
 <?php
 
+use App\Enums\DocumentType;
+use App\Enums\UserRole;
+use App\Models\User;
+use App\Models\UserDocument;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -46,7 +50,37 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+/** An approved mentor who has set up their mentoring profile (available to pair). */
+function availableMentor(string $name = 'Grace Mentor'): User
 {
-    // ..
+    $mentor = User::factory()->mentor()->approved()->create(['name' => $name]);
+    $mentor->mentorProfile->update([
+        'primary_expertise' => 'Trade finance',
+        'industry_focus' => ['Agriculture'],
+        'years_experience' => 10,
+        'afcfta_knowledge' => 'Deep experience across the AfCFTA.',
+        'availability' => 'Weekday evenings',
+    ]);
+
+    return $mentor;
+}
+
+/** An entrepreneur who has fully completed onboarding (fields + documents). */
+function completeEntrepreneur(): User
+{
+    $entrepreneur = User::factory()->entrepreneur()->approved()->create();
+    $entrepreneur->entrepreneurProfile->update([
+        'business_name' => 'Acme Textiles',
+        'business_description' => 'We weave sustainable textiles.',
+        'business_email' => 'hello@acme.co',
+        'business_phone_number' => '+254700111222',
+        'sector' => ['Manufacturing'],
+        'years_in_operation' => 5,
+        'employee_count' => 20,
+    ]);
+    foreach (DocumentType::requiredFor(UserRole::Entrepreneur) as $type) {
+        UserDocument::factory()->for($entrepreneur)->create(['document_type' => $type]);
+    }
+
+    return $entrepreneur->refresh();
 }

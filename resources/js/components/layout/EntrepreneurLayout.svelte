@@ -18,7 +18,12 @@
             icon: LayoutGrid,
             enabled: true,
         },
-        { label: 'My mentor', href: '/entrepreneur/mentor', icon: UserRound },
+        {
+            label: 'Mentors',
+            href: '/entrepreneur/mentors',
+            icon: UserRound,
+            enabled: true,
+        },
         { label: 'Meetings', href: '/entrepreneur/meetings', icon: Calendar },
         { label: 'Reports', href: '/entrepreneur/reports', icon: FileText },
     ];

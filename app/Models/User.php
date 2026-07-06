@@ -8,6 +8,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -94,6 +95,31 @@ class User extends Authenticatable
     public function documents(): HasMany
     {
         return $this->hasMany(UserDocument::class);
+    }
+
+    /** The mentor an entrepreneur has chosen. @return HasOne<MentorPairing, $this> */
+    public function mentorPairing(): HasOne
+    {
+        return $this->hasOne(MentorPairing::class, 'entrepreneur_id');
+    }
+
+    /** The entrepreneurs paired to a mentor. @return HasMany<MentorPairing, $this> */
+    public function menteePairings(): HasMany
+    {
+        return $this->hasMany(MentorPairing::class, 'mentor_id');
+    }
+
+    /**
+     * Approved mentors who have set up their mentoring profile — the pool an
+     * entrepreneur browses and can pair with.
+     *
+     * @param  Builder<User>  $query
+     */
+    public function scopeAvailableMentor(Builder $query): void
+    {
+        $query->where('role', UserRole::Mentor)
+            ->where('account_status', AccountStatus::Approved)
+            ->whereHas('mentorProfile', fn (Builder $q) => $q->whereNotNull('primary_expertise'));
     }
 
     public function isAdmin(): bool
