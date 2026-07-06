@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\AccountStatus;
+use App\Enums\PairingStatus;
 use App\Enums\UserRole;
 use Database\Factories\UserFactory;
 use Illuminate\Auth\MustVerifyEmail;
@@ -98,17 +99,19 @@ class User extends Authenticatable
         return $this->hasMany(UserDocument::class);
     }
 
-    /** The mentors an entrepreneur has chosen. @return BelongsToMany<User, $this> */
+    /** The mentors an entrepreneur has active pairings with. @return BelongsToMany<User, $this> */
     public function mentors(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'mentor_pairings', 'entrepreneur_id', 'mentor_id')
+        return $this->belongsToMany(User::class, 'pairings', 'entrepreneur_user_id', 'mentor_user_id')
+            ->wherePivot('status', PairingStatus::Active->value)
             ->withTimestamps();
     }
 
-    /** The entrepreneurs paired to a mentor. @return BelongsToMany<User, $this> */
+    /** The entrepreneurs a mentor has active pairings with. @return BelongsToMany<User, $this> */
     public function mentees(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'mentor_pairings', 'mentor_id', 'entrepreneur_id')
+        return $this->belongsToMany(User::class, 'pairings', 'mentor_user_id', 'entrepreneur_user_id')
+            ->wherePivot('status', PairingStatus::Active->value)
             ->withTimestamps();
     }
 

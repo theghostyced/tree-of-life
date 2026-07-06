@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Entrepreneur;
 
 use App\Data\OnboardingProgress;
 use App\Http\Controllers\Controller;
+use App\Models\Pairing;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -42,7 +43,14 @@ class PairingController extends Controller
             ]);
         }
 
-        $user->mentors()->attach($mentor->id);
+        // A pairing row (status defaults to active) rather than a bare pivot
+        // attach: the mentor dashboard, meetings, and the admin Mentorship
+        // section all read pairings, and ending a mentorship later flips the
+        // status instead of deleting history.
+        Pairing::create([
+            'entrepreneur_user_id' => $user->id,
+            'mentor_user_id' => $mentor->id,
+        ]);
 
         return redirect()->route('entrepreneur.mentors.index')
             ->with('status', "You're now working with {$mentor->name}.");

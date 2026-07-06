@@ -290,81 +290,87 @@
                     >
                         {#each mentors.data as m (m.id)}
                             <article
-                                class="flex flex-col rounded-2xl border border-line bg-panel/40 p-6 transition-colors hover:border-line-strong"
+                                class="flex h-full flex-col rounded-2xl border border-line bg-panel/40 p-6 transition-colors hover:border-line-strong"
                             >
-                                <div class="flex items-start gap-4">
-                                    <div
-                                        class="flex size-12 shrink-0 items-center justify-center rounded-full bg-accent-soft text-sm font-semibold text-accent"
-                                    >
-                                        {initials(m.name)}
-                                    </div>
-                                    <div class="min-w-0">
-                                        <h3
-                                            class="truncate text-base font-semibold text-ink"
-                                        >
-                                            {m.name}
-                                        </h3>
-                                        {#if m.expertise}
-                                            <p
-                                                class="truncate text-sm text-accent"
-                                            >
-                                                {m.expertise}
-                                            </p>
-                                        {/if}
-                                    </div>
-                                </div>
-
-                                {#if m.bio}
-                                    <p
-                                        class="mt-4 line-clamp-3 text-[15px] text-muted"
-                                    >
-                                        {m.bio}
-                                    </p>
-                                {/if}
-
-                                {#if m.industries.length}
-                                    <div class="mt-4">
-                                        <p
-                                            class="text-xs font-medium tracking-wide text-faint uppercase"
-                                        >
-                                            Focus areas
-                                        </p>
+                                <div class="flex flex-1 flex-col">
+                                    <div class="flex items-start gap-4">
                                         <div
-                                            class="mt-2 flex flex-wrap gap-1.5"
+                                            class="flex size-12 shrink-0 items-center justify-center rounded-full bg-accent-soft text-sm font-semibold text-accent"
                                         >
-                                            {#each m.industries as ind (ind)}
-                                                <span
-                                                    class="rounded-md border border-line bg-elevated px-2 py-0.5 text-xs text-muted"
+                                            {initials(m.name)}
+                                        </div>
+                                        <div class="min-w-0">
+                                            <h3
+                                                class="truncate text-base font-semibold text-ink"
+                                            >
+                                                {m.name}
+                                            </h3>
+                                            {#if m.expertise}
+                                                <p
+                                                    class="truncate text-sm text-accent"
                                                 >
-                                                    {ind}
-                                                </span>
-                                            {/each}
+                                                    {m.expertise}
+                                                </p>
+                                            {/if}
                                         </div>
                                     </div>
-                                {/if}
 
-                                <dl class="mt-4 flex flex-wrap gap-x-8 gap-y-2">
-                                    {#if yearsLabel(m.yearsExperience)}
-                                        <div>
-                                            <dt class="text-xs text-muted">
-                                                Experience
-                                            </dt>
-                                            <dd class="text-sm text-ink">
-                                                {yearsLabel(m.yearsExperience)}
-                                            </dd>
+                                    {#if m.bio}
+                                        <p
+                                            class="mt-4 line-clamp-3 text-[15px] text-muted"
+                                        >
+                                            {m.bio}
+                                        </p>
+                                    {/if}
+
+                                    {#if m.industries.length}
+                                        <div class="mt-4">
+                                            <p
+                                                class="text-xs font-medium tracking-wide text-faint uppercase"
+                                            >
+                                                Focus areas
+                                            </p>
+                                            <div
+                                                class="mt-2 flex flex-wrap gap-1.5"
+                                            >
+                                                {#each m.industries as ind (ind)}
+                                                    <span
+                                                        class="rounded-md border border-line bg-elevated px-2 py-0.5 text-xs text-muted"
+                                                    >
+                                                        {ind}
+                                                    </span>
+                                                {/each}
+                                            </div>
                                         </div>
                                     {/if}
-                                    {#if m.availability}
-                                        <div>
-                                            <dt class="text-xs text-muted">
-                                                Availability
-                                            </dt>
-                                            <dd class="text-sm text-ink">
-                                                {m.availability}
-                                            </dd>
-                                        </div>
-                                    {/if}
-                                </dl>
+
+                                    <dl
+                                        class="mt-4 flex flex-wrap gap-x-8 gap-y-2"
+                                    >
+                                        {#if yearsLabel(m.yearsExperience)}
+                                            <div>
+                                                <dt class="text-xs text-muted">
+                                                    Experience
+                                                </dt>
+                                                <dd class="text-sm text-ink">
+                                                    {yearsLabel(
+                                                        m.yearsExperience,
+                                                    )}
+                                                </dd>
+                                            </div>
+                                        {/if}
+                                        {#if m.availability}
+                                            <div>
+                                                <dt class="text-xs text-muted">
+                                                    Availability
+                                                </dt>
+                                                <dd class="text-sm text-ink">
+                                                    {m.availability}
+                                                </dd>
+                                            </div>
+                                        {/if}
+                                    </dl>
+                                </div>
 
                                 <button
                                     type="button"
