@@ -2,6 +2,17 @@
     import { Link } from '@inertiajs/svelte';
     import { ArrowRight, ListChecks } from '@lucide/svelte';
     import MentorLayout from '@/components/layout/MentorLayout.svelte';
+    import MeetingRow from '@/components/mentorship/meeting-row.svelte';
+    import ReportSlideOver from '@/components/mentorship/report-slide-over.svelte';
+    import RescheduleCard from '@/components/mentorship/reschedule-card.svelte';
+    import { DAY_NAMES, meetingTime } from '@/components/mentorship/types';
+    import type {
+        AttentionReschedule,
+        AvailabilitySlot,
+        Mentee,
+        MissingReport,
+        WeekMeeting,
+    } from '@/components/mentorship/types';
     import { cn } from '@/lib/utils';
 
     type Onboarding = {
@@ -12,13 +23,49 @@
         missing: string[];
     };
 
-    let { onboarding }: { onboarding: Onboarding } = $props();
+    let {
+        onboarding,
+        attention,
+        meetings = [],
+        mentees = [],
+        availability,
+        stats,
+    }: {
+        onboarding: Onboarding;
+        attention: {
+            reschedules: AttentionReschedule[];
+            missingReports: MissingReport[];
+        };
+        meetings: WeekMeeting[];
+        mentees: Mentee[];
+        availability: { activeCount: number; slots: AvailabilitySlot[] };
+        stats: {
+            menteeCount: number;
+            completedCount: number;
+            hoursMentored: number;
+        };
+    } = $props();
 
     const pct = $derived(
         onboarding.total === 0
             ? 0
             : Math.round((onboarding.completed / onboarding.total) * 100),
     );
+
+    const needsAttention = $derived(
+        attention.reschedules.length + attention.missingReports.length > 0,
+    );
+
+    let reportFor = $state<MissingReport | null>(null);
+
+    // Toast, matching pages/admin/users/Index.svelte exactly:
+    let toast = $state<string | null>(null);
+    let toastTimer: ReturnType<typeof setTimeout> | undefined;
+    function toastMsg(m: string) {
+        toast = m;
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => (toast = null), 3400);
+    }
 
     const focusRing =
         'outline-none focus-visible:ring-2 focus-visible:ring-accent/60';
@@ -86,20 +133,178 @@
         {/if}
     </div>
 
-    <div
-        class="mt-8 flex flex-1 flex-col items-center justify-center border-t border-line px-6 py-16 text-center"
-    >
-        <img
-            src="/images/illustrations/support-options.svg"
-            alt=""
-            class="mb-6 size-44 opacity-90 sm:size-52 lg:size-60"
-        />
-        <h3 class="text-lg font-semibold text-ink">
-            Your workspace is taking shape
-        </h3>
-        <p class="mt-2 max-w-sm text-[15px] text-muted">
-            Your mentees, meetings, and reports will appear here as the
-            programme gets underway.
-        </p>
+    <div class="px-6">
+        {#if needsAttention}
+            <section class="mt-8" aria-labelledby="attention-heading">
+                <h2
+                    id="attention-heading"
+                    class="text-sm font-semibold text-ink"
+                >
+                    Needs your attention
+                </h2>
+                <div class="mt-3 grid gap-4 lg:grid-cols-2">
+                    {#each attention.reschedules as reschedule (reschedule.id)}
+                        <RescheduleCard
+                            {reschedule}
+                            onReviewed={(accepted) =>
+                                toastMsg(
+                                    accepted
+                                        ? 'Meeting moved to the new time.'
+                                        : 'Reschedule request declined.',
+                                )}
+                        />
+                    {/each}
+                    {#each attention.missingReports as missing (missing.meetingId)}
+                        <div
+                            class="rounded-xl border border-line bg-panel/40 p-5"
+                        >
+                            <p class="text-sm font-medium text-ink">
+                                Your meeting with {missing.menteeName} needs a report
+                            </p>
+                            <p class="mt-1 text-[13px] text-muted">
+                                Held {meetingTime(missing.endedAt)}
+                            </p>
+                            <button
+                                type="button"
+                                onclick={() => (reportFor = missing)}
+                                class={cn(
+                                    'mt-4 inline-flex items-center rounded-lg bg-accent px-3.5 py-2 text-sm font-semibold text-on-accent shadow-btn transition-all hover:bg-accent-strong',
+                                    focusRing,
+                                )}
+                            >
+                                Write report
+                            </button>
+                        </div>
+                    {/each}
+                </div>
+            </section>
+        {/if}
+
+        <section class="mt-8" aria-labelledby="week-heading">
+            <h2 id="week-heading" class="text-sm font-semibold text-ink">
+                This week
+            </h2>
+            {#if meetings.length}
+                <ul
+                    class="mt-3 divide-y divide-line rounded-xl border border-line bg-panel/40 px-5"
+                >
+                    {#each meetings as meeting (meeting.id)}
+                        <MeetingRow {meeting} />
+                    {/each}
+                </ul>
+            {:else}
+                <p
+                    class="mt-3 rounded-xl border border-line bg-panel/40 p-5 text-sm text-muted"
+                >
+                    No meetings booked this week.
+                </p>
+            {/if}
+        </section>
+
+        <section class="mt-8" aria-labelledby="mentees-heading">
+            <h2
+                id="mentees-heading"
+                class="flex items-center gap-2 text-sm font-semibold text-ink"
+            >
+                Your mentees
+                {#if stats.menteeCount}
+                    <span
+                        class="rounded-full bg-elevated px-1.5 py-0.5 text-[11px] font-semibold text-faint tabular-nums"
+                    >
+                        {stats.menteeCount}
+                    </span>
+                {/if}
+            </h2>
+            {#if mentees.length}
+                <ul
+                    class="mt-3 divide-y divide-line rounded-xl border border-line bg-panel/40 px-5"
+                >
+                    {#each mentees as mentee (mentee.pairingId)}
+                        <li class="flex items-center gap-4 py-3.5">
+                            <div class="min-w-0 flex-1">
+                                <p
+                                    class="truncate text-sm font-medium text-ink"
+                                >
+                                    {mentee.name}
+                                </p>
+                                {#if mentee.company}
+                                    <p
+                                        class="mt-0.5 truncate text-[13px] text-muted"
+                                    >
+                                        {mentee.company}
+                                    </p>
+                                {/if}
+                            </div>
+                            <p class="shrink-0 text-[13px] text-muted">
+                                {mentee.nextMeetingAt
+                                    ? `Next ${meetingTime(mentee.nextMeetingAt)}`
+                                    : mentee.lastMeetingAt
+                                      ? `Last met ${meetingTime(mentee.lastMeetingAt)}`
+                                      : 'No meetings yet'}
+                            </p>
+                        </li>
+                    {/each}
+                </ul>
+            {:else}
+                <p
+                    class="mt-3 rounded-xl border border-line bg-panel/40 p-5 text-sm text-muted"
+                >
+                    No mentees yet. Entrepreneurs choose their mentor when they
+                    join, and new mentees appear here automatically.
+                </p>
+            {/if}
+        </section>
+
+        <section class="mt-8 mb-12" aria-labelledby="availability-heading">
+            <h2
+                id="availability-heading"
+                class="text-sm font-semibold text-ink"
+            >
+                Availability
+            </h2>
+            {#if availability.activeCount}
+                <ul class="mt-3 flex flex-wrap gap-2">
+                    {#each availability.slots as slot (slot.id)}
+                        <li
+                            class="rounded-full border border-line bg-elevated px-3 py-1.5 text-xs text-muted"
+                        >
+                            <span class="font-medium text-ink"
+                                >{DAY_NAMES[slot.dayOfWeek]}</span
+                            >
+                            {slot.startTime} to {slot.endTime}
+                        </li>
+                    {/each}
+                </ul>
+            {:else}
+                <p
+                    class="mt-3 rounded-xl border border-line bg-panel/40 p-5 text-sm text-muted"
+                >
+                    No availability set yet. Availability management is coming
+                    soon; an admin can help set your slots in the meantime.
+                </p>
+            {/if}
+        </section>
     </div>
+
+    {#if reportFor}
+        <ReportSlideOver
+            meeting={reportFor}
+            onClose={() => (reportFor = null)}
+            onSubmitted={() => {
+                reportFor = null;
+                toastMsg('Report submitted.');
+            }}
+        />
+    {/if}
+
+    {#if toast}
+        <div class="fixed bottom-6 left-1/2 z-[60] -translate-x-1/2">
+            <div
+                role="status"
+                class="flex items-center gap-2.5 rounded-lg border border-line-strong bg-elevated px-4 py-2.5 text-sm text-ink shadow-card"
+            >
+                {toast}
+            </div>
+        </div>
+    {/if}
 </MentorLayout>
