@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\InvitationImportController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\InvitationAcceptanceController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Chat\MarkReadController;
 use App\Http\Controllers\Chat\SendMessageController;
 use App\Http\Controllers\Entrepreneur\DashboardController as EntrepreneurDashboardController;
 use App\Http\Controllers\Entrepreneur\EmployeeInvitationController;
@@ -93,4 +94,6 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/conversations/{conversation}/messages', [SendMessageController::class, 'store'])
         ->name('conversations.messages.store');
+    Route::post('/conversations/{conversation}/read', [MarkReadController::class, 'store'])
+        ->name('conversations.read');
 });
