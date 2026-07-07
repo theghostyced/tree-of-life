@@ -3,12 +3,16 @@
 namespace App\Models;
 
 use App\Enums\PairingStatus;
+use App\Observers\PairingObserver;
 use Database\Factories\PairingFactory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
+#[ObservedBy(PairingObserver::class)]
 class Pairing extends Model
 {
     /** @use HasFactory<PairingFactory> */
@@ -42,5 +46,10 @@ class Pairing extends Model
     public function meetings(): HasMany
     {
         return $this->hasMany(Meeting::class);
+    }
+
+    public function conversation(): HasOne
+    {
+        return $this->hasOne(Conversation::class);
     }
 }
