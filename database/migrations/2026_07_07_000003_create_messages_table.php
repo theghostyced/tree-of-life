@@ -1,6 +1,5 @@
 <?php
 
-// database/migrations/2026_07_07_000003_create_messages_table.php
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

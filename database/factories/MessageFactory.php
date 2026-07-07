@@ -1,7 +1,5 @@
 <?php
 
-// database/factories/MessageFactory.php
-
 namespace Database\Factories;
 
 use App\Enums\MessageType;

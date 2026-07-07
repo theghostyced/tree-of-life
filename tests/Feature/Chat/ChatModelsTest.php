@@ -1,7 +1,5 @@
 <?php
 
-// tests/Feature/Chat/ChatModelsTest.php
-
 use App\Enums\MessageType;
 use App\Models\Conversation;
 use App\Models\ConversationParticipant;
@@ -30,4 +28,24 @@ test('a conversation has messages, participants, and a pairing', function () {
         ->and($conversation->isActive())->toBeTrue()
         ->and($conversation->unreadCountFor($entrepreneur))->toBe(1)
         ->and($conversation->unreadCountFor($mentor))->toBe(0);
+});
+
+test('a system message with no sender counts as unread for both participants', function () {
+    $entrepreneur = completeEntrepreneur();
+    $mentor = availableMentor();
+    $pairing = Pairing::create([
+        'entrepreneur_user_id' => $entrepreneur->id,
+        'mentor_user_id' => $mentor->id,
+    ]);
+    $conversation = Conversation::create(['pairing_id' => $pairing->id]);
+    ConversationParticipant::create(['conversation_id' => $conversation->id, 'user_id' => $entrepreneur->id]);
+    ConversationParticipant::create(['conversation_id' => $conversation->id, 'user_id' => $mentor->id]);
+    $conversation->messages()->create([
+        'sender_user_id' => null,
+        'type' => MessageType::System,
+        'body' => 'Call scheduled',
+    ]);
+
+    expect($conversation->unreadCountFor($entrepreneur))->toBe(1)
+        ->and($conversation->unreadCountFor($mentor))->toBe(1);
 });

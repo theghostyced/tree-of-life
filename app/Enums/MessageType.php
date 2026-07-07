@@ -1,7 +1,5 @@
 <?php
 
-// app/Enums/MessageType.php
-
 namespace App\Enums;
 
 enum MessageType: string

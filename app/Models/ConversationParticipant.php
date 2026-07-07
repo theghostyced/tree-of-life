@@ -1,7 +1,5 @@
 <?php
 
-// app/Models/ConversationParticipant.php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;

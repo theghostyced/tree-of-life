@@ -1,7 +1,5 @@
 <?php
 
-// app/Models/Message.php
-
 namespace App\Models;
 
 use App\Enums\MessageType;

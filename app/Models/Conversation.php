@@ -1,7 +1,5 @@
 <?php
 
-// app/Models/Conversation.php
-
 namespace App\Models;
 
 use Database\Factories\ConversationFactory;
@@ -57,7 +55,9 @@ class Conversation extends Model
         $participant = $this->participantFor($user);
 
         return $this->messages()
-            ->where('sender_user_id', '!=', $user->id)
+            ->where(function ($q) use ($user) {
+                $q->whereNull('sender_user_id')->orWhere('sender_user_id', '!=', $user->id);
+            })
             ->when($participant?->last_read_message_id, fn ($q, $id) => $q->where('id', '>', $id))
             ->count();
     }
