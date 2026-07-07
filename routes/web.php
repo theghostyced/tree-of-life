@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\InvitationImportController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\InvitationAcceptanceController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Chat\SendMessageController;
 use App\Http\Controllers\Entrepreneur\DashboardController as EntrepreneurDashboardController;
 use App\Http\Controllers\Entrepreneur\EmployeeInvitationController;
 use App\Http\Controllers\Entrepreneur\MeetingController as EntrepreneurMeetingController;
@@ -89,4 +90,7 @@ Route::middleware('auth')->group(function () {
      */
     Route::post('/onboarding/documents', [DocumentController::class, 'store'])->name('onboarding.documents.store');
     Route::get('/onboarding/documents/{document}', [DocumentController::class, 'show'])->name('onboarding.documents.show');
+
+    Route::post('/conversations/{conversation}/messages', [SendMessageController::class, 'store'])
+        ->name('conversations.messages.store');
 });
