@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\InvitationImportController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\InvitationAcceptanceController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Chat\ConversationMessagesController;
 use App\Http\Controllers\Chat\MarkReadController;
 use App\Http\Controllers\Chat\SendMessageController;
 use App\Http\Controllers\Entrepreneur\DashboardController as EntrepreneurDashboardController;
@@ -92,6 +93,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/onboarding/documents', [DocumentController::class, 'store'])->name('onboarding.documents.store');
     Route::get('/onboarding/documents/{document}', [DocumentController::class, 'show'])->name('onboarding.documents.show');
 
+    Route::get('/conversations/{conversation}/messages', [ConversationMessagesController::class, 'index'])
+        ->name('conversations.messages.index');
     Route::post('/conversations/{conversation}/messages', [SendMessageController::class, 'store'])
         ->name('conversations.messages.store');
     Route::post('/conversations/{conversation}/read', [MarkReadController::class, 'store'])
