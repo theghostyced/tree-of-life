@@ -44,11 +44,15 @@ class BookMeeting
         // App days are 0 = Monday .. 6 = Sunday; Carbon ISO is 1 = Monday .. 7 = Sunday.
         $targetIso = ((int) $slot->day_of_week) + 1;
 
-        $candidate = now()->startOfDay()->setTime($hour, $minute);
+        // The slot's times are wall-clock in the mentor's own timezone; resolve
+        // the instant there, then work in the app timezone (how starts_at is
+        // stored) so the dedupe comparison lines up.
+        $candidate = now($slot->timezone)->startOfDay()->setTime($hour, $minute);
         $candidate = $candidate->addDays(($targetIso - $candidate->dayOfWeekIso + 7) % 7);
         if ($candidate->isPast()) {
             $candidate = $candidate->addWeek();
         }
+        $candidate = $candidate->setTimezone(config('app.timezone'));
 
         for ($week = 0; $week < 8; $week++) {
             $taken = $pairing->meetings()
