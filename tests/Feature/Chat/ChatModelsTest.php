@@ -1,8 +1,6 @@
 <?php
 
 use App\Enums\MessageType;
-use App\Models\Conversation;
-use App\Models\ConversationParticipant;
 use App\Models\Pairing;
 
 test('a conversation has messages, participants, and a pairing', function () {
@@ -12,9 +10,9 @@ test('a conversation has messages, participants, and a pairing', function () {
         'entrepreneur_user_id' => $entrepreneur->id,
         'mentor_user_id' => $mentor->id,
     ]);
-    $conversation = Conversation::create(['pairing_id' => $pairing->id]);
-    ConversationParticipant::create(['conversation_id' => $conversation->id, 'user_id' => $entrepreneur->id]);
-    ConversationParticipant::create(['conversation_id' => $conversation->id, 'user_id' => $mentor->id]);
+
+    // The PairingObserver auto-provisions the conversation and both participants.
+    $conversation = $pairing->conversation()->firstOrFail();
     $conversation->messages()->create([
         'sender_user_id' => $mentor->id, 'type' => MessageType::Text, 'body' => 'Hello there',
     ]);
@@ -37,13 +35,10 @@ test('a system message with no sender counts as unread for both participants', f
         'entrepreneur_user_id' => $entrepreneur->id,
         'mentor_user_id' => $mentor->id,
     ]);
-    $conversation = Conversation::create(['pairing_id' => $pairing->id]);
-    ConversationParticipant::create(['conversation_id' => $conversation->id, 'user_id' => $entrepreneur->id]);
-    ConversationParticipant::create(['conversation_id' => $conversation->id, 'user_id' => $mentor->id]);
+
+    $conversation = $pairing->conversation()->firstOrFail();
     $conversation->messages()->create([
-        'sender_user_id' => null,
-        'type' => MessageType::System,
-        'body' => 'Call scheduled',
+        'sender_user_id' => null, 'type' => MessageType::System, 'body' => 'Call scheduled',
     ]);
 
     expect($conversation->unreadCountFor($entrepreneur))->toBe(1)
