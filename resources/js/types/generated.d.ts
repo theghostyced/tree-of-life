@@ -15,6 +15,7 @@ declare namespace App {
         export type InvitationStatus =
             'pending' | 'accepted' | 'revoked' | 'expired';
         export type MeetingStatus = 'confirmed' | 'completed' | 'cancelled';
+        export type MessageType = 'text' | 'system';
         export type PairingStatus = 'active' | 'ended';
         export type RescheduleStatus = 'pending' | 'accepted' | 'declined';
         export type UserRole = 'admin' | 'mentor' | 'entrepreneur' | 'employee';
