@@ -8,7 +8,7 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
 
-Broadcast::channel('conversation.{conversationId}', [ConversationChannel::class, 'join']);
+Broadcast::channel('conversation.{conversationId}', ConversationChannel::class);
 
 Broadcast::channel('user.{userId}', function (User $user, int $userId) {
     return (int) $user->id === (int) $userId;
