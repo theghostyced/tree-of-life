@@ -1,0 +1,11 @@
+<?php
+
+// app/Enums/MessageType.php
+
+namespace App\Enums;
+
+enum MessageType: string
+{
+    case Text = 'text';
+    case System = 'system';
+}
