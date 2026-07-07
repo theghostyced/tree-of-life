@@ -1,3 +1,5 @@
+import '@/echo';
+
 import { createInertiaApp } from '@inertiajs/svelte';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
