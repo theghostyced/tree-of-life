@@ -2,6 +2,7 @@
 
 namespace App\Actions\Mentorship;
 
+use App\Actions\Chat\PostSystemMessage;
 use App\Enums\MeetingStatus;
 use App\Models\Meeting;
 use App\Models\MentorAvailabilitySlot;
@@ -19,7 +20,7 @@ class BookMeeting
 
         abort_if($starts === null, 422, 'That slot is fully booked for the coming weeks.');
 
-        return Meeting::create([
+        $meeting = Meeting::create([
             'pairing_id' => $pairing->id,
             'mentor_availability_slot_id' => $slot->id,
             'starts_at' => $starts,
@@ -31,6 +32,15 @@ class BookMeeting
             'status' => MeetingStatus::Confirmed,
             'confirmed_at' => now(),
         ]);
+
+        // Announce the booking in the pairing's chat. Kept defensive so a
+        // booking never fails if a legacy pairing has no conversation.
+        if ($conversation = $pairing->conversation()->first()) {
+            $when = $meeting->starts_at->timezone($meeting->timezone)->format('D j M, g:i A');
+            app(PostSystemMessage::class)->handle($conversation, "📅 Call scheduled for {$when}");
+        }
+
+        return $meeting;
     }
 
     /**
