@@ -25,7 +25,13 @@
         teardown();
         teardown = subscribeConversation(id, {
             onMessage: ({ message }) => {
-                if (message.sender_id !== currentUserId) { messages = [...messages, message]; markRead(id); }
+                // Ignore our own broadcast (already shown optimistically) and
+                // guard against duplicate delivery so the keyed #each never
+                // sees a repeated id.
+                if (message.sender_id === currentUserId) return;
+                if (messages.some((m) => m.id === message.id)) return;
+                messages = [...messages, message];
+                markRead(id);
             },
             onRead: ({ last_read_message_id }) => (otherLastRead = last_read_message_id),
             onTyping: () => { typing = true; clearTimeout(typingTimer); typingTimer = setTimeout(() => (typing = false), 3000); },
