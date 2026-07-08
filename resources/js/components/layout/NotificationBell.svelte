@@ -10,6 +10,7 @@
         X,
     } from '@lucide/svelte';
     import { fade } from 'svelte/transition';
+    import { cubicOut } from 'svelte/easing';
     import { subscribeNotifications } from '@/lib/chat';
     import { cn } from '@/lib/utils';
     import type { AppNotification } from '@/types/global';
@@ -152,6 +153,27 @@
         const el = e.currentTarget as HTMLElement;
         if (el.scrollTop + el.clientHeight >= el.scrollHeight - 60) loadOlder();
     }
+
+    // Slide the panel in from the right on desktop (the sidebar) and drop it a
+    // touch on mobile (the dropdown). Reduced motion falls back to a crossfade.
+    function panelTransition(_node: Element, { duration = 220 }) {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            return { duration: 120, css: (t: number) => `opacity: ${t}` };
+        }
+        if (window.matchMedia('(min-width: 1024px)').matches) {
+            return {
+                duration,
+                easing: cubicOut,
+                css: (t: number) => `transform: translateX(${(1 - t) * 100}%)`,
+            };
+        }
+        return {
+            duration,
+            easing: cubicOut,
+            css: (t: number) =>
+                `transform: translateY(${(1 - t) * -8}px); opacity: ${t}`,
+        };
+    }
 </script>
 
 <div class="relative">
@@ -183,7 +205,7 @@
     ></button>
 
     <div
-        transition:fade={{ duration: 150 }}
+        transition:panelTransition={{ duration: 220 }}
         class="fixed top-16 right-2 left-2 z-50 flex max-h-[75vh] flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-xl lg:top-14 lg:right-0 lg:left-auto lg:h-[calc(100dvh-3.5rem)] lg:max-h-none lg:w-[400px] lg:rounded-none lg:border-y-0 lg:border-r-0 lg:border-l lg:border-line-strong lg:shadow-2xl"
     >
         <div
