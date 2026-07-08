@@ -25,7 +25,8 @@ class MentorController extends Controller
         $user = $request->user();
 
         if (! OnboardingProgress::forUser($user)->isComplete) {
-            return redirect()->route('entrepreneur.dashboard');
+            return redirect()->route('entrepreneur.onboarding')
+                ->with('info', 'Finish your business profile to browse and add mentors.');
         }
 
         $chosenIds = $user->mentors()->pluck('users.id');

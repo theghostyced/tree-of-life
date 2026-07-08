@@ -76,10 +76,11 @@ test('the hub paginates the mentor pool', function () {
         ->assertInertia(fn (Assert $page) => $page->has('mentors.data', 1));
 });
 
-test('the hub redirects an entrepreneur who has not finished onboarding', function () {
+test('the hub redirects an entrepreneur who has not finished onboarding to onboarding', function () {
     $entrepreneur = User::factory()->entrepreneur()->approved()->create();
     availableMentor();
 
     $this->actingAs($entrepreneur)->get('/entrepreneur/mentors')
-        ->assertRedirect('/entrepreneur/dashboard');
+        ->assertRedirect('/entrepreneur/onboarding')
+        ->assertSessionHas('info');
 });
