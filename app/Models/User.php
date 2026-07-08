@@ -57,6 +57,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'account_status_changed_at' => 'datetime',
             'profile_submitted_at' => 'datetime',
+            'onboarding_completed_at' => 'datetime',
             'password' => 'hashed',
             'role' => UserRole::class,
             'account_status' => AccountStatus::class,

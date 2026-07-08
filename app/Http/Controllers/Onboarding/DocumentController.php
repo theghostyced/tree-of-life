@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Onboarding;
 
+use App\Actions\Onboarding\MarkOnboardingComplete;
 use App\Actions\StoreUserDocument;
 use App\Enums\DocumentType;
 use App\Http\Controllers\Controller;
@@ -21,6 +22,8 @@ class DocumentController extends Controller
             DocumentType::from($request->validated('document_type')),
             $request->file('file'),
         );
+
+        app(MarkOnboardingComplete::class)->handle($request->user());
 
         return back()->with('status', 'Document uploaded.');
     }

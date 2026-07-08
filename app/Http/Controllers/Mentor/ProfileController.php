@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Mentor;
 
+use App\Actions\Onboarding\MarkOnboardingComplete;
 use App\Data\MentorOnboardingData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Mentor\UpdateMentorProfileRequest;
@@ -23,6 +24,8 @@ class ProfileController extends Controller
     public function update(UpdateMentorProfileRequest $request): RedirectResponse
     {
         $request->user()->mentorProfile()->update($request->validated());
+
+        app(MarkOnboardingComplete::class)->handle($request->user());
 
         return back()->with('status', 'Profile saved.');
     }

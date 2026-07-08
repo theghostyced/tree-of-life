@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Entrepreneur;
 
+use App\Actions\Onboarding\MarkOnboardingComplete;
 use App\Data\EntrepreneurOnboardingData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Entrepreneur\UpdateEntrepreneurProfileRequest;
@@ -23,6 +24,8 @@ class ProfileController extends Controller
     public function update(UpdateEntrepreneurProfileRequest $request): RedirectResponse
     {
         $request->user()->entrepreneurProfile()->update($request->validated());
+
+        app(MarkOnboardingComplete::class)->handle($request->user());
 
         return back()->with('status', 'Profile saved.');
     }
