@@ -30,3 +30,17 @@ test('messages paginate oldest-to-newest with a before cursor', function () {
     expect($secondPage)->toHaveCount(10)
         ->and(end($secondPage)['id'])->toBe($ids[9]);
 });
+
+test('a non-participant cannot read a conversation history', function () {
+    $entrepreneur = completeEntrepreneur();
+    $mentor = availableMentor();
+    $intruder = availableMentor();
+    $conversation = Pairing::create([
+        'entrepreneur_user_id' => $entrepreneur->id,
+        'mentor_user_id' => $mentor->id,
+    ])->conversation()->firstOrFail();
+
+    $this->actingAs($intruder)
+        ->getJson("/conversations/{$conversation->id}/messages")
+        ->assertForbidden();
+});
