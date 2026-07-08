@@ -1,8 +1,8 @@
 <script lang="ts">
-    import { router } from '@inertiajs/svelte';
-    import { Video, MapPin, Calendar, Plus } from '@lucide/svelte';
+    import { Video, MapPin, Calendar } from '@lucide/svelte';
     import EntrepreneurLayout from '@/components/layout/EntrepreneurLayout.svelte';
-    import { Toaster, toast } from '@/components/ui/sonner';
+    import BookCallCalendar from './BookCallCalendar.svelte';
+    import { Toaster } from '@/components/ui/sonner';
     import { cn } from '@/lib/utils';
 
     type Meeting = {
@@ -17,22 +17,31 @@
         status: 'confirmed' | 'completed' | 'cancelled';
         reportSummary: string | null;
     };
-    type Bookable = {
+    type Mentor = { pairingId: number; mentorId: number; name: string };
+    type Occurrence = {
         slotId: number;
-        mentorName: string;
         startsAt: number;
+        endsAt: number;
         sessionType: 'virtual' | 'in_person';
+        location: string | null;
+        meetingLink: string | null;
     };
 
     let {
         upcoming = [],
         past = [],
-        bookable = [],
+        mentors = [],
+        availability = {},
     }: {
         upcoming: Meeting[];
         past: Meeting[];
-        bookable: Bookable[];
+        mentors: Mentor[];
+        availability: Record<number, Occurrence[]>;
     } = $props();
+
+    const preselect =
+        Number(new URLSearchParams(window.location.search).get('pairing')) ||
+        null;
 
     const focusRing =
         'outline-none focus-visible:ring-2 focus-visible:ring-accent/60';
@@ -60,22 +69,6 @@
             cls: 'bg-danger/12 text-danger-strong',
         },
     };
-
-    let booking = $state<number | null>(null);
-    function book(slotId: number) {
-        router.post(
-            '/entrepreneur/meetings',
-            { slot_id: slotId },
-            {
-                preserveScroll: true,
-                onStart: () => (booking = slotId),
-                onFinish: () => (booking = null),
-                onSuccess: () => toast.success('Meeting booked.'),
-                onError: () =>
-                    toast.error("That time isn't available anymore."),
-            },
-        );
-    }
 </script>
 
 <EntrepreneurLayout title="Meetings">
@@ -155,52 +148,13 @@
         {/snippet}
 
         <!-- Book -->
-        {#if bookable.length}
-            <section class="mt-8">
-                <h2 class="text-lg font-semibold text-ink">Book a session</h2>
-                <div class="mt-4 grid gap-3 sm:grid-cols-2">
-                    {#each bookable as b (b.slotId)}
-                        <div
-                            class="flex items-center gap-3 rounded-xl border border-line bg-panel/40 p-4"
-                        >
-                            <div
-                                class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-accent-soft text-accent"
-                            >
-                                {#if b.sessionType === 'virtual'}
-                                    <Video class="size-4" strokeWidth={1.75} />
-                                {:else}
-                                    <MapPin class="size-4" strokeWidth={1.75} />
-                                {/if}
-                            </div>
-                            <div class="min-w-0">
-                                <p
-                                    class="truncate text-sm font-medium text-ink"
-                                >
-                                    {b.mentorName}
-                                </p>
-                                <p class="text-xs text-muted tabular-nums">
-                                    {fmtDate(b.startsAt)} · {fmtTime(
-                                        b.startsAt,
-                                    )}
-                                </p>
-                            </div>
-                            <button
-                                type="button"
-                                onclick={() => book(b.slotId)}
-                                disabled={booking !== null}
-                                class={cn(
-                                    'ml-auto inline-flex items-center gap-1 rounded-lg bg-accent px-3 py-1.5 text-xs font-semibold text-on-accent shadow-btn transition-all hover:-translate-y-px hover:bg-accent-strong disabled:opacity-60',
-                                    focusRing,
-                                )}
-                            >
-                                <Plus class="size-3.5" strokeWidth={2.25} />
-                                Book
-                            </button>
-                        </div>
-                    {/each}
-                </div>
-            </section>
-        {/if}
+        <div class="mt-8">
+            <BookCallCalendar
+                {mentors}
+                {availability}
+                initialPairingId={preselect}
+            />
+        </div>
 
         <!-- Upcoming -->
         <section class="mt-8">
@@ -224,9 +178,7 @@
                         No upcoming meetings
                     </h3>
                     <p class="mt-1.5 max-w-sm text-[15px] text-muted">
-                        {bookable.length
-                            ? 'Book a session above to get started.'
-                            : "Your mentors haven't opened any times yet. Check back soon."}
+                        Pick an open time above to book your first session.
                     </p>
                 </div>
             {/if}

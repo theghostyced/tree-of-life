@@ -8,17 +8,27 @@ use App\Models\Meeting;
 use App\Models\MentorAvailabilitySlot;
 use App\Models\Pairing;
 use Carbon\CarbonInterface;
+use Illuminate\Support\Collection;
 
 class BookMeeting
 {
     /**
-     * Book the next free occurrence of a mentor's weekly slot for a pairing.
+     * Book a mentor's slot for a pairing. Without $startsAt, books the next
+     * free occurrence; with it, books that specific (still-available) occurrence.
      */
-    public function handle(Pairing $pairing, MentorAvailabilitySlot $slot): Meeting
-    {
-        $starts = self::nextFreeOccurrence($slot, $pairing);
-
-        abort_if($starts === null, 422, 'That slot is fully booked for the coming weeks.');
+    public function handle(
+        Pairing $pairing,
+        MentorAvailabilitySlot $slot,
+        ?CarbonInterface $startsAt = null,
+    ): Meeting {
+        if ($startsAt !== null) {
+            $starts = self::freeOccurrences($slot, $pairing)
+                ->first(fn (CarbonInterface $o) => $o->equalTo($startsAt));
+            abort_if($starts === null, 422, 'That time is no longer available.');
+        } else {
+            $starts = self::nextFreeOccurrence($slot, $pairing);
+            abort_if($starts === null, 422, 'That slot is fully booked for the coming weeks.');
+        }
 
         $meeting = Meeting::create([
             'pairing_id' => $pairing->id,
@@ -48,11 +58,24 @@ class BookMeeting
     }
 
     /**
-     * The earliest future occurrence of the slot's weekday+time that this
-     * pairing hasn't already booked, looking up to 8 weeks ahead.
+     * The earliest future free occurrence of the slot for this pairing.
      */
     public static function nextFreeOccurrence(MentorAvailabilitySlot $slot, Pairing $pairing): ?CarbonInterface
     {
+        return self::freeOccurrences($slot, $pairing)->first();
+    }
+
+    /**
+     * All future occurrences of the slot's weekday+time this pairing hasn't
+     * already booked, over the next $weeks weeks (oldest first).
+     *
+     * @return Collection<int, CarbonInterface>
+     */
+    public static function freeOccurrences(
+        MentorAvailabilitySlot $slot,
+        Pairing $pairing,
+        int $weeks = 8,
+    ): Collection {
         [$hour, $minute] = array_map('intval', explode(':', substr((string) $slot->start_time, 0, 5)));
 
         // App days are 0 = Monday .. 6 = Sunday; Carbon ISO is 1 = Monday .. 7 = Sunday.
@@ -68,23 +91,24 @@ class BookMeeting
         }
         $candidate = $candidate->setTimezone(config('app.timezone'));
 
-        for ($week = 0; $week < 8; $week++) {
+        $out = collect();
+        for ($week = 0; $week < $weeks; $week++) {
             $taken = $pairing->meetings()
                 ->where('status', MeetingStatus::Confirmed->value)
                 ->where('starts_at', $candidate->toDateTimeString())
                 ->exists();
 
             if (! $taken) {
-                return $candidate->copy();
+                $out->push($candidate->copy());
             }
 
             $candidate = $candidate->addWeek();
         }
 
-        return null;
+        return $out;
     }
 
-    private static function durationMinutes(MentorAvailabilitySlot $slot): int
+    public static function durationMinutes(MentorAvailabilitySlot $slot): int
     {
         [$sh, $sm] = array_map('intval', explode(':', substr((string) $slot->start_time, 0, 5)));
         [$eh, $em] = array_map('intval', explode(':', substr((string) $slot->end_time, 0, 5)));

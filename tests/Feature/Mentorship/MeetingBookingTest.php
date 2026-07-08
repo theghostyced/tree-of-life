@@ -61,20 +61,55 @@ test('an entrepreneur cannot book a slot of a mentor they are not paired with', 
     expect(Meeting::count())->toBe(0);
 });
 
-test('the entrepreneur meetings page lists bookable slots and upcoming meetings', function () {
+test('the entrepreneur meetings page lists mentors and their open slot occurrences', function () {
     [$entrepreneur, , $slot] = pairedWithSlot();
+    $pairing = Pairing::sole();
 
+    // The weekly slot yields 8 free occurrences over the booking horizon.
     $this->actingAs($entrepreneur)->get('/entrepreneur/meetings')
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->component('entrepreneur/Meetings')
-            ->has('bookable', 1)
+            ->has('mentors', 1)
+            ->has("availability.{$pairing->id}", 8)
             ->has('upcoming', 0));
 
-    $this->actingAs($entrepreneur)->post('/entrepreneur/meetings', ['slot_id' => $slot->id]);
+    $first = \App\Actions\Mentorship\BookMeeting::freeOccurrences($slot, $pairing)->first();
+    $this->actingAs($entrepreneur)->post('/entrepreneur/meetings', [
+        'slot_id' => $slot->id,
+        'starts_at' => $first->getTimestampMs(),
+    ]);
 
+    // Booking one occurrence leaves seven, and one upcoming meeting.
     $this->actingAs($entrepreneur)->get('/entrepreneur/meetings')
-        ->assertInertia(fn (Assert $page) => $page->has('upcoming', 1));
+        ->assertInertia(fn (Assert $page) => $page
+            ->has('upcoming', 1)
+            ->has("availability.{$pairing->id}", 7));
+});
+
+test('an entrepreneur can book a specific future occurrence, not just the next', function () {
+    [$entrepreneur, , $slot] = pairedWithSlot();
+    $pairing = Pairing::sole();
+    $third = \App\Actions\Mentorship\BookMeeting::freeOccurrences($slot, $pairing)[2];
+
+    $this->actingAs($entrepreneur)
+        ->post('/entrepreneur/meetings', ['slot_id' => $slot->id, 'starts_at' => $third->getTimestampMs()])
+        ->assertRedirect();
+
+    expect(Meeting::sole()->starts_at->timestamp)->toBe($third->timestamp);
+});
+
+test('booking a time that is not an open slot occurrence is rejected', function () {
+    [$entrepreneur, , $slot] = pairedWithSlot();
+
+    // 1pm tomorrow is not a valid occurrence of the Wednesday 09:00 slot.
+    $bogus = now()->addDay()->setTime(13, 0);
+
+    $this->actingAs($entrepreneur)
+        ->post('/entrepreneur/meetings', ['slot_id' => $slot->id, 'starts_at' => $bogus->getTimestampMs()])
+        ->assertStatus(422);
+
+    expect(Meeting::count())->toBe(0);
 });
 
 test('the mentor meetings page lists their booked sessions', function () {

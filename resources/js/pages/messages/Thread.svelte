@@ -151,7 +151,7 @@
     }
     function schedule() {
         router.visit(
-            `/${rolePrefix}/meetings?mentor=${thread.conversation.pairing_id}`,
+            `/${rolePrefix}/meetings?pairing=${thread.conversation.pairing_id}`,
         );
     }
     function jsonHeaders() {
