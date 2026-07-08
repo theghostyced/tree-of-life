@@ -36,8 +36,12 @@ class BookMeeting
         // Announce the booking in the pairing's chat. Kept defensive so a
         // booking never fails if a legacy pairing has no conversation.
         if ($conversation = $pairing->conversation()->first()) {
-            $when = $meeting->starts_at->timezone($meeting->timezone)->format('D j M, g:i A');
-            app(PostSystemMessage::class)->handle($conversation, "📅 Call scheduled for {$when}");
+            try {
+                $when = $meeting->starts_at->timezone($meeting->timezone)->format('D j M, g:i A');
+                app(PostSystemMessage::class)->handle($conversation, "📅 Call scheduled for {$when}");
+            } catch (\Throwable $e) {
+                report($e);
+            }
         }
 
         return $meeting;

@@ -101,6 +101,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/conversations/{conversation}/messages', [ConversationMessagesController::class, 'index'])
         ->name('conversations.messages.index');
     Route::post('/conversations/{conversation}/messages', [SendMessageController::class, 'store'])
+        ->middleware('throttle:60,1')
         ->name('conversations.messages.store');
     Route::post('/conversations/{conversation}/read', [MarkReadController::class, 'store'])
         ->name('conversations.read');
