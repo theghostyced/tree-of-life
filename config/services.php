@@ -35,4 +35,11 @@ return [
         ],
     ],
 
+    'meet' => [
+        // Fallback video link used for a booked meeting when the mentor's slot
+        // has no link of its own (e.g. locally, before the Google Meet
+        // integration mints per-meeting links). Set to a real, reusable link.
+        'default_link' => env('MEET_DEFAULT_LINK'),
+    ],
+
 ];

@@ -38,7 +38,7 @@ class BookMeeting
             'timezone' => $slot->timezone,
             'session_type' => $slot->session_type,
             'location' => $slot->location,
-            'meeting_link' => $slot->meeting_link,
+            'meeting_link' => $slot->meeting_link ?: config('services.meet.default_link'),
             'status' => MeetingStatus::Confirmed,
             'confirmed_at' => now(),
         ]);
