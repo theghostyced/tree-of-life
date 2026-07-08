@@ -5,6 +5,7 @@ namespace App\Actions\Mentorship;
 use App\Enums\RescheduleStatus;
 use App\Models\MeetingReschedule;
 use App\Models\User;
+use App\Notifications\MeetingRescheduleReviewed;
 use Illuminate\Support\Facades\DB;
 
 class ReviewMeetingReschedule
@@ -36,5 +37,7 @@ class ReviewMeetingReschedule
                 ]);
             }
         });
+
+        $reschedule->requestedBy->notify(new MeetingRescheduleReviewed($reschedule, $accept));
     }
 }
