@@ -12,6 +12,7 @@ export type UserRole = App.Enums.UserRole;
 export type InvitationStatus = App.Enums.InvitationStatus;
 export type AccountStatus = App.Enums.AccountStatus;
 export type DocumentType = App.Enums.DocumentType;
+export type NotificationCategory = App.Enums.NotificationCategory;
 
 export const userRoleLabel: Record<UserRole, string> = {
     admin: 'Admin',
@@ -33,4 +34,10 @@ export const invitationStatusLabel: Record<InvitationStatus, string> = {
 export const accountStatusLabel: Record<AccountStatus, string> = {
     approved: 'Approved',
     deactivated: 'Deactivated',
+};
+
+export const notificationCategoryLabel: Record<NotificationCategory, string> = {
+    meeting: 'Meetings',
+    report: 'Reports',
+    onboarding: 'Onboarding',
 };

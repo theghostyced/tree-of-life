@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Resources\NotificationResource;
 use App\Models\Message;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -63,6 +64,12 @@ class HandleInertiaRequests extends Middleware
                 'error' => fn () => $request->session()->get('error'),
                 'info' => fn () => $request->session()->get('info'),
             ],
+            'notifications' => $request->user() ? [
+                'unreadCount' => $request->user()->unreadNotifications()->count(),
+                'recent' => NotificationResource::collection(
+                    $request->user()->notifications()->latest()->limit(15)->get()
+                )->resolve(),
+            ] : ['unreadCount' => 0, 'recent' => []],
         ];
     }
 }

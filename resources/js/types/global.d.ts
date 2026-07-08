@@ -1,5 +1,16 @@
 import type { Auth } from '@/types/auth';
 
+export type AppNotification = {
+    id: string;
+    category: App.Enums.NotificationCategory;
+    title: string;
+    body: string;
+    actions: { label: string; url: string }[];
+    illustration: string | null;
+    read: boolean;
+    createdAt: number;
+};
+
 // Extend ImportMeta interface for Vite...
 declare module 'vite/client' {
     interface ImportMetaEnv {
@@ -26,6 +37,10 @@ declare module '@inertiajs/core' {
                 success?: string | null;
                 error?: string | null;
                 info?: string | null;
+            };
+            notifications: {
+                unreadCount: number;
+                recent: AppNotification[];
             };
             [key: string]: unknown;
         };

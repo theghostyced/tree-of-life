@@ -22,6 +22,7 @@ use App\Http\Controllers\Mentor\MeetingController as MentorMeetingController;
 use App\Http\Controllers\Mentor\MeetingReportController;
 use App\Http\Controllers\Mentor\ProfileController as MentorProfileController;
 use App\Http\Controllers\Mentor\RescheduleController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Onboarding\DocumentController;
 use Illuminate\Support\Facades\Route;
 
@@ -105,4 +106,8 @@ Route::middleware('auth')->group(function () {
         ->name('conversations.messages.store');
     Route::post('/conversations/{conversation}/read', [MarkReadController::class, 'store'])
         ->name('conversations.read');
+
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/read-all', [NotificationController::class, 'readAll'])->name('notifications.read-all');
+    Route::post('/notifications/{notification}/read', [NotificationController::class, 'read'])->name('notifications.read');
 });
