@@ -10,6 +10,7 @@
     } from '@lucide/svelte';
     import AppHead from '@/components/AppHead.svelte';
     import { subscribeUser } from '@/lib/chat';
+    import FlashToasts from '@/components/FlashToasts.svelte';
     import AppNavbar from './AppNavbar.svelte';
 
     /**
@@ -52,9 +53,7 @@
     // user broadcast channel, and cleared while viewing a messages route.
     let unread = $state(page.props.auth.unreadMessages ?? 0);
 
-    onMount(() =>
-        subscribeUser(page.props.auth.user.id, () => (unread += 1)),
-    );
+    onMount(() => subscribeUser(page.props.auth.user.id, () => (unread += 1)));
 
     $effect(() => {
         if (page.url.includes('/messages')) unread = 0;
@@ -70,4 +69,5 @@
     <main class="custom-scrollbar flex flex-1 flex-col overflow-y-auto">
         {@render children()}
     </main>
+    <FlashToasts />
 </div>

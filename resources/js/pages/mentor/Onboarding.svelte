@@ -12,7 +12,7 @@
     import { Stepper } from '@/components/ui/stepper';
     import { OptionChecklist } from '@/components/ui/option-checklist';
     import { Button } from '@/components/ui/button';
-    import { Toaster, toast } from '@/components/ui/sonner';
+    import { toast } from '@/components/ui/sonner';
     import {
         INDUSTRIES,
         YEAR_RANGES,
@@ -149,8 +149,6 @@
 </script>
 
 <MentorLayout title="Complete your profile">
-    <Toaster position="top-center" />
-
     <div
         class="flex h-14 shrink-0 items-center gap-2 border-b border-line px-6 text-sm text-muted"
     >

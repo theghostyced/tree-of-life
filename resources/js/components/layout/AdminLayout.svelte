@@ -8,6 +8,7 @@
         Send,
     } from '@lucide/svelte';
     import AppHead from '@/components/AppHead.svelte';
+    import FlashToasts from '@/components/FlashToasts.svelte';
     import AppNavbar from './AppNavbar.svelte';
 
     /**
@@ -45,4 +46,5 @@
     <main class="custom-scrollbar flex flex-1 flex-col overflow-y-auto">
         {@render children()}
     </main>
+    <FlashToasts />
 </div>

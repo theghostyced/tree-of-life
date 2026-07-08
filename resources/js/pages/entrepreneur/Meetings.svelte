@@ -2,7 +2,6 @@
     import { Video, MapPin, Calendar } from '@lucide/svelte';
     import EntrepreneurLayout from '@/components/layout/EntrepreneurLayout.svelte';
     import BookCallCalendar from './BookCallCalendar.svelte';
-    import { Toaster } from '@/components/ui/sonner';
     import { cn } from '@/lib/utils';
 
     type Meeting = {
@@ -72,8 +71,6 @@
 </script>
 
 <EntrepreneurLayout title="Meetings">
-    <Toaster position="top-center" />
-
     <div class="mx-auto w-full max-w-7xl px-6 py-8">
         <div>
             <h1 class="text-2xl font-semibold tracking-tight text-ink">

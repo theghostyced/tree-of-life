@@ -3,7 +3,7 @@
     import { Plus, Trash2, Video, MapPin, Clock } from '@lucide/svelte';
     import MentorLayout from '@/components/layout/MentorLayout.svelte';
     import * as Select from '@/components/ui/select';
-    import { Toaster, toast } from '@/components/ui/sonner';
+    import { toast } from '@/components/ui/sonner';
     import { cn } from '@/lib/utils';
 
     type Slot = {
@@ -78,8 +78,6 @@
 </script>
 
 <MentorLayout title="Availability">
-    <Toaster position="top-center" />
-
     <div class="mx-auto w-full max-w-7xl px-6 py-8">
         <div>
             <h1 class="text-2xl font-semibold tracking-tight text-ink">

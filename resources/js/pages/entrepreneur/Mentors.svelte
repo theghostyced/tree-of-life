@@ -9,7 +9,7 @@
     } from '@lucide/svelte';
     import EntrepreneurLayout from '@/components/layout/EntrepreneurLayout.svelte';
     import * as Select from '@/components/ui/select';
-    import { Toaster, toast } from '@/components/ui/sonner';
+    import { toast } from '@/components/ui/sonner';
     import { YEAR_RANGES } from '@/lib/onboarding-options';
     import { cn } from '@/lib/utils';
 
@@ -145,8 +145,6 @@
 </script>
 
 <EntrepreneurLayout title="Mentors">
-    <Toaster position="top-center" />
-
     <div class="mx-auto w-full max-w-7xl px-6 py-8">
         <!-- Header -->
         <div>
