@@ -225,6 +225,9 @@ The primary surface for admins and mentors — review queues, pairings, meetings
 - Status column always uses a Status Chip, never bare colored text.
 - **Skeleton rows** on load (not a centered spinner). **Empty state** teaches the next action ("No meetings awaiting a report — you're clear"), never a bare "Nothing here."
 
+### Named Rules
+**The shadcn-First Rule.** When building any UI control, first reach for an existing shadcn component in `resources/js/components/ui/` (Checkbox, Button, Select, Table, Tabs, sonner, etc.) and use it if it fits. Only hand-roll custom markup when no component works — and then create a reusable component, not one-off inline markup. The app's shadcn set is theme-adapted (sage tokens), so its components render on-brand; raw native controls do not (a native `<input type="checkbox">` shows a bright white box when unchecked, clashing with the dark theme). If a shadcn component needs the sage theme adapted, adapt the component once rather than avoiding it.
+
 ## 6. Layout & Page Width
 
 Role pages are full-height surfaces inside their role layout (the layout's `<main>` scrolls). Page **content** sits in one centered column so operators keep the same reading width and aligned left/right edges as they move between screens.

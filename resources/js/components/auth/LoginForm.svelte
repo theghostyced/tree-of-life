@@ -2,6 +2,7 @@
     import { useForm } from '@inertiajs/svelte';
     import { Mail, Lock, Eye, EyeOff, ArrowRight } from '@lucide/svelte';
     import { Button } from '@/components/ui/button';
+    import { Checkbox } from '@/components/ui/checkbox';
     import { toast } from '@/components/ui/sonner';
     import IconInput from './IconInput.svelte';
 
@@ -104,12 +105,7 @@
     </div>
 
     <div class="flex items-center pt-2">
-        <input
-            type="checkbox"
-            id="remember"
-            bind:checked={form.remember}
-            class="size-4 cursor-pointer rounded border-line bg-surface accent-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
-        />
+        <Checkbox id="remember" bind:checked={form.remember} />
         <label
             for="remember"
             class="ml-2 block cursor-pointer text-sm text-muted transition-colors hover:text-ink"

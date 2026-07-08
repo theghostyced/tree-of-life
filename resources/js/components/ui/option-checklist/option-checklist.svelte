@@ -1,5 +1,6 @@
 <script lang="ts">
     import { cn } from '@/lib/utils';
+    import { Checkbox } from '@/components/ui/checkbox';
 
     let {
         options,
@@ -41,7 +42,7 @@
 
     const rowClass = (active: boolean) =>
         cn(
-            'flex cursor-pointer items-center gap-2.5 rounded-lg border px-3.5 py-2.5 text-[15px] transition-colors',
+            'flex w-full cursor-pointer items-center gap-2.5 rounded-lg border px-3.5 py-2.5 text-left text-[15px] outline-none transition-colors focus-visible:ring-2 focus-visible:ring-accent/40',
             active
                 ? 'border-accent bg-accent-soft text-ink'
                 : 'border-line bg-surface text-muted hover:border-line-strong',
@@ -51,25 +52,31 @@
 <div class="space-y-3">
     <div class="grid gap-2 sm:grid-cols-2">
         {#each options as opt (opt)}
-            <label class={rowClass(value.includes(opt))}>
-                <input
-                    type="checkbox"
+            <button
+                type="button"
+                onclick={() => toggle(opt)}
+                class={rowClass(value.includes(opt))}
+            >
+                <Checkbox
                     checked={value.includes(opt)}
-                    onchange={() => toggle(opt)}
-                    class="size-4 rounded border-line accent-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+                    tabindex={-1}
+                    class="pointer-events-none"
                 />
                 {opt}
-            </label>
+            </button>
         {/each}
-        <label class={rowClass(otherOpen)}>
-            <input
-                type="checkbox"
+        <button
+            type="button"
+            onclick={toggleOther}
+            class={rowClass(otherOpen)}
+        >
+            <Checkbox
                 checked={otherOpen}
-                onchange={toggleOther}
-                class="size-4 rounded border-line accent-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+                tabindex={-1}
+                class="pointer-events-none"
             />
             Other
-        </label>
+        </button>
     </div>
     {#if otherOpen}
         <input
