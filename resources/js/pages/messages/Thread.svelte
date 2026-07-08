@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { onDestroy } from 'svelte';
+    import { onDestroy, tick } from 'svelte';
     import { router } from '@inertiajs/svelte';
     import { CalendarPlus } from '@lucide/svelte';
     import { subscribeConversation, whisperTyping } from '@/lib/chat';
@@ -27,6 +27,10 @@
     let typingTimer: ReturnType<typeof setTimeout>;
     let teardown: () => void = () => {};
     let scrollEl = $state<HTMLElement | null>(null);
+    let loadingOlder = $state(false);
+    let hasMore = $state(false);
+
+    const PAGE_SIZE = 30;
 
     const online = $derived(onlineIds.has(thread.conversation.other.id));
     const lastMineId = $derived(
@@ -77,7 +81,11 @@
         const id = thread.conversation.id;
         messages = thread.messages;
         otherLastRead = thread.conversation.other_last_read_message_id;
+        // A full first page implies there may be older messages to load.
+        hasMore = thread.messages.length >= PAGE_SIZE;
+        loadingOlder = false;
         markRead(id);
+        scrollToBottom();
         teardown();
         teardown = subscribeConversation(id, {
             onMessage: ({ message }) => {
@@ -86,32 +94,72 @@
                 // sees a repeated id.
                 if (message.sender_id === currentUserId) return;
                 if (messages.some((m) => m.id === message.id)) return;
+                const near = atBottom();
                 messages = [...messages, message];
                 markRead(id);
+                if (near) scrollToBottom();
             },
             onRead: ({ last_read_message_id }) =>
                 (otherLastRead = last_read_message_id),
             onTyping: () => {
+                const near = atBottom();
                 typing = true;
                 clearTimeout(typingTimer);
                 typingTimer = setTimeout(() => (typing = false), 3000);
+                if (near) scrollToBottom();
             },
         });
         return () => teardown();
     });
     onDestroy(() => teardown());
 
-    // Keep the newest message in view as the thread grows.
-    $effect(() => {
-        messages.length;
-        typing;
-        if (scrollEl) {
-            const node = scrollEl;
-            queueMicrotask(() => {
-                node.scrollTop = node.scrollHeight;
-            });
+    async function scrollToBottom() {
+        await tick();
+        if (scrollEl) scrollEl.scrollTop = scrollEl.scrollHeight;
+    }
+    function atBottom(): boolean {
+        if (!scrollEl) return true;
+        return (
+            scrollEl.scrollHeight - scrollEl.scrollTop - scrollEl.clientHeight <
+            120
+        );
+    }
+
+    // Fetch the previous page of messages and prepend it, anchoring the scroll
+    // so the reader's position doesn't jump.
+    async function loadOlder() {
+        if (!hasMore || loadingOlder || messages.length === 0 || !scrollEl)
+            return;
+        loadingOlder = true;
+        const node = scrollEl;
+        const before = messages[0].id;
+        const prevHeight = node.scrollHeight;
+        const prevTop = node.scrollTop;
+        try {
+            const res = await fetch(
+                `/conversations/${thread.conversation.id}/messages?before=${before}`,
+                { headers: { Accept: 'application/json' } },
+            );
+            if (!res.ok) return;
+            const { messages: older }: { messages: Message[] } =
+                await res.json();
+            const existing = new Set(messages.map((m) => m.id));
+            const fresh = older.filter((m) => !existing.has(m.id));
+            if (fresh.length === 0) {
+                hasMore = false;
+                return;
+            }
+            messages = [...fresh, ...messages];
+            if (older.length < PAGE_SIZE) hasMore = false;
+            await tick();
+            node.scrollTop = prevTop + (node.scrollHeight - prevHeight);
+        } finally {
+            loadingOlder = false;
         }
-    });
+    }
+    function onScroll() {
+        if (scrollEl && scrollEl.scrollTop < 80) loadOlder();
+    }
 
     async function send(body: string) {
         const optimistic: Message = {
@@ -123,6 +171,7 @@
             created_at: new Date().toISOString(),
         };
         messages = [...messages, optimistic];
+        scrollToBottom();
         const res = await fetch(
             `/conversations/${thread.conversation.id}/messages`,
             {
@@ -200,8 +249,17 @@
         </button>
     </header>
 
-    <div bind:this={scrollEl} class="custom-scrollbar flex-1 overflow-y-auto">
+    <div
+        bind:this={scrollEl}
+        onscroll={onScroll}
+        class="custom-scrollbar flex-1 overflow-y-auto"
+    >
         <div class="mx-auto flex w-full max-w-3xl flex-col px-5 pt-4 pb-6">
+            {#if loadingOlder}
+                <div class="flex justify-center py-2 text-xs text-faint">
+                    Loading earlier messages…
+                </div>
+            {/if}
             {#each items as it (it.m.id)}
                 {#if it.showDay}
                     <div class="my-4 flex items-center gap-3">
