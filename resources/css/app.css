@@ -73,6 +73,13 @@
     --color-on-accent: #050606; /* text/icon on accent fills */
     --color-glow-amber: #e0964a; /* warm morning-sun glow on the brand panel */
 
+    /* Chart series — an earthy sage-forward ramp for data viz. */
+    --chart-1: #a3b18a; /* sage accent */
+    --chart-2: #6fbe74; /* positive green */
+    --chart-3: #e0964a; /* warm amber */
+    --chart-4: #8a9576; /* sage-500 */
+    --chart-5: #c1c9b0; /* sage-300 */
+
     /* Elevation — dark surfaces lean on borders; shadows stay subtle. */
     --shadow-bar: 0 1px 2px rgba(0, 0, 0, 0.4);
     --shadow-raised: 0 1px 2px rgba(0, 0, 0, 0.35);

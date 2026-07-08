@@ -2,7 +2,7 @@
     import { Link } from '@inertiajs/svelte';
     import { ArrowRight, ListChecks, ChevronRight } from '@lucide/svelte';
     import EntrepreneurLayout from '@/components/layout/EntrepreneurLayout.svelte';
-    import { Toaster } from '@/components/ui/sonner';
+    import BarTrend from '@/components/charts/bar-trend.svelte';
     import { cn } from '@/lib/utils';
 
     type Onboarding = {
@@ -25,10 +25,16 @@
     let {
         onboarding,
         mentors = [],
+        sessions = [],
     }: {
         onboarding: Onboarding;
         mentors: Mentor[];
+        sessions: { month: string; sessions: number }[];
     } = $props();
+
+    const sessionsSeries = [
+        { key: 'sessions', label: 'Sessions', color: 'var(--chart-1)' },
+    ];
 
     const pct = $derived(
         onboarding.total === 0
@@ -50,8 +56,6 @@
 </script>
 
 <EntrepreneurLayout title="Dashboard">
-    <Toaster position="top-center" />
-
     <div class="mx-auto w-full max-w-7xl px-6 py-8">
         <!-- Header -->
         <div>
@@ -109,6 +113,24 @@
                             />
                         </Link>
                     {/each}
+                </div>
+
+                <div
+                    class="mt-5 rounded-2xl border border-line bg-panel/40 p-6"
+                >
+                    <h3 class="text-base font-semibold text-ink">
+                        Your sessions
+                    </h3>
+                    <p class="mt-0.5 text-xs text-muted">
+                        Meetings over the last 6 months
+                    </p>
+                    <div class="mt-4">
+                        <BarTrend
+                            data={sessions}
+                            x="month"
+                            series={sessionsSeries}
+                        />
+                    </div>
                 </div>
 
                 <div

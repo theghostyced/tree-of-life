@@ -2,6 +2,7 @@
     import { Link } from '@inertiajs/svelte';
     import { ArrowRight, ListChecks } from '@lucide/svelte';
     import MentorLayout from '@/components/layout/MentorLayout.svelte';
+    import BarTrend from '@/components/charts/bar-trend.svelte';
     import MeetingRow from '@/components/mentorship/meeting-row.svelte';
     import ReportSlideOver from '@/components/mentorship/report-slide-over.svelte';
     import RescheduleCard from '@/components/mentorship/reschedule-card.svelte';
@@ -30,6 +31,7 @@
         mentees = [],
         availability,
         stats,
+        sessions = [],
     }: {
         onboarding: Onboarding;
         attention: {
@@ -44,7 +46,12 @@
             completedCount: number;
             hoursMentored: number;
         };
+        sessions: { week: string; sessions: number }[];
     } = $props();
+
+    const sessionsSeries = [
+        { key: 'sessions', label: 'Sessions', color: 'var(--chart-1)' },
+    ];
 
     const pct = $derived(
         onboarding.total === 0
@@ -199,6 +206,18 @@
                     No meetings booked this week.
                 </p>
             {/if}
+        </section>
+
+        <section class="mt-8" aria-labelledby="sessions-heading">
+            <h2 id="sessions-heading" class="text-sm font-semibold text-ink">
+                Sessions
+            </h2>
+            <p class="mt-0.5 text-xs text-muted">
+                Completed sessions over the last 8 weeks
+            </p>
+            <div class="mt-4 rounded-2xl border border-line bg-panel/40 p-6">
+                <BarTrend data={sessions} x="week" series={sessionsSeries} />
+            </div>
         </section>
 
         <section class="mt-8" aria-labelledby="mentees-heading">

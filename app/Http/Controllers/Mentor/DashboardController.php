@@ -32,7 +32,29 @@ class DashboardController extends Controller
             'mentees' => $this->mentees($mentor),
             'availability' => $this->availability($mentor),
             'stats' => $this->stats($mentor),
+            'sessions' => $this->sessionsByWeek($mentor),
         ]);
+    }
+
+    /**
+     * Completed sessions per week over the last 8 weeks — an aggregate count
+     * per week, so no meeting rows are pulled into PHP.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function sessionsByWeek(User $mentor): array
+    {
+        return collect(range(7, 0))->map(function (int $back) use ($mentor): array {
+            $start = now()->subWeeks($back)->startOfWeek();
+
+            $count = Meeting::query()
+                ->where('status', MeetingStatus::Completed)
+                ->whereBetween('starts_at', [$start, $start->copy()->endOfWeek()])
+                ->whereHas('pairing', fn ($p) => $p->where('mentor_user_id', $mentor->id))
+                ->count();
+
+            return ['week' => $start->format('M j'), 'sessions' => $count];
+        })->values()->all();
     }
 
     /**

@@ -2,6 +2,7 @@
     import { Link, page } from '@inertiajs/svelte';
     import { ArrowRight } from '@lucide/svelte';
     import AdminLayout from '@/components/layout/AdminLayout.svelte';
+    import BarTrend from '@/components/charts/bar-trend.svelte';
     import AccountStatusChip from '@/components/users/account-status.svelte';
     import { initials, relative } from '@/components/users/types';
     import { userRoleLabel } from '@/types/enums';
@@ -37,17 +38,34 @@
         sentAt: number;
     };
 
+    type GrowthPoint = {
+        month: string;
+        mentors: number;
+        entrepreneurs: number;
+    };
+
     let {
         stats,
         readiness,
         recent = [],
         pendingInvitations = [],
+        growth = [],
     }: {
         stats: Stats;
         readiness: Readiness;
         recent: RecentUser[];
         pendingInvitations: PendingInvite[];
+        growth: GrowthPoint[];
     } = $props();
+
+    const growthSeries = [
+        { key: 'mentors', label: 'Mentors', color: 'var(--chart-1)' },
+        {
+            key: 'entrepreneurs',
+            label: 'Entrepreneurs',
+            color: 'var(--chart-3)',
+        },
+    ];
 
     const auth = $derived(page.props.auth as Auth);
     const firstName = $derived((auth.user?.name ?? '').split(' ')[0]);
@@ -117,6 +135,39 @@
                 </div>
             {/each}
         </div>
+
+        <!-- Membership growth -->
+        <section class="rounded-2xl border border-line bg-panel/40 p-6">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <h2 class="text-sm font-semibold text-ink">
+                        Membership growth
+                    </h2>
+                    <p class="mt-0.5 text-xs text-muted">
+                        New people over the last 6 months
+                    </p>
+                </div>
+                <div class="flex items-center gap-4 text-xs text-muted">
+                    <span class="inline-flex items-center gap-1.5">
+                        <span
+                            class="size-2 rounded-full"
+                            style="background: var(--chart-1)"
+                        ></span>
+                        Mentors
+                    </span>
+                    <span class="inline-flex items-center gap-1.5">
+                        <span
+                            class="size-2 rounded-full"
+                            style="background: var(--chart-3)"
+                        ></span>
+                        Entrepreneurs
+                    </span>
+                </div>
+            </div>
+            <div class="mt-5">
+                <BarTrend data={growth} x="month" series={growthSeries} stack />
+            </div>
+        </section>
 
         <!-- Readiness + recent -->
         <div class="grid gap-5 lg:grid-cols-2">
