@@ -17,4 +17,6 @@ export type Auth = {
     user: User;
     /** Role of the authenticated viewer (mirrors {@link \App\Enums\UserRole}). */
     role: UserRole;
+    /** Total unread messages across the viewer's conversations. */
+    unreadMessages: number;
 };

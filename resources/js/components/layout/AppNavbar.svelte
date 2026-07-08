@@ -19,14 +19,17 @@
         href: string;
         icon: typeof LayoutGrid;
         enabled?: boolean;
+        badgeKey?: string;
     };
 
     let {
         links,
         home = '/',
+        unread = 0,
     }: {
         links: NavLink[];
         home?: string;
+        unread?: number;
     } = $props();
 
     const utilities = [
@@ -106,6 +109,12 @@
                 >
                     <Icon class="size-4" strokeWidth={1.75} />
                     <span class="hidden xl:inline">{link.label}</span>
+                    {#if link.badgeKey === 'messages' && unread > 0}
+                        <span
+                            class="ml-auto flex min-w-5 items-center justify-center rounded-full bg-accent px-1.5 text-[11px] font-semibold text-on-accent"
+                            >{unread}</span
+                        >
+                    {/if}
                 </Link>
             {:else}
                 <button
@@ -181,6 +190,12 @@
                         >
                             <Icon class="size-5" strokeWidth={1.75} />
                             {link.label}
+                            {#if link.badgeKey === 'messages' && unread > 0}
+                                <span
+                                    class="ml-auto flex min-w-5 items-center justify-center rounded-full bg-accent px-1.5 text-[11px] font-semibold text-on-accent"
+                                    >{unread}</span
+                                >
+                            {/if}
                         </Link>
                     {:else}
                         <button

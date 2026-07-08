@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Message;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -45,6 +46,17 @@ class HandleInertiaRequests extends Middleware
                     'email' => $request->user()->email,
                 ] : null,
                 'role' => $request->user()?->role?->value,
+                'unreadMessages' => $request->user()
+                    ? Message::query()
+                        ->whereHas('conversation.participants', fn ($q) => $q->where('user_id', $request->user()->id))
+                        ->where('sender_user_id', '!=', $request->user()->id)
+                        ->whereNotExists(function ($q) use ($request) {
+                            $q->selectRaw('1')->from('conversation_participants as cp')
+                                ->whereColumn('cp.conversation_id', 'messages.conversation_id')
+                                ->where('cp.user_id', $request->user()->id)
+                                ->whereColumn('cp.last_read_message_id', '>=', 'messages.id');
+                        })->count()
+                    : 0,
             ],
         ];
     }

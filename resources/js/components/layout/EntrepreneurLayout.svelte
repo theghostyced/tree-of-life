@@ -1,7 +1,15 @@
 <script lang="ts">
-    import type { Snippet } from 'svelte';
-    import { LayoutGrid, UserRound, Calendar, FileText } from '@lucide/svelte';
+    import { onMount, type Snippet } from 'svelte';
+    import { page } from '@inertiajs/svelte';
+    import {
+        LayoutGrid,
+        UserRound,
+        Calendar,
+        MessageSquare,
+        FileText,
+    } from '@lucide/svelte';
     import AppHead from '@/components/AppHead.svelte';
+    import { subscribeUser } from '@/lib/chat';
     import AppNavbar from './AppNavbar.svelte';
 
     /**
@@ -30,8 +38,27 @@
             icon: Calendar,
             enabled: true,
         },
+        {
+            label: 'Messages',
+            href: '/entrepreneur/messages',
+            icon: MessageSquare,
+            badgeKey: 'messages',
+            enabled: true,
+        },
         { label: 'Reports', href: '/entrepreneur/reports', icon: FileText },
     ];
+
+    // Live global unread badge: seeded from the shared prop, incremented by the
+    // user broadcast channel, and cleared while viewing a messages route.
+    let unread = $state(page.props.auth.unreadMessages ?? 0);
+
+    onMount(() =>
+        subscribeUser(page.props.auth.user.id, () => (unread += 1)),
+    );
+
+    $effect(() => {
+        if (page.url.includes('/messages')) unread = 0;
+    });
 </script>
 
 <AppHead {title} />
@@ -39,7 +66,7 @@
 <div
     class="flex h-screen flex-col overflow-hidden bg-canvas font-sans text-ink"
 >
-    <AppNavbar {links} home="/entrepreneur/dashboard" />
+    <AppNavbar {links} {unread} home="/entrepreneur/dashboard" />
     <main class="custom-scrollbar flex flex-1 flex-col overflow-y-auto">
         {@render children()}
     </main>
