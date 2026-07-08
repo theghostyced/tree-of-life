@@ -3,10 +3,17 @@ import type { Message } from '@/pages/messages/types';
 
 type MessageSentPayload = {
     message: Message;
-    conversation: { id: number; last_message_preview: string; last_message_at: string };
+    conversation: {
+        id: number;
+        last_message_preview: string;
+        last_message_at: string;
+    };
     recipient_unread_count: number;
 };
-type MessageReadPayload = { reader_id: number; last_read_message_id: number | null };
+type MessageReadPayload = {
+    reader_id: number;
+    last_read_message_id: number | null;
+};
 
 export function subscribeConversation(
     id: number,
@@ -23,9 +30,31 @@ export function subscribeConversation(
     return () => echo.leave(`conversation.${id}`);
 }
 
-export function subscribeUser(id: number, onMessage: (p: MessageSentPayload) => void): () => void {
+export function subscribeUser(
+    id: number,
+    onMessage: (p: MessageSentPayload) => void,
+): () => void {
     echo.private(`user.${id}`).listen('.message.sent', onMessage);
     return () => echo.leave(`user.${id}`);
+}
+
+export type NotificationBroadcast = {
+    id: string;
+    type: string;
+    category: App.Enums.NotificationCategory;
+    title: string;
+    body: string;
+    actions: { label: string; url: string }[];
+    illustration: string | null;
+};
+
+/** Listen for Laravel broadcast notifications on the user's private channel. */
+export function subscribeNotifications(
+    userId: number,
+    onNotification: (p: NotificationBroadcast) => void,
+): () => void {
+    echo.private(`App.Models.User.${userId}`).notification(onNotification);
+    return () => echo.leave(`App.Models.User.${userId}`);
 }
 
 export function joinPresence(handlers: {
@@ -33,7 +62,10 @@ export function joinPresence(handlers: {
     joining: (u: { id: number }) => void;
     leaving: (u: { id: number }) => void;
 }): () => void {
-    echo.join('online').here(handlers.here).joining(handlers.joining).leaving(handlers.leaving);
+    echo.join('online')
+        .here(handlers.here)
+        .joining(handlers.joining)
+        .leaving(handlers.leaving);
     return () => echo.leave('online');
 }
 

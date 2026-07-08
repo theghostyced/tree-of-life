@@ -1,12 +1,13 @@
 <script lang="ts">
     import { Link, page, router } from '@inertiajs/svelte';
-    import { LayoutGrid, Search, Bell, Menu, X, LogOut } from '@lucide/svelte';
+    import { LayoutGrid, Search, Menu, X, LogOut } from '@lucide/svelte';
     import { fade, fly } from 'svelte/transition';
     import Logo from '@/components/Logo.svelte';
     import { RoleBadge } from '@/components/ui/role-badge';
     import { cn } from '@/lib/utils';
     import type { Auth } from '@/types/auth';
     import UserMenu from './UserMenu.svelte';
+    import NotificationBell from './NotificationBell.svelte';
 
     /**
      * Primary top navigation, reused across roles. The link set and logo home
@@ -32,10 +33,7 @@
         unread?: number;
     } = $props();
 
-    const utilities = [
-        { label: 'Search', icon: Search },
-        { label: 'Notifications', icon: Bell },
-    ];
+    const utilities = [{ label: 'Search', icon: Search }];
 
     const currentUrl = $derived(page.url);
     const auth = $derived(page.props.auth as Auth);
@@ -130,37 +128,39 @@
         {/each}
     </nav>
 
-    <!-- Desktop utilities -->
-    <div class="ml-auto hidden shrink-0 items-center gap-1 text-muted lg:flex">
-        {#each utilities as util (util.label)}
-            {@const Icon = util.icon}
-            <button
-                type="button"
-                aria-label={util.label}
-                class={iconButtonClass}
-            >
-                <Icon class="size-[18px]" strokeWidth={1.75} />
-            </button>
-        {/each}
-        <RoleBadge role={auth.role} class="ml-2" />
-        <UserMenu />
-    </div>
+    <!-- Right cluster: the bell shows at every size; search, role, and menu on
+         desktop; the hamburger on mobile. -->
+    <div class="ml-auto flex shrink-0 items-center gap-1 text-muted">
+        <button
+            type="button"
+            aria-label="Search"
+            class={cn(iconButtonClass, 'hidden lg:flex')}
+        >
+            <Search class="size-[18px]" strokeWidth={1.75} />
+        </button>
 
-    <!-- Mobile trigger -->
-    <button
-        type="button"
-        onclick={() => (mobileOpen = !mobileOpen)}
-        aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-        aria-expanded={mobileOpen}
-        aria-controls="mobile-nav"
-        class="-mr-1 ml-auto flex size-11 items-center justify-center rounded-md text-muted outline-none transition-colors hover:bg-elevated hover:text-accent focus-visible:ring-2 focus-visible:ring-accent/60 lg:hidden"
-    >
-        {#if mobileOpen}
-            <X class="size-5" strokeWidth={1.75} />
-        {:else}
-            <Menu class="size-5" strokeWidth={1.75} />
-        {/if}
-    </button>
+        <NotificationBell />
+
+        <div class="hidden items-center gap-1 lg:flex">
+            <RoleBadge role={auth.role} class="ml-1" />
+            <UserMenu />
+        </div>
+
+        <button
+            type="button"
+            onclick={() => (mobileOpen = !mobileOpen)}
+            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-nav"
+            class="-mr-1 flex size-11 items-center justify-center rounded-md outline-none transition-colors hover:bg-elevated hover:text-accent focus-visible:ring-2 focus-visible:ring-accent/60 lg:hidden"
+        >
+            {#if mobileOpen}
+                <X class="size-5" strokeWidth={1.75} />
+            {:else}
+                <Menu class="size-5" strokeWidth={1.75} />
+            {/if}
+        </button>
+    </div>
 </header>
 
 {#if mobileOpen}
