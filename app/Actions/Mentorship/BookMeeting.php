@@ -7,6 +7,8 @@ use App\Enums\MeetingStatus;
 use App\Models\Meeting;
 use App\Models\MentorAvailabilitySlot;
 use App\Models\Pairing;
+use App\Notifications\MeetingBooked;
+use App\Notifications\MeetingBookedConfirmation;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
 
@@ -53,6 +55,9 @@ class BookMeeting
                 report($e);
             }
         }
+
+        $pairing->mentor->notify(new MeetingBooked($meeting));
+        $pairing->entrepreneur->notify(new MeetingBookedConfirmation($meeting));
 
         return $meeting;
     }
