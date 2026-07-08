@@ -24,19 +24,24 @@
         initialPairingId?: number | null;
     } = $props();
 
-    const HORIZON_WEEKS = 8;
+    const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-    function mondayOf(d: Date): Date {
-        const x = new Date(d);
-        const off = (x.getDay() + 6) % 7;
-        x.setDate(x.getDate() - off);
-        x.setHours(0, 0, 0, 0);
-        return x;
+    function firstOfMonth(v: number | Date): Date {
+        const d = new Date(v);
+        return new Date(d.getFullYear(), d.getMonth(), 1);
+    }
+    function startOfDay(v: number | Date): Date {
+        const d = new Date(v);
+        d.setHours(0, 0, 0, 0);
+        return d;
     }
     function addDays(d: Date, n: number): Date {
         const x = new Date(d);
         x.setDate(x.getDate() + n);
         return x;
+    }
+    function addMonths(d: Date, n: number): Date {
+        return new Date(d.getFullYear(), d.getMonth() + n, 1);
     }
     function sameDay(ms: number, d: Date): boolean {
         const a = new Date(ms);
@@ -47,18 +52,25 @@
         );
     }
 
-    const thisMonday = mondayOf(new Date());
-    const maxMonday = addDays(thisMonday, 7 * (HORIZON_WEEKS - 1));
-
-    let selectedPairing = $state<number | null>(
+    const resolvedInitial =
         initialPairingId &&
-            mentors.some((m) => m.pairingId === initialPairingId)
+        mentors.some((m) => m.pairingId === initialPairingId)
             ? initialPairingId
-            : (mentors[0]?.pairingId ?? null),
+            : (mentors[0]?.pairingId ?? null);
+    const initialOcc =
+        resolvedInitial !== null ? (availability[resolvedInitial] ?? []) : [];
+
+    let selectedPairing = $state<number | null>(resolvedInitial);
+    let currentMonth = $state(
+        firstOfMonth(initialOcc[0]?.startsAt ?? Date.now()),
     );
-    let weekStart = $state(thisMonday);
+    let selectedDay = $state<Date | null>(
+        initialOcc.length ? startOfDay(initialOcc[0].startsAt) : null,
+    );
     let selected = $state<Occurrence | null>(null);
     let booking = $state(false);
+
+    const thisMonth = firstOfMonth(Date.now());
 
     const mentorName = $derived(
         mentors.find((m) => m.pairingId === selectedPairing)?.name ?? '',
@@ -67,19 +79,32 @@
         selectedPairing !== null ? (availability[selectedPairing] ?? []) : [],
     );
     const totalOpen = $derived(occ.length);
-    const days = $derived(
-        Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)),
+    const maxMonth = $derived(
+        occ.length ? firstOfMonth(occ[occ.length - 1].startsAt) : thisMonth,
     );
-    const canPrev = $derived(weekStart.getTime() > thisMonday.getTime());
-    const canNext = $derived(weekStart.getTime() < maxMonday.getTime());
+    const canPrev = $derived(currentMonth.getTime() > thisMonth.getTime());
+    const canNext = $derived(currentMonth.getTime() < maxMonth.getTime());
+    const monthLabel = $derived(
+        currentMonth.toLocaleDateString('en-US', {
+            month: 'long',
+            year: 'numeric',
+        }),
+    );
 
-    const weekLabel = $derived.by(() => {
-        const end = addDays(weekStart, 6);
-        const mon = (d: Date) =>
-            d.toLocaleDateString('en-US', { month: 'short' });
-        return weekStart.getMonth() === end.getMonth()
-            ? `${mon(weekStart)} ${weekStart.getDate()} – ${end.getDate()}`
-            : `${mon(weekStart)} ${weekStart.getDate()} – ${mon(end)} ${end.getDate()}`;
+    // Days (this month) that have at least one open slot, for the dot markers.
+    const openDays = $derived(
+        new Set(occ.map((o) => startOfDay(o.startsAt).getTime())),
+    );
+
+    const cells = $derived.by(() => {
+        const y = currentMonth.getFullYear();
+        const m = currentMonth.getMonth();
+        const first = new Date(y, m, 1);
+        const daysInMonth = new Date(y, m + 1, 0).getDate();
+        const lead = (first.getDay() + 6) % 7;
+        const gridStart = addDays(first, -lead);
+        const total = Math.ceil((lead + daysInMonth) / 7) * 7;
+        return Array.from({ length: total }, (_, i) => addDays(gridStart, i));
     });
 
     const fmtTime = (ms: number) =>
@@ -87,8 +112,8 @@
             hour: 'numeric',
             minute: '2-digit',
         });
-    const fmtDayFull = (ms: number) =>
-        new Date(ms).toLocaleDateString('en-US', {
+    const fmtDayFull = (v: number | Date) =>
+        new Date(v).toLocaleDateString('en-US', {
             weekday: 'long',
             month: 'short',
             day: 'numeric',
@@ -99,6 +124,8 @@
             .filter((o) => sameDay(o.startsAt, day))
             .sort((a, b) => a.startsAt - b.startsAt);
     }
+    const selectedTimes = $derived(selectedDay ? timesFor(selectedDay) : []);
+
     function isSelected(o: Occurrence): boolean {
         return (
             selected !== null &&
@@ -108,20 +135,28 @@
     }
     function selectMentor(pairingId: number) {
         selectedPairing = pairingId;
+        const list = availability[pairingId] ?? [];
+        currentMonth = firstOfMonth(list[0]?.startsAt ?? Date.now());
+        selectedDay = list.length ? startOfDay(list[0].startsAt) : null;
         selected = null;
-        weekStart = thisMonday;
     }
-    function prevWeek() {
+    function prevMonth() {
         if (canPrev) {
-            weekStart = addDays(weekStart, -7);
+            currentMonth = addMonths(currentMonth, -1);
+            selectedDay = null;
             selected = null;
         }
     }
-    function nextWeek() {
+    function nextMonth() {
         if (canNext) {
-            weekStart = addDays(weekStart, 7);
+            currentMonth = addMonths(currentMonth, 1);
+            selectedDay = null;
             selected = null;
         }
+    }
+    function selectDay(d: Date) {
+        selectedDay = startOfDay(d);
+        selected = null;
     }
     function pick(o: Occurrence) {
         selected = isSelected(o) ? null : o;
@@ -191,66 +226,100 @@
                 {mentorName} hasn't opened any times yet. Check back soon.
             </p>
         {:else}
-            <div class="mt-4 flex items-center justify-between">
-                <h3 class="text-sm font-medium text-muted tabular-nums">
-                    {weekLabel}
-                </h3>
-                <div class="flex items-center gap-1">
-                    <button
-                        type="button"
-                        onclick={prevWeek}
-                        disabled={!canPrev}
-                        aria-label="Previous week"
-                        class="flex size-8 items-center justify-center rounded-lg border border-line text-muted outline-none transition-colors hover:bg-elevated focus-visible:ring-2 focus-visible:ring-accent/40 disabled:opacity-40 disabled:hover:bg-transparent"
-                    >
-                        <ChevronLeft class="size-4" strokeWidth={1.75} />
-                    </button>
-                    <button
-                        type="button"
-                        onclick={nextWeek}
-                        disabled={!canNext}
-                        aria-label="Next week"
-                        class="flex size-8 items-center justify-center rounded-lg border border-line text-muted outline-none transition-colors hover:bg-elevated focus-visible:ring-2 focus-visible:ring-accent/40 disabled:opacity-40 disabled:hover:bg-transparent"
-                    >
-                        <ChevronRight class="size-4" strokeWidth={1.75} />
-                    </button>
-                </div>
-            </div>
-
-            <div
-                class="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7"
-            >
-                {#each days as d (d.getTime())}
-                    {@const times = timesFor(d)}
-                    {@const today = sameDay(Date.now(), d)}
-                    <div
-                        class="rounded-xl border border-line bg-panel/40 p-2.5"
-                    >
-                        <div class="mb-2 flex items-center justify-between">
-                            <span
-                                class="text-xs font-medium {today
-                                    ? 'text-accent'
-                                    : 'text-muted'}"
+            <div class="mt-4 flex flex-col gap-6 md:flex-row md:gap-8">
+                <!-- Month grid -->
+                <div class="w-full md:w-[320px] md:shrink-0">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-sm font-semibold text-ink">
+                            {monthLabel}
+                        </h3>
+                        <div class="flex items-center gap-1">
+                            <button
+                                type="button"
+                                onclick={prevMonth}
+                                disabled={!canPrev}
+                                aria-label="Previous month"
+                                class="flex size-8 items-center justify-center rounded-lg border border-line text-muted outline-none transition-colors hover:bg-elevated focus-visible:ring-2 focus-visible:ring-accent/40 disabled:opacity-40 disabled:hover:bg-transparent"
                             >
-                                {d.toLocaleDateString('en-US', {
-                                    weekday: 'short',
-                                })}
-                            </span>
-                            <span
-                                class="flex size-6 items-center justify-center rounded-full text-xs font-semibold tabular-nums {today
-                                    ? 'bg-accent text-on-accent'
-                                    : 'text-ink'}"
+                                <ChevronLeft
+                                    class="size-4"
+                                    strokeWidth={1.75}
+                                />
+                            </button>
+                            <button
+                                type="button"
+                                onclick={nextMonth}
+                                disabled={!canNext}
+                                aria-label="Next month"
+                                class="flex size-8 items-center justify-center rounded-lg border border-line text-muted outline-none transition-colors hover:bg-elevated focus-visible:ring-2 focus-visible:ring-accent/40 disabled:opacity-40 disabled:hover:bg-transparent"
+                            >
+                                <ChevronRight
+                                    class="size-4"
+                                    strokeWidth={1.75}
+                                />
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mt-3 grid grid-cols-7 gap-1">
+                        {#each WEEKDAYS as w (w)}
+                            <div
+                                class="pb-1 text-center text-[11px] font-medium text-faint"
+                            >
+                                {w}
+                            </div>
+                        {/each}
+                        {#each cells as d (d.getTime())}
+                            {@const inMonth =
+                                d.getMonth() === currentMonth.getMonth()}
+                            {@const has = openDays.has(startOfDay(d).getTime())}
+                            {@const today = sameDay(Date.now(), d)}
+                            {@const isSel =
+                                selectedDay !== null &&
+                                sameDay(selectedDay.getTime(), d)}
+                            <button
+                                type="button"
+                                disabled={!inMonth || !has}
+                                onclick={() => selectDay(d)}
+                                class={cn(
+                                    'relative flex aspect-square items-center justify-center rounded-lg text-sm tabular-nums outline-none transition-colors focus-visible:ring-2 focus-visible:ring-accent/50',
+                                    !inMonth && 'text-faint/40',
+                                    inMonth && !has && 'text-muted',
+                                    inMonth &&
+                                        has &&
+                                        !isSel &&
+                                        'font-medium text-ink hover:bg-elevated',
+                                    isSel &&
+                                        'bg-accent font-semibold text-on-accent',
+                                    today &&
+                                        !isSel &&
+                                        'font-semibold text-accent',
+                                )}
                             >
                                 {d.getDate()}
-                            </span>
-                        </div>
-                        <div class="flex flex-col gap-1.5">
-                            {#each times as o (o.startsAt)}
+                                {#if inMonth && has && !isSel}
+                                    <span
+                                        class="absolute bottom-1 size-1 rounded-full bg-accent"
+                                    ></span>
+                                {/if}
+                            </button>
+                        {/each}
+                    </div>
+                </div>
+
+                <!-- Times for the selected day -->
+                <div class="min-w-0 flex-1">
+                    {#if selectedDay && selectedTimes.length}
+                        <p class="text-sm font-semibold text-ink">
+                            {fmtDayFull(selectedDay)}
+                        </p>
+                        <div class="mt-3 flex flex-wrap gap-2">
+                            {#each selectedTimes as o (o.startsAt)}
                                 <button
                                     type="button"
                                     onclick={() => pick(o)}
                                     class={cn(
-                                        'rounded-lg border px-2 py-1.5 text-xs font-medium tabular-nums outline-none transition-colors focus-visible:ring-2 focus-visible:ring-accent/50',
+                                        'rounded-lg border px-3 py-1.5 text-sm font-medium tabular-nums outline-none transition-colors focus-visible:ring-2 focus-visible:ring-accent/50',
                                         isSelected(o)
                                             ? 'border-accent bg-accent text-on-accent'
                                             : 'border-line bg-surface text-ink hover:border-accent hover:text-accent',
@@ -258,20 +327,19 @@
                                 >
                                     {fmtTime(o.startsAt)}
                                 </button>
-                            {:else}
-                                <span
-                                    class="py-1.5 text-center text-xs text-faint"
-                                    >—</span
-                                >
                             {/each}
                         </div>
-                    </div>
-                {/each}
+                    {:else}
+                        <p class="text-sm text-muted">
+                            Select a highlighted day to see open times.
+                        </p>
+                    {/if}
+                </div>
             </div>
 
             {#if selected}
                 <div
-                    class="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-accent/40 bg-accent-soft/50 px-4 py-3"
+                    class="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-accent/40 bg-accent-soft/50 px-4 py-3"
                 >
                     <p class="text-sm text-ink">
                         Book
