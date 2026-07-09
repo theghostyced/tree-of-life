@@ -308,33 +308,5 @@
                 </p>
             {/if}
         </section>
-
-        <!-- Meetings & reports (next to build) -->
-        <section
-            class="flex flex-col gap-6 rounded-2xl border border-line bg-accent-soft/40 p-6 sm:flex-row sm:items-center sm:justify-between sm:gap-8"
-        >
-            <div class="min-w-0">
-                <div class="flex flex-wrap items-center gap-2.5">
-                    <h2 class="text-base font-semibold text-ink">
-                        Meetings &amp; reports
-                    </h2>
-                    <span
-                        class="rounded-full border border-line bg-elevated px-2 py-0.5 text-[11px] font-medium text-muted"
-                    >
-                        Coming soon
-                    </span>
-                </div>
-                <p class="mt-2 max-w-xl text-sm text-muted">
-                    The heart of Tolfund: pair each entrepreneur with a mentor,
-                    schedule their meetings, and capture a short report after
-                    every one. This is the next area to build.
-                </p>
-            </div>
-            <img
-                src="/images/illustrations/social-talk.svg"
-                alt=""
-                class="h-36 w-auto shrink-0 self-center opacity-90 sm:h-44 lg:h-52"
-            />
-        </section>
     </div>
 </AdminLayout>
