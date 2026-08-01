@@ -76,10 +76,12 @@ consent.
 
 ### `GoogleCalendarSync`
 
-Three operations against `google/apiclient`:
+Two operations, over a `CalendarClient` interface so tests never touch the
+network:
 
-- `create(Meeting): array{eventId: string, meetLink: ?string}`
-- `update(Meeting): void` — patches the existing `google_event_id`
+- `push(Meeting): void` — creates the event, or patches the existing
+  `google_event_id` if there is one. A meeting whose earlier sync failed has no
+  event id, so it self-heals here.
 - `cancel(Meeting): void`
 
 Event payload: summary naming both participants, description linking back to
@@ -89,8 +91,10 @@ as an attendee, `sendUpdates: "all"`, and `conferenceData.createRequest` with
 
 ### Token lifecycle
 
-A `GoogleToken` service refreshes when `expires_at` is near. On `invalid_grant`
-(user revoked access from their Google account settings) it sets `revoked_at`.
+`GoogleCalendarClient` refreshes the access token when it has expired. On
+`invalid_grant` (the user revoked access from their Google account settings) it
+sets `revoked_at` and raises `CalendarConnectionRevoked`, which the sync job
+treats as non-retryable.
 Revocation therefore collapses into the existing disconnected state: the same
 gate hides their slots, with no extra status to reason about.
 
@@ -116,7 +120,8 @@ The three places a meeting's time is created or changed:
 - `RescheduleMeeting` (mentor-direct path) — dispatch update.
 - `ReviewMeetingReschedule` (on accept) — dispatch update.
 
-Cancellation dispatches cancel.
+Cancellation is implemented in the sync service but left unwired: the app has
+no meeting-cancellation flow today. It attaches when that feature is built.
 
 ### Replaces a live bug
 
@@ -160,6 +165,8 @@ class of problem.
 
 ## Out of scope
 
+- Building a meeting-cancellation flow. The sync service supports cancelling an
+  event, but nothing in the app currently cancels a meeting.
 - Reading mentors' busy times to hide clashing slots (would need re-consent).
 - Entrepreneur-side Google connection.
 - Calendar providers other than Google.
