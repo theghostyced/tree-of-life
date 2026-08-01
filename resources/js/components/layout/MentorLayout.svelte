@@ -28,7 +28,12 @@
             icon: LayoutGrid,
             enabled: true,
         },
-        { label: 'Mentees', href: '/mentor/mentees', icon: Users },
+        {
+            label: 'Mentees',
+            href: '/mentor/mentees',
+            icon: Users,
+            enabled: true,
+        },
         {
             label: 'Meetings',
             href: '/mentor/meetings',
