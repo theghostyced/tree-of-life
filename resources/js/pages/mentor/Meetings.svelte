@@ -2,6 +2,7 @@
     import { router } from '@inertiajs/svelte';
     import { Video, MapPin, Calendar, FileText } from '@lucide/svelte';
     import MentorLayout from '@/components/layout/MentorLayout.svelte';
+    import RescheduleDialog from '@/components/mentorship/reschedule-dialog.svelte';
     import { toast } from '@/components/ui/sonner';
     import { cn } from '@/lib/utils';
 
@@ -15,17 +16,24 @@
         meetingLink: string | null;
         agenda: string | null;
         status: 'confirmed' | 'completed' | 'cancelled';
+        pairingId: number;
         reportSummary: string | null;
         canReport: boolean;
     };
 
+    type Occurrence = { slotId: number; startsAt: number; endsAt: number };
+
     let {
         upcoming = [],
         past = [],
+        availability = {},
     }: {
         upcoming: Meeting[];
         past: Meeting[];
+        availability: Record<number, Occurrence[]>;
     } = $props();
+
+    let rescheduling = $state<Meeting | null>(null);
 
     const focusRing =
         'outline-none focus-visible:ring-2 focus-visible:ring-accent/60';
@@ -145,6 +153,21 @@
                     {/if}
                 </div>
 
+                {#if m.status === 'confirmed'}
+                    <div class="mt-3 border-t border-line pt-3">
+                        <button
+                            type="button"
+                            data-test={`reschedule-meeting-${m.id}`}
+                            onclick={() => (rescheduling = m)}
+                            class={cn(
+                                'text-xs font-medium text-accent transition-colors hover:text-accent-strong',
+                                focusRing,
+                            )}
+                        >
+                            Reschedule
+                        </button>
+                    </div>
+                {/if}
                 {#if m.reportSummary}
                     <div class="mt-3 border-t border-line pt-3">
                         <p
@@ -245,3 +268,12 @@
         {/if}
     </div>
 </MentorLayout>
+
+<RescheduleDialog
+    target={rescheduling}
+    occurrences={rescheduling
+        ? (availability[rescheduling.pairingId] ?? [])
+        : []}
+    endpoint={(id) => `/mentor/meetings/${id}/reschedule`}
+    onclose={() => (rescheduling = null)}
+/>

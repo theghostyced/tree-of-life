@@ -22,6 +22,7 @@ use App\Http\Controllers\Mentor\MeetingController as MentorMeetingController;
 use App\Http\Controllers\Mentor\MeetingReportController;
 use App\Http\Controllers\Mentor\ProfileController as MentorProfileController;
 use App\Http\Controllers\Mentor\RescheduleController;
+use App\Http\Controllers\Mentorship\MeetingRescheduleController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Onboarding\DocumentController;
 use Illuminate\Support\Facades\Route;
@@ -70,6 +71,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/pairings', [EntrepreneurPairingController::class, 'store'])->middleware('account.active')->name('pairings.store');
         Route::get('/meetings', [EntrepreneurMeetingController::class, 'index'])->middleware('account.active')->name('meetings.index');
         Route::post('/meetings', [EntrepreneurMeetingController::class, 'store'])->middleware('account.active')->name('meetings.store');
+        Route::post('/meetings/{meeting}/reschedule', [MeetingRescheduleController::class, 'store'])->middleware('account.active')->name('meetings.reschedule');
         Route::get('/messages', [MessagesController::class, 'index'])->middleware('account.active')->name('messages');
         Route::get('/messages/{conversation}', [MessagesController::class, 'index'])->middleware('account.active')->name('messages.show');
         Route::post('/employees', [EmployeeInvitationController::class, 'store'])->name('employees.store');
@@ -83,6 +85,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/availability', [MentorAvailabilityController::class, 'store'])->name('availability.store');
             Route::delete('/availability/{slot}', [MentorAvailabilityController::class, 'destroy'])->name('availability.destroy');
             Route::get('/meetings', [MentorMeetingController::class, 'index'])->name('meetings.index');
+            Route::post('/meetings/{meeting}/reschedule', [MeetingRescheduleController::class, 'store'])->name('meetings.reschedule');
             Route::get('/messages', [MessagesController::class, 'index'])->name('messages');
             Route::get('/messages/{conversation}', [MessagesController::class, 'index'])->name('messages.show');
         });

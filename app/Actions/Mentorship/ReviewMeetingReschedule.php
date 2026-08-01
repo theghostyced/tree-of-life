@@ -38,6 +38,10 @@ class ReviewMeetingReschedule
             }
         });
 
+        if ($accept) {
+            RescheduleMeeting::announce($reschedule->meeting->refresh());
+        }
+
         $reschedule->requestedBy->notify(new MeetingRescheduleReviewed($reschedule, $accept));
     }
 }

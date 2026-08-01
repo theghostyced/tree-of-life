@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Entrepreneur;
 use App\Actions\Mentorship\BookMeeting;
 use App\Enums\MeetingStatus;
 use App\Enums\PairingStatus;
+use App\Enums\RescheduleStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Meeting;
 use App\Models\MentorAvailabilitySlot;
 use App\Models\Pairing;
+use App\Support\AvailabilityOptions;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -91,28 +93,7 @@ class MeetingController extends Controller
                 'name' => $pairing->mentor->name,
             ];
 
-            $slots = MentorAvailabilitySlot::query()
-                ->where('mentor_user_id', $pairing->mentor_user_id)
-                ->where('is_active', true)
-                ->get();
-
-            $occurrences = [];
-            foreach ($slots as $slot) {
-                $duration = BookMeeting::durationMinutes($slot);
-                foreach (BookMeeting::freeOccurrences($slot, $pairing) as $occurrence) {
-                    $occurrences[] = [
-                        'slotId' => $slot->id,
-                        'startsAt' => $occurrence->getTimestampMs(),
-                        'endsAt' => $occurrence->copy()->addMinutes($duration)->getTimestampMs(),
-                        'sessionType' => $slot->session_type,
-                        'location' => $slot->location,
-                        'meetingLink' => $slot->meeting_link,
-                    ];
-                }
-            }
-
-            usort($occurrences, fn ($a, $b) => $a['startsAt'] <=> $b['startsAt']);
-            $availability[$pairing->id] = $occurrences;
+            $availability[$pairing->id] = AvailabilityOptions::forPairing($pairing);
         }
 
         return ['mentors' => $mentors, 'availability' => $availability];
@@ -125,6 +106,9 @@ class MeetingController extends Controller
     {
         return [
             'id' => $meeting->id,
+            'pairingId' => $meeting->pairing_id,
+            'reschedulePending' => $meeting->reschedules()
+                ->where('status', RescheduleStatus::Pending)->exists(),
             'counterpartName' => $meeting->pairing->mentor->name,
             'startsAt' => $meeting->starts_at->getTimestampMs(),
             'endsAt' => $meeting->ends_at->getTimestampMs(),

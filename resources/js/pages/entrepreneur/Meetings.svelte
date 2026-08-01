@@ -1,8 +1,9 @@
 <script lang="ts">
     import { Video, MapPin, Calendar } from '@lucide/svelte';
     import EntrepreneurLayout from '@/components/layout/EntrepreneurLayout.svelte';
-    import BookCallCalendar from './BookCallCalendar.svelte';
+    import RescheduleDialog from '@/components/mentorship/reschedule-dialog.svelte';
     import { cn } from '@/lib/utils';
+    import BookCallCalendar from './BookCallCalendar.svelte';
 
     type Meeting = {
         id: number;
@@ -15,6 +16,8 @@
         agenda: string | null;
         status: 'confirmed' | 'completed' | 'cancelled';
         reportSummary: string | null;
+        pairingId: number;
+        reschedulePending: boolean;
     };
     type Mentor = { pairingId: number; mentorId: number; name: string };
     type Occurrence = {
@@ -44,6 +47,8 @@
 
     const focusRing =
         'outline-none focus-visible:ring-2 focus-visible:ring-accent/60';
+
+    let rescheduling = $state<Meeting | null>(null);
 
     const fmtDate = (ms: number) =>
         new Date(ms).toLocaleDateString('en-US', {
@@ -131,6 +136,30 @@
                         </span>
                     {/if}
                 </div>
+                {#if m.status === 'confirmed'}
+                    <div class="mt-3 border-t border-line pt-3">
+                        {#if m.reschedulePending}
+                            <p
+                                class="text-xs text-muted"
+                                data-test="reschedule-pending"
+                            >
+                                Reschedule requested, waiting on your mentor.
+                            </p>
+                        {:else}
+                            <button
+                                type="button"
+                                data-test={`reschedule-meeting-${m.id}`}
+                                onclick={() => (rescheduling = m)}
+                                class={cn(
+                                    'text-xs font-medium text-accent transition-colors hover:text-accent-strong',
+                                    focusRing,
+                                )}
+                            >
+                                Reschedule
+                            </button>
+                        {/if}
+                    </div>
+                {/if}
                 {#if m.reportSummary}
                     <div class="mt-3 border-t border-line pt-3">
                         <p
@@ -194,3 +223,13 @@
         {/if}
     </div>
 </EntrepreneurLayout>
+
+<RescheduleDialog
+    target={rescheduling}
+    occurrences={rescheduling
+        ? (availability[rescheduling.pairingId] ?? [])
+        : []}
+    endpoint={(id) => `/entrepreneur/meetings/${id}/reschedule`}
+    reasonRequired
+    onclose={() => (rescheduling = null)}
+/>
