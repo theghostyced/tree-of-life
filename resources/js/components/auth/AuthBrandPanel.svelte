@@ -1,12 +1,13 @@
 <script lang="ts">
+    import { Link } from '@inertiajs/svelte';
     import Logo from '@/components/Logo.svelte';
     import AuthFooter from './AuthFooter.svelte';
     import ShaderGlow from './ShaderGlow.svelte';
 
     /**
-     * Left-hand brand panel for the auth screen. A warm, softly lit dark surface
-     * — the "greenhouse at first light": a WebGL shader field of slowly drifting
-     * sage and amber glows — carrying the Tree Of Life Fund logo, a welcoming
+     * Left-hand brand panel for the auth screen. A warm, softly lit dark surface,
+     * the "greenhouse at first light": a WebGL shader field of slowly drifting
+     * sage and amber glows, carrying the Tree Of Life Fund logo, a welcoming
      * statement, the community avatars, and the legal footer. Desktop only.
      */
     const community = [
@@ -24,7 +25,13 @@
     <div class="vignette" aria-hidden="true"></div>
 
     <div class="relative z-10 p-12">
-        <Logo size="lg" />
+        <Link
+            href="/"
+            aria-label="Tree Of Life Fund home"
+            class="inline-block rounded-md outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-panel"
+        >
+            <Logo size="lg" />
+        </Link>
     </div>
 
     <div class="relative z-10 flex flex-1 flex-col justify-center p-12">
@@ -35,7 +42,7 @@
         </h1>
         <p class="max-w-md text-lg leading-relaxed text-muted">
             An invitation-only workspace that pairs entrepreneurs with mentors,
-            schedules their meetings, and keeps a clear report of every one —
+            schedules their meetings, and keeps a clear report of every one,
             especially for the women building what's next.
         </p>
 

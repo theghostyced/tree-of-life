@@ -1,9 +1,10 @@
 <script lang="ts">
+    import { Link } from '@inertiajs/svelte';
     import AppHead from '@/components/AppHead.svelte';
-    import Logo from '@/components/Logo.svelte';
     import AuthBrandPanel from '@/components/auth/AuthBrandPanel.svelte';
-    import LoginForm from '@/components/auth/LoginForm.svelte';
     import AuthFooter from '@/components/auth/AuthFooter.svelte';
+    import LoginForm from '@/components/auth/LoginForm.svelte';
+    import Logo from '@/components/Logo.svelte';
     import { Toaster } from '@/components/ui/sonner';
 </script>
 
@@ -20,7 +21,13 @@
         <div
             class="absolute top-0 right-0 left-0 z-20 flex items-center justify-between border-b border-line bg-panel/50 p-6 backdrop-blur-md lg:hidden"
         >
-            <Logo size="sm" />
+            <Link
+                href="/"
+                aria-label="Tree Of Life Fund home"
+                class="rounded-md outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-panel"
+            >
+                <Logo size="sm" />
+            </Link>
         </div>
 
         <div
