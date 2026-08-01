@@ -27,6 +27,12 @@ class StoreUserDocument
             Storage::disk($existing->disk)->delete($existing->path);
         }
 
+        // Read before store(): it moves the upload, and getMimeType() detects
+        // from content rather than the client's claim.
+        $mimeType = $file->getMimeType() ?: 'application/octet-stream';
+        $originalName = $file->getClientOriginalName();
+        $size = $file->getSize();
+
         $path = $file->store("user-documents/{$user->id}", self::DISK);
 
         return UserDocument::updateOrCreate(
@@ -34,9 +40,9 @@ class StoreUserDocument
             [
                 'disk' => self::DISK,
                 'path' => $path,
-                'original_name' => $file->getClientOriginalName(),
-                'mime_type' => $file->getClientMimeType(),
-                'size' => $file->getSize(),
+                'original_name' => $originalName,
+                'mime_type' => $mimeType,
+                'size' => $size,
                 'uploaded_at' => now(),
             ],
         );

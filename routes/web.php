@@ -98,6 +98,7 @@ Route::middleware('auth')->group(function () {
      */
     Route::post('/onboarding/documents', [DocumentController::class, 'store'])->name('onboarding.documents.store');
     Route::get('/onboarding/documents/{document}', [DocumentController::class, 'show'])->name('onboarding.documents.show');
+    Route::get('/onboarding/documents/{document}/preview', [DocumentController::class, 'preview'])->name('onboarding.documents.preview');
 
     Route::get('/conversations/{conversation}/messages', [ConversationMessagesController::class, 'index'])
         ->name('conversations.messages.index');

@@ -42,4 +42,21 @@ class UserDocument extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Whether a browser can safely render this file inline in an iframe.
+     *
+     * An allowlist, not an `image/*` prefix: that would admit image/svg+xml,
+     * which can run script on our own origin.
+     */
+    public function isPreviewable(): bool
+    {
+        return in_array($this->mime_type, [
+            'application/pdf',
+            'image/png',
+            'image/jpeg',
+            'image/gif',
+            'image/webp',
+        ], true);
+    }
 }

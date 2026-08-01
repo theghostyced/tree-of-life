@@ -26,6 +26,38 @@ test('an entrepreneur uploads a required document to the private disk', function
     Storage::disk('local')->assertExists($doc->path);
 });
 
+/**
+ * The stored mime type decides whether the file is later served inline for
+ * preview, so it has to describe the real bytes. The browser-declared
+ * Content-Type is attacker-controlled and must never be trusted for that.
+ */
+test('the stored mime type is detected from content, not the client claim', function () {
+    Storage::fake('local');
+    $user = User::factory()->entrepreneur()->create();
+
+    // Genuine PNG bytes, uploaded while claiming to be a PDF.
+    $genuinePng = UploadedFile::fake()->image('milestones.png', 16, 16);
+    $spoofed = new UploadedFile(
+        $genuinePng->getPathname(),
+        'milestones.png',
+        'application/pdf',
+        null,
+        true,
+    );
+
+    $this->actingAs($user)->post('/onboarding/documents', [
+        'document_type' => 'milestones',
+        'file' => $spoofed,
+    ])->assertRedirect();
+
+    $doc = UserDocument::where('user_id', $user->id)
+        ->where('document_type', DocumentType::Milestones)->first();
+
+    expect($doc)->not->toBeNull()
+        ->and($spoofed->getClientMimeType())->toBe('application/pdf')
+        ->and($doc->mime_type)->toBe('image/png');
+});
+
 test('an oversized document is rejected and nothing is stored', function () {
     Storage::fake('local');
     $user = User::factory()->entrepreneur()->create();

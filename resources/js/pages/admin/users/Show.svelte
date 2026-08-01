@@ -9,6 +9,8 @@
         BadgeCheck,
         FileText,
         Download,
+        Eye,
+        X,
     } from '@lucide/svelte';
     import AdminLayout from '@/components/layout/AdminLayout.svelte';
     import RoleBadge from '@/components/ui/role-badge/role-badge.svelte';
@@ -24,6 +26,8 @@
         type: string;
         label: string;
         uploaded: string | null;
+        required: boolean;
+        previewable: boolean;
     };
     type User = {
         id: number;
@@ -146,6 +150,21 @@
     // ── Actions ────────────────────────────────────────────────────────
     let confirmingDelete = $state(false);
     let acting = $state(false);
+
+    let previewDoc = $state<Doc | null>(null);
+    let previewDialog = $state<HTMLDialogElement | null>(null);
+
+    function openPreview(doc: Doc): void {
+        previewDoc = doc;
+    }
+
+    // showModal() gives focus trapping, Escape, inertness and a top-layer
+    // backdrop for free, so none of that is reimplemented here.
+    $effect(() => {
+        if (previewDoc && previewDialog && !previewDialog.open) {
+            previewDialog.showModal();
+        }
+    });
     let timer: ReturnType<typeof setTimeout> | undefined;
 
     $effect(() => () => clearTimeout(timer));
@@ -413,39 +432,68 @@
                     <h2 class="text-sm font-semibold text-ink">Documents</h2>
                     <ul class="mt-4 divide-y divide-line">
                         {#each user.documents as doc (doc.type)}
-                            <li class="flex items-center gap-3 py-3">
-                                <FileText
-                                    class={cn(
-                                        'size-4 shrink-0',
-                                        doc.uploaded
-                                            ? 'text-accent'
-                                            : 'text-faint',
-                                    )}
-                                    strokeWidth={1.75}
-                                />
-                                <div class="min-w-0 flex-1">
-                                    <p class="truncate text-sm text-ink">
-                                        {doc.label}
-                                    </p>
-                                    <p class="truncate text-xs text-muted">
-                                        {doc.uploaded ?? 'Not uploaded'}
-                                    </p>
-                                </div>
-                                {#if doc.uploaded && doc.id}
-                                    <a
-                                        href={`/onboarding/documents/${doc.id}`}
+                            <li class="py-3">
+                                <div class="flex items-center gap-3">
+                                    <FileText
                                         class={cn(
-                                            'inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium text-muted transition-colors hover:bg-elevated hover:text-ink',
-                                            focusRing,
+                                            'size-4 shrink-0',
+                                            doc.uploaded
+                                                ? 'text-accent'
+                                                : 'text-faint',
                                         )}
-                                    >
-                                        <Download
-                                            class="size-3.5"
-                                            strokeWidth={1.75}
-                                        />
-                                        Download
-                                    </a>
-                                {/if}
+                                        strokeWidth={1.75}
+                                    />
+                                    <div class="min-w-0 flex-1">
+                                        <p
+                                            class="flex items-center gap-2 truncate text-sm text-ink"
+                                        >
+                                            {doc.label}
+                                            {#if !doc.required}
+                                                <span
+                                                    class="shrink-0 rounded-full border border-line px-2 py-0.5 text-[11px] font-medium text-muted"
+                                                >
+                                                    No longer required
+                                                </span>
+                                            {/if}
+                                        </p>
+                                        <p class="truncate text-xs text-muted">
+                                            {doc.uploaded ?? 'Not uploaded'}
+                                        </p>
+                                    </div>
+                                    {#if doc.uploaded && doc.id}
+                                        {#if doc.previewable}
+                                            <button
+                                                type="button"
+                                                data-test={`view-document-${doc.id}`}
+                                                onclick={() => openPreview(doc)}
+                                                class={cn(
+                                                    'inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium text-muted transition-colors hover:bg-elevated hover:text-ink',
+                                                    focusRing,
+                                                )}
+                                            >
+                                                <Eye
+                                                    class="size-3.5"
+                                                    strokeWidth={1.75}
+                                                />
+                                                View
+                                            </button>
+                                        {/if}
+                                        <a
+                                            href={`/onboarding/documents/${doc.id}`}
+                                            data-test={`download-document-${doc.id}`}
+                                            class={cn(
+                                                'inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium text-muted transition-colors hover:bg-elevated hover:text-ink',
+                                                focusRing,
+                                            )}
+                                        >
+                                            <Download
+                                                class="size-3.5"
+                                                strokeWidth={1.75}
+                                            />
+                                            Download
+                                        </a>
+                                    {/if}
+                                </div>
                             </li>
                         {/each}
                     </ul>
@@ -453,4 +501,69 @@
             {/if}
         </div>
     </div>
+
+    <dialog
+        bind:this={previewDialog}
+        data-test="document-preview-dialog"
+        aria-label={previewDoc
+            ? `${previewDoc.label} preview`
+            : 'Document preview'}
+        onclose={() => (previewDoc = null)}
+        onclick={(event) => {
+            if (event.target === previewDialog) {
+                previewDialog?.close();
+            }
+        }}
+        class="m-auto w-[min(64rem,92vw)] rounded-xl border border-line bg-panel p-0 text-ink backdrop:bg-black/70 backdrop:backdrop-blur-sm"
+    >
+        {#if previewDoc?.id}
+            <div class="flex items-center gap-3 border-b border-line px-5 py-4">
+                <FileText
+                    class="size-4 shrink-0 text-accent"
+                    strokeWidth={1.75}
+                />
+                <div class="min-w-0 flex-1">
+                    <p class="truncate text-sm font-semibold text-ink">
+                        {previewDoc.label}
+                    </p>
+                    <p class="truncate text-xs text-muted">
+                        {previewDoc.uploaded}
+                    </p>
+                </div>
+                <a
+                    href={`/onboarding/documents/${previewDoc.id}`}
+                    data-test="dialog-download-document"
+                    class={cn(
+                        'inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium text-muted transition-colors hover:bg-elevated hover:text-ink',
+                        focusRing,
+                    )}
+                >
+                    <Download class="size-3.5" strokeWidth={1.75} />
+                    Download
+                </a>
+                <button
+                    type="button"
+                    data-test="close-document-preview"
+                    aria-label="Close preview"
+                    onclick={() => previewDialog?.close()}
+                    class={cn(
+                        'inline-flex items-center justify-center rounded-md p-1.5 text-muted transition-colors hover:bg-elevated hover:text-ink',
+                        focusRing,
+                    )}
+                >
+                    <X class="size-4" strokeWidth={1.75} />
+                </button>
+            </div>
+
+            <!-- No sandbox: it disables Chrome's PDF viewer, and re-enabling it
+                 needs allow-scripts. Safety comes from the mime allowlist plus
+                 nosniff on the preview response. -->
+            <iframe
+                src={`/onboarding/documents/${previewDoc.id}/preview`}
+                title={`${previewDoc.label} preview`}
+                data-test="document-preview-frame"
+                class="h-[min(75vh,44rem)] w-full bg-canvas"
+            ></iframe>
+        {/if}
+    </dialog>
 </AdminLayout>

@@ -34,4 +34,34 @@ class DocumentController extends Controller
 
         return Storage::disk($document->disk)->download($document->path, $document->original_name);
     }
+
+    /** The same private file served inline so it can render in an iframe. */
+    public function preview(UserDocument $document): StreamedResponse
+    {
+        Gate::authorize('view', $document);
+
+        abort_unless($document->isPreviewable(), 404);
+
+        return Storage::disk($document->disk)->response(
+            $document->path,
+            $this->headerSafeFilename($document->original_name),
+            [
+                'Content-Type' => $document->mime_type,
+                'X-Content-Type-Options' => 'nosniff',
+            ],
+            'inline',
+        );
+    }
+
+    /** Strip path, control characters (CRLF injection) and header delimiters. */
+    private function headerSafeFilename(string $original): string
+    {
+        $filename = preg_replace(
+            '#[\x00-\x1F\x7F:;",/\\\\]+#',
+            '',
+            basename($original),
+        ) ?? '';
+
+        return trim($filename) !== '' ? trim($filename) : 'document';
+    }
 }
