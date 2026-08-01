@@ -24,6 +24,13 @@ pest()->extend(TestCase::class)
 
 pest()->extend(TestCase::class)->in('Unit');
 
+// Grouped and excluded in phpunit.xml so the default run stays browser-free.
+// Run them with: php artisan test --group=browser
+pest()->extend(TestCase::class)
+    ->use(RefreshDatabase::class)
+    ->group('browser')
+    ->in('Browser');
+
 /*
 |--------------------------------------------------------------------------
 | Expectations

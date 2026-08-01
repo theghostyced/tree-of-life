@@ -11,4 +11,6 @@ createInertiaApp({
         delay: 100,
         showSpinner: false,
     },
+}).then(() => {
+    document.documentElement.dataset.hydrated = 'true';
 });
