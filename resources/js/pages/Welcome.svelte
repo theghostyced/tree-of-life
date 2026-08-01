@@ -1,58 +1,46 @@
 <script lang="ts">
     import { Link } from '@inertiajs/svelte';
-    import {
-        ArrowRight,
-        CalendarClock,
-        ClipboardList,
-        GraduationCap,
-        Handshake,
-        MessagesSquare,
-        ShieldCheck,
-    } from '@lucide/svelte';
+    import { ArrowRight } from '@lucide/svelte';
     import AppHead from '@/components/AppHead.svelte';
     import CtaBand from '@/components/landing/CtaBand.svelte';
     import FaqItem from '@/components/landing/FaqItem.svelte';
     import LandingFooter from '@/components/landing/LandingFooter.svelte';
     import LandingHero from '@/components/landing/LandingHero.svelte';
     import LandingNav from '@/components/landing/LandingNav.svelte';
-    import OfferingCard from '@/components/landing/OfferingCard.svelte';
+    import ProcessStep from '@/components/landing/ProcessStep.svelte';
     import { cn } from '@/lib/utils';
 
     /**
      * Public landing page. The only page a signed-out visitor sees besides the
      * login and invitation-acceptance screens, so it explains what Tolfund is
-     * and routes invited people to sign in — there is no public registration.
+     * and routes invited people to sign in. There is no public registration.
      */
-    const offerings = [
+
+    /** The real product loop, in the order a participant actually meets it. */
+    const steps = [
         {
-            icon: Handshake,
-            title: 'Choose your mentor',
-            body: 'Browse approved mentors by expertise and industry, and choose the ones you want to work with — several, if that is what your business needs.',
+            title: 'An admin invites you',
+            body: 'Tolfund is invitation-only. Your invitation arrives by email carrying a single-use link, and it stays valid for seven days.',
         },
         {
-            icon: CalendarClock,
-            title: 'Shared availability',
-            body: 'Mentors publish the hours they are free. Entrepreneurs book straight into them, and every confirmed meeting carries its own joining link.',
+            title: 'You set up your profile',
+            body: 'A guided wizard collects your details and documents, and shows exactly what is still missing, so nobody is left guessing whether they are ready.',
         },
         {
-            icon: ClipboardList,
-            title: 'A report for every meeting',
-            body: 'Each meeting leaves a short written record, so what was discussed and decided stays reviewable long after the conversation ends.',
+            title: 'You choose your mentor',
+            body: 'Entrepreneurs browse approved mentors by expertise and industry and choose who to work with, several if that is what the business needs. Nobody is assigned a mentor without choosing them.',
         },
         {
-            icon: MessagesSquare,
-            title: 'Messages between meetings',
+            title: 'You book real availability',
+            body: 'Mentors publish the hours they are free. Bookings land inside those hours, and every confirmed meeting carries its own joining link.',
+        },
+        {
+            title: 'You talk between meetings',
             body: 'A private thread for each pairing keeps questions, context, and follow-ups in one place rather than scattered across inboxes.',
         },
         {
-            icon: GraduationCap,
-            title: 'Guided onboarding',
-            body: 'A step-by-step profile and document wizard shows exactly what is still missing, so nobody is left guessing whether they are ready.',
-        },
-        {
-            icon: ShieldCheck,
-            title: 'Programme oversight',
-            body: 'Admins can see who is paired, whether meetings are happening, and whether reports are being captured — without chasing anyone by email.',
+            title: 'The meeting leaves a report',
+            body: 'The mentor writes a short written record afterwards. It is what both sides revisit later, and how the programme knows a mentorship is genuinely running.',
         },
     ];
 
@@ -64,7 +52,7 @@
         },
         {
             question: 'How are entrepreneurs and mentors paired?',
-            answer: 'Entrepreneurs browse the approved mentors and choose who they want to work with. The mentor sees their new mentee on their dashboard straight away — nobody is assigned a mentor without choosing them.',
+            answer: 'Entrepreneurs browse the approved mentors and choose who they want to work with. The mentor sees their new mentee on their dashboard straight away. Nobody is assigned a mentor without choosing them.',
             open: false,
         },
         {
@@ -83,68 +71,140 @@
         'outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas';
 </script>
 
-<AppHead title="Tolfund — where founders meet their mentors" />
+<AppHead title="Tolfund: where founders meet their mentors" />
 
 <div class="min-h-screen bg-canvas font-sans text-ink antialiased">
     <LandingNav />
     <LandingHero />
 
-    <!-- Mission band -->
-    <section class="border-y border-line bg-panel px-6 py-16 lg:px-12">
+    <!-- Mission band. Tight against the hero on purpose: it reads as the hero's
+         closing thought, and the long run of air comes after it. The Fund's own
+         mission statement, stated plainly rather than dressed up as a quote. -->
+    <section class="bg-sage-800 px-6 py-14 lg:px-12 lg:py-16">
         <div class="mx-auto max-w-4xl text-center">
+            <!-- sage-200 on sage-800 is 7.86:1. The default muted grey would be
+                 3.82:1 here and fail, and grey on a tinted surface reads washed
+                 out regardless; text on a coloured band takes that band's hue. -->
             <p
-                class="text-xl leading-relaxed text-balance text-ink/90 md:text-2xl"
+                class="text-xl leading-relaxed text-balance text-sage-200 md:text-2xl"
             >
-                “Tolfund exists so that a mentorship is never left to chance.
-                When founders and mentors both know their next meeting and their
-                next step, the relationship does what it was meant to do.”
+                Our mission is to build the African middle class through the
+                economic empowerment of African women entrepreneurs.
             </p>
         </div>
     </section>
 
-    <!-- How it works -->
-    <section id="how-it-works" class="scroll-mt-24 px-6 py-24 lg:px-12">
+    <!-- The Fund itself: what it is, and which half of it this portal is.
+         Two halves, not a card pair. The second carries an accent rule and a
+         "You are here" marker because it is the half the visitor is standing
+         in, which is information rather than decoration. -->
+    <section id="fund" class="scroll-mt-24 px-6 py-24 lg:px-12 lg:py-28">
         <div class="mx-auto w-full max-w-7xl">
-            <div class="mx-auto mb-16 max-w-2xl text-center">
+            <div class="mb-14 max-w-3xl">
                 <h2
-                    class="mb-4 text-4xl font-semibold tracking-tight text-balance text-ink md:text-5xl"
+                    class="mb-6 text-4xl font-semibold tracking-[-0.02em] text-balance text-ink md:text-5xl"
                 >
-                    How Tolfund works
+                    Not a traditional equity fund.
                 </h2>
-                <p class="text-lg text-muted">
-                    Everything a mentorship needs to stay on track — pairing,
-                    scheduling, and a clear record of every conversation.
+                <p
+                    class="max-w-[65ch] text-lg leading-relaxed text-pretty text-muted"
+                >
+                    The Tree of Life Fund is an impact fund that provides
+                    African women entrepreneurs with the finance and the
+                    technical support required to grow their businesses through
+                    intra-African trade.
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-                {#each offerings as offering (offering.title)}
-                    <OfferingCard
-                        icon={offering.icon}
-                        title={offering.title}
-                        body={offering.body}
-                    />
-                {/each}
+            <div class="grid max-w-5xl gap-10 md:grid-cols-2 md:gap-16">
+                <div class="border-t border-line pt-6">
+                    <p class="mb-3 text-sm font-semibold text-muted">
+                        Elsewhere in the Fund
+                    </p>
+                    <h3 class="mb-3 text-xl font-semibold text-ink">
+                        Access to finance and credit
+                    </h3>
+                    <p
+                        class="text-[15px] leading-relaxed text-pretty text-muted"
+                    >
+                        The Fund sets out to plug the gap in access to finance
+                        and credit for African women entrepreneurs, so capital
+                        stops being the reason a good business cannot scale.
+                    </p>
+                </div>
+
+                <div class="border-t border-accent/60 pt-6">
+                    <p class="mb-3 text-sm font-semibold text-accent">
+                        You are here
+                    </p>
+                    <h3 class="mb-3 text-xl font-semibold text-ink">
+                        Access to technical expertise
+                    </h3>
+                    <p
+                        class="text-[15px] leading-relaxed text-pretty text-muted"
+                    >
+                        Specialist teams of instructors support the growth and
+                        scale of those companies. This portal is where that
+                        second half runs: the pairings, the meetings, and the
+                        written record of every one.
+                    </p>
+                </div>
             </div>
         </div>
     </section>
 
+    <!-- How it works: an ordered sequence, not a tile grid. -->
+    <section
+        id="how-it-works"
+        class="scroll-mt-24 px-6 py-24 lg:px-12 lg:py-32"
+    >
+        <div class="mx-auto w-full max-w-7xl">
+            <div class="mb-14 max-w-2xl">
+                <h2
+                    class="mb-4 text-4xl font-semibold tracking-[-0.02em] text-balance text-ink md:text-5xl"
+                >
+                    How Tolfund works
+                </h2>
+                <p class="max-w-[65ch] text-lg text-pretty text-muted">
+                    Six steps from an invitation to a written record, the same
+                    path for every founder and every mentor on the programme.
+                </p>
+            </div>
+
+            <!-- Capped narrower than the 7xl column so the hairlines end near
+                 the prose instead of running out into dead space. -->
+            <ol class="max-w-5xl border-b border-line">
+                {#each steps as step, i (step.title)}
+                    <ProcessStep
+                        index={i + 1}
+                        title={step.title}
+                        body={step.body}
+                    />
+                {/each}
+            </ol>
+        </div>
+    </section>
+
     <!-- Inside the programme -->
-    <section id="programme" class="scroll-mt-24 px-6 py-24 lg:px-12">
+    <section id="programme" class="scroll-mt-24 px-6 pb-24 lg:px-12 lg:pb-32">
         <div
-            class="mx-auto flex w-full max-w-7xl flex-col items-center gap-16 lg:flex-row"
+            class="mx-auto flex w-full max-w-7xl flex-col items-center gap-12 lg:flex-row lg:gap-16"
         >
             <div class="w-full lg:w-1/2">
                 <div
                     class="relative isolate aspect-[4/3] overflow-hidden rounded-xl border border-line"
                 >
-                    <!-- NOTE: remote Unsplash asset from the source design;
-                         replace with an owned, licensed image before launch.
-                         Dimmed and desaturated to match the hero treatment so a
-                         bright photograph does not punch a hole in the canvas. -->
+                    <!-- NOTE: remote Unsplash asset; replace with an owned,
+                         licensed image before launch. Dimmed and desaturated to
+                         match the hero so a bright photograph does not punch a
+                         hole in the canvas. -->
                     <img
-                        src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=1740&q=80"
-                        alt=""
+                        src="https://images.unsplash.com/photo-1744973149087-179e3ed54eae?auto=format&fit=crop&w=1400&q=80"
+                        alt="Two women listening intently at a programme gathering, lit in warm gold"
+                        width="1400"
+                        height="1050"
+                        loading="lazy"
+                        decoding="async"
                         class="absolute inset-0 size-full object-cover brightness-[.82] saturate-[.6]"
                     />
                     <div
@@ -155,62 +215,77 @@
             </div>
 
             <div class="w-full lg:w-1/2">
-                <span
-                    class="mb-4 block text-xs font-semibold tracking-[0.04em] text-accent uppercase"
-                >
-                    Inside the programme
-                </span>
                 <h2
-                    class="mb-6 text-4xl leading-tight font-semibold tracking-tight text-balance text-ink md:text-5xl"
+                    class="mb-6 text-4xl leading-tight font-semibold tracking-[-0.02em] text-balance text-ink md:text-5xl"
                 >
                     Built for the women building what's next.
                 </h2>
-                <p class="mb-8 text-lg leading-relaxed text-muted">
-                    Spreadsheets and email lose the thread. Tolfund keeps the
-                    whole relationship in one place — who is paired with whom,
+                <p
+                    class="mb-8 max-w-[65ch] text-lg leading-relaxed text-pretty text-muted"
+                >
+                    We want to change the narrative about the capacity of
+                    African women's businesses to grow, to scale, and to adapt
+                    to technology, so they can generate financial resources of
+                    their own and take their place in the AfCFTA marketplace.
+                </p>
+                <p
+                    class="mb-8 max-w-[65ch] text-lg leading-relaxed text-pretty text-muted"
+                >
+                    That takes more than good intentions. Tolfund keeps the
+                    whole relationship in one place: who is paired with whom,
                     when they are meeting next, and what came out of the last
-                    conversation — so mentors, founders, and programme admins
-                    are all working from the same picture.
+                    conversation, so mentors, founders, and programme admins are
+                    all working from the same picture.
                 </p>
 
-                <div class="mb-10 grid grid-cols-2 gap-8">
+                <!-- Two commitments, stated as claims rather than dressed up as
+                     metrics; invented headline numbers would be worse than none. -->
+                <dl
+                    class="mb-10 grid gap-x-8 gap-y-4 border-t border-line pt-6 sm:grid-cols-2"
+                >
                     <div>
-                        <p class="mb-2 text-3xl font-semibold text-accent">
-                            1:1
-                        </p>
-                        <p class="text-sm font-medium text-muted">
-                            Mentor–entrepreneur pairings
-                        </p>
+                        <dt class="mb-1 font-semibold text-ink">
+                            You pick your mentor
+                        </dt>
+                        <dd class="text-[15px] text-muted">
+                            Never assigned one
+                        </dd>
                     </div>
                     <div>
-                        <p class="mb-2 text-3xl font-semibold text-accent">
-                            Every meeting
-                        </p>
-                        <p class="text-sm font-medium text-muted">
-                            Leaves a written report
-                        </p>
+                        <dt class="mb-1 font-semibold text-ink">
+                            Every meeting is written up
+                        </dt>
+                        <dd class="text-[15px] text-muted">
+                            Reviewable long afterwards
+                        </dd>
                     </div>
-                </div>
+                </dl>
 
                 <Link
                     href="/login"
                     class={cn(
-                        'inline-flex items-center gap-2 border-b-2 border-accent pb-1 font-medium text-ink transition-colors hover:text-accent',
+                        'group inline-flex min-h-11 items-center gap-2 border-b-2 border-accent pb-1 font-medium text-ink transition-colors hover:text-accent',
                         focusRing,
                     )}
                 >
                     Sign in to your workspace
-                    <ArrowRight class="size-4" strokeWidth={2} />
+                    <ArrowRight
+                        class="size-4 transition-transform duration-200 group-hover:translate-x-0.5"
+                        strokeWidth={2}
+                    />
                 </Link>
             </div>
         </div>
     </section>
 
     <!-- FAQ -->
-    <section id="faq" class="scroll-mt-24 px-6 py-24 lg:px-12">
+    <section
+        id="faq"
+        class="scroll-mt-24 border-t border-line px-6 py-24 lg:px-12 lg:py-28"
+    >
         <div class="mx-auto w-full max-w-3xl">
             <h2
-                class="mb-12 text-center text-3xl font-semibold tracking-tight text-balance text-ink md:text-4xl"
+                class="mb-12 text-center text-3xl font-semibold tracking-[-0.02em] text-balance text-ink md:text-4xl"
             >
                 Questions, answered
             </h2>

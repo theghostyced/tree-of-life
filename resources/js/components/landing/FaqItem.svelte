@@ -2,7 +2,7 @@
     import { ChevronDown } from '@lucide/svelte';
 
     /**
-     * Native <details> disclosure — keyboard and screen-reader behaviour comes
+     * Native <details> disclosure: keyboard and screen-reader behaviour comes
      * free, no JS state. The open/close sweep is preserved from the source
      * design and disabled under prefers-reduced-motion.
      */

@@ -7,10 +7,12 @@
     /**
      * Public top bar for the marketing page. Sits over the hero photograph, so
      * every control is light-on-dark regardless of what the image is doing
-     * behind it. Tolfund is invitation-only — there is no "sign up" here on
+     * behind it. Tolfund is invitation-only, so there is no "sign up" here on
      * purpose; the only account action a visitor can take is signing in.
      */
+    /** Ordered to match the page, so the bar reads as a table of contents. */
     const sections = [
+        { href: '#fund', label: 'The fund' },
         { href: '#how-it-works', label: 'How it works' },
         { href: '#programme', label: 'The programme' },
         { href: '#faq', label: 'Questions' },
@@ -22,59 +24,65 @@
         'outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas';
 </script>
 
-<nav
-    class="absolute top-0 z-50 flex w-full items-center justify-between px-6 py-5 lg:px-12"
->
-    <Link
-        href="/"
-        aria-label="Tree Of Life Fund home"
-        class={cn('rounded-md', focusRing)}
-    >
-        <Logo size="sm" />
-    </Link>
-
-    <ul class="hidden items-center gap-8 text-sm font-medium lg:flex">
-        {#each sections as section (section.href)}
-            <li>
-                <a
-                    href={section.href}
-                    class={cn(
-                        'rounded-md text-ink/80 transition-colors hover:text-ink',
-                        focusRing,
-                    )}
-                >
-                    {section.label}
-                </a>
-            </li>
-        {/each}
-    </ul>
-
-    <div class="hidden items-center gap-3 text-sm font-medium md:flex">
+<!-- Full-bleed bar whose inner content aligns to the same 7xl column as every
+     section, per the Page-Width Rule in DESIGN.md. -->
+<nav class="absolute top-0 z-50 w-full px-6 py-5 lg:px-12">
+    <div class="mx-auto flex w-full max-w-7xl items-center justify-between">
         <Link
-            href="/login"
-            class={cn(
-                'rounded-lg bg-accent px-5 py-2.5 font-semibold text-on-accent shadow-btn transition-all hover:-translate-y-px hover:bg-accent-strong hover:shadow-btn-strong active:translate-y-0',
-                focusRing,
-            )}
+            href="/"
+            aria-label="Tree Of Life Fund home"
+            class={cn('rounded-md', focusRing)}
         >
-            Sign in
+            <Logo size="sm" />
         </Link>
-    </div>
 
-    <button
-        type="button"
-        onclick={() => (menuOpen = !menuOpen)}
-        aria-expanded={menuOpen}
-        aria-controls="landing-mobile-menu"
-        aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-        class={cn('rounded-lg p-2 text-ink lg:hidden', focusRing)}
-    >
-        {#if menuOpen}
-            <X class="size-6" strokeWidth={1.75} />
-        {:else}
-            <Menu class="size-6" strokeWidth={1.75} />
-        {/if}
-    </button>
+        <ul class="hidden items-center gap-8 text-sm font-medium lg:flex">
+            {#each sections as section (section.href)}
+                <li>
+                    <a
+                        href={section.href}
+                        class={cn(
+                            'rounded-md py-2 text-ink/90 transition-colors hover:text-ink',
+                            focusRing,
+                        )}
+                    >
+                        {section.label}
+                    </a>
+                </li>
+            {/each}
+        </ul>
+
+        <!-- lg, not md: below the lg breakpoint the burger owns the nav, and showing
+         both a Sign in button and a burger duplicates the affordance. -->
+        <div class="hidden items-center gap-3 text-sm font-medium lg:flex">
+            <!-- A link, not a filled button: the hero already carries the primary
+             Sign in CTA, and two competing buttons blunt both. -->
+            <Link
+                href="/login"
+                class={cn(
+                    'rounded-md py-2 font-medium text-accent underline-offset-4 transition-colors hover:text-accent-strong hover:underline',
+                    focusRing,
+                )}
+            >
+                Sign in
+            </Link>
+        </div>
+
+        <button
+            type="button"
+            onclick={() => (menuOpen = !menuOpen)}
+            aria-expanded={menuOpen}
+            aria-controls="landing-mobile-menu"
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            class={cn('-mr-2.5 rounded-lg p-2.5 text-ink lg:hidden', focusRing)}
+        >
+            {#if menuOpen}
+                <X class="size-6" strokeWidth={1.75} />
+            {:else}
+                <Menu class="size-6" strokeWidth={1.75} />
+            {/if}
+        </button>
+    </div>
 </nav>
 
 {#if menuOpen}

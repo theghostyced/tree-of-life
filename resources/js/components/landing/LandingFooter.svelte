@@ -8,13 +8,14 @@
      *
      * The source design carried a row of social icons; those are omitted rather
      * than pointed at invented accounts. Legal hrefs stay as '#' placeholders,
-     * matching the existing convention in AuthFooter.svelte — swap them for
+     * matching the existing convention in AuthFooter.svelte. Swap them for
      * real destinations when those pages exist.
      */
     const columns = [
         {
             heading: 'The programme',
             links: [
+                { label: 'The fund', href: '#fund' },
                 { label: 'How it works', href: '#how-it-works' },
                 { label: 'Inside Tolfund', href: '#programme' },
                 { label: 'Questions', href: '#faq' },
@@ -37,8 +38,9 @@
         },
     ];
 
+    /** py-2 lifts the hit area to ~34px, clearing WCAG 2.2 AA target size (24px). */
     const linkClass =
-        'rounded-sm transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50';
+        'inline-block rounded-sm py-2 transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50';
 </script>
 
 <footer class="bg-panel px-6 pt-20 pb-10 text-muted lg:px-12">
@@ -62,7 +64,7 @@
                     >
                         {column.heading}
                     </h2>
-                    <ul class="space-y-4 text-[15px]">
+                    <ul class="space-y-1 text-[15px]">
                         {#each column.links as link (link.label)}
                             <li>
                                 {#if link.href.startsWith('/')}
@@ -82,7 +84,7 @@
         </div>
 
         <div
-            class="flex flex-col items-center justify-between gap-4 border-t border-line pt-8 text-sm text-faint md:flex-row"
+            class="flex flex-col items-center justify-between gap-4 border-t border-line pt-8 text-sm text-muted md:flex-row"
         >
             <p>© 2026 Tree Of Life Fund. All rights reserved.</p>
             <p class="flex items-center gap-2">
