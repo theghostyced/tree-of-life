@@ -14,9 +14,11 @@ it('treats an approved entrepreneur with an empty profile as onboarding-incomple
 
     $progress = OnboardingProgress::forUser($user);
 
+    // 7 profile fields + 3 required documents (business plan, milestones,
+    // operational plan). Update deliberately if either set changes.
     expect($progress->isComplete)->toBeFalse()
-        ->and($progress->total)->toBe(12)
-        ->and($progress->remaining)->toBe(12);
+        ->and($progress->total)->toBe(10)
+        ->and($progress->remaining)->toBe(10);
 });
 
 it('treats an approved mentor with an empty profile as onboarding-incomplete', function () {
@@ -37,7 +39,7 @@ it('surfaces the completeness banner data on an approved but incomplete dashboar
         ->assertInertia(fn (Assert $page) => $page
             ->component('entrepreneur/Dashboard')
             ->where('onboarding.isComplete', false)
-            ->where('onboarding.remaining', 12));
+            ->where('onboarding.remaining', 10));
 });
 
 it('lets an approved entrepreneur open their onboarding wizard', function () {

@@ -1,7 +1,11 @@
 <?php
 
 use App\Enums\AccountStatus;
+use App\Enums\DocumentType;
+use App\Models\Company;
+use App\Models\Pairing;
 use App\Models\User;
+use App\Models\UserDocument;
 use Inertia\Testing\AssertableInertia as Assert;
 
 test('an admin can view the users list', function () {
@@ -31,6 +35,40 @@ test('an admin can open a user detail page', function () {
             ->component('admin/users/Show')
             ->where('user.id', $user->id)
             ->where('user.email', $user->email));
+});
+
+test('the detail page lists every required document slot for the role', function () {
+    $admin = User::factory()->admin()->create();
+    $user = User::factory()->entrepreneur()->create();
+
+    $this->actingAs($admin)->get("/admin/users/{$user->id}")
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->has('user.documents', 3)
+            ->where('user.documents.0.type', 'business_plan')
+            ->where('user.documents.1.type', 'milestones')
+            ->where('user.documents.2.type', 'operational_plan')
+            ->where('user.documents.0.required', true));
+});
+
+test('an admin sees documents the user uploaded that onboarding no longer requires', function () {
+    $admin = User::factory()->admin()->create();
+    $user = User::factory()->entrepreneur()->create();
+
+    // A file uploaded under the old required set. It must stay visible to the
+    // reviewing admin rather than vanishing with the requirement.
+    UserDocument::factory()->for($user)->create([
+        'document_type' => DocumentType::BusinessCertificate,
+    ]);
+
+    $this->actingAs($admin)->get("/admin/users/{$user->id}")
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->has('user.documents', 4)
+            ->where('user.documents.3.type', 'business_certificate')
+            ->where('user.documents.3.label', 'Business Certificate')
+            ->where('user.documents.3.required', false)
+            ->whereNot('user.documents.3.id', null));
 });
 
 test('an admin can revoke and restore a user\'s access', function () {
@@ -99,8 +137,8 @@ test('a non-admin cannot perform user lifecycle actions', function () {
 
 test('a mentors detail page lists their entrepreneurs', function () {
     $admin = User::factory()->admin()->approved()->create();
-    $pairing = App\Models\Pairing::factory()->create();
-    App\Models\Pairing::factory()->ended()->create([
+    $pairing = Pairing::factory()->create();
+    Pairing::factory()->ended()->create([
         'mentor_user_id' => $pairing->mentor_user_id,
     ]);
 
@@ -115,10 +153,10 @@ test('a mentors detail page lists their entrepreneurs', function () {
 
 test('an entrepreneurs detail page lists their mentor', function () {
     $admin = User::factory()->admin()->approved()->create();
-    $pairing = App\Models\Pairing::factory()->create();
+    $pairing = Pairing::factory()->create();
 
     // The entrepreneur's own company must not leak onto the mentor's row.
-    $company = App\Models\Company::factory()->create();
+    $company = Company::factory()->create();
     $pairing->entrepreneur->update(['company_id' => $company->id]);
 
     $this->actingAs($admin)

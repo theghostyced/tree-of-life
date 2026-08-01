@@ -5,11 +5,9 @@ use App\Enums\UserRole;
 
 test('the entrepreneur required document set is complete and exact', function () {
     expect(DocumentType::requiredFor(UserRole::Entrepreneur))->toEqualCanonicalizing([
-        DocumentType::BusinessCertificate,
-        DocumentType::BusinessRegistrationDocuments,
         DocumentType::BusinessPlan,
+        DocumentType::Milestones,
         DocumentType::OperationalPlan,
-        DocumentType::TechnicalSupportRequirements,
     ]);
 });
 

@@ -7,6 +7,7 @@ enum DocumentType: string
     case BusinessCertificate = 'business_certificate';
     case BusinessRegistrationDocuments = 'business_registration_documents';
     case BusinessPlan = 'business_plan';
+    case Milestones = 'milestones';
     case OperationalPlan = 'operational_plan';
     case TechnicalSupportRequirements = 'technical_support_requirements';
     case PassportPhoto = 'passport_photo';
@@ -21,12 +22,11 @@ enum DocumentType: string
     public static function requiredFor(UserRole $role): array
     {
         return match ($role) {
+            // Retired types stay as cases so existing rows still cast.
             UserRole::Entrepreneur => [
-                self::BusinessCertificate,
-                self::BusinessRegistrationDocuments,
                 self::BusinessPlan,
+                self::Milestones,
                 self::OperationalPlan,
-                self::TechnicalSupportRequirements,
             ],
             UserRole::Mentor => [
                 self::PassportPhoto,
@@ -43,6 +43,7 @@ enum DocumentType: string
             self::BusinessCertificate => 'Business Certificate',
             self::BusinessRegistrationDocuments => 'Business Registration Documents',
             self::BusinessPlan => 'Business Plan',
+            self::Milestones => 'Milestones',
             self::OperationalPlan => 'Operational Plan',
             self::TechnicalSupportRequirements => 'Technical Support Requirements',
             self::PassportPhoto => 'Passport Photo',

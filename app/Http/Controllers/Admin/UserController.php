@@ -163,14 +163,32 @@ class UserController extends Controller
     private function documentsFor(User $user): array
     {
         $documents = $user->documents->keyBy(fn (UserDocument $doc) => $doc->document_type->value);
+        $required = DocumentType::requiredFor($user->role);
 
-        return collect(DocumentType::requiredFor($user->role))
+        $requiredRows = collect($required)
             ->map(fn (DocumentType $type): array => [
                 'id' => $documents->get($type->value)?->id,
                 'type' => $type->value,
                 'label' => $type->label(),
                 'uploaded' => $documents->get($type->value)?->original_name,
-            ])->all();
+                'required' => true,
+                'previewable' => (bool) $documents->get($type->value)?->isPreviewable(),
+            ]);
+
+        // Uploaded files outside the required set, so nothing is hidden from review.
+        $extraRows = $user->documents
+            ->reject(fn (UserDocument $doc): bool => in_array($doc->document_type, $required, true))
+            ->map(fn (UserDocument $doc): array => [
+                'id' => $doc->id,
+                'type' => $doc->document_type->value,
+                'label' => $doc->document_type->label(),
+                'uploaded' => $doc->original_name,
+                'required' => false,
+                'previewable' => $doc->isPreviewable(),
+            ])
+            ->values();
+
+        return $requiredRows->concat($extraRows)->all();
     }
 
     /**
