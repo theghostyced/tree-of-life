@@ -80,12 +80,13 @@ a private `mapMeeting()`. They are identical except `counterpartName`, which
 resolves to the pairing's mentor in one and its entrepreneur in the other. A
 third copy for admin would triplicate the shape.
 
-Extract `App\Support\MeetingPresenter`:
+Extract `App\Data\MeetingSummary`, following the existing presenter convention
+(`App\Data\MentorCard` — an `Arrayable` with a static `forX()` factory):
 
-- `base(Meeting $meeting): array` — the fields all three roles share:
-  `id, startsAt, endsAt, durationMinutes, timezone, sessionType, location,
-  meetingLink, agenda, status`.
-- Each controller spreads `base()` and adds its own naming: mentor and
+- `MeetingSummary::forMeeting(Meeting $meeting): self` carries the fields all
+  three roles share: `id, startsAt, endsAt, durationMinutes, timezone,
+  sessionType, location, meetingLink, agenda, status`.
+- Each controller spreads `->toArray()` and adds its own naming: mentor and
   entrepreneur add `counterpartName` and their report fields; admin adds
   `mentorName`, `entrepreneurName`, `bookedByName`, `hasReport`.
 
