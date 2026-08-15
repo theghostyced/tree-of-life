@@ -20,11 +20,9 @@
                         <td style="padding:0 4px 24px;">
                             <table role="presentation" cellpadding="0" cellspacing="0">
                                 <tr>
-                                    <td style="width:40px;height:40px;background:#adb982;border-radius:10px;text-align:center;vertical-align:middle;">
-                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#14160f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;">
-                                            <path d="M8 19a4 4 0 0 1-1.4-7.76A4.5 4.5 0 0 1 12 5a4.5 4.5 0 0 1 5.4 6.24A4 4 0 0 1 16 19Z" />
-                                            <path d="M12 19v3" />
-                                        </svg>
+                                    {{-- A hosted raster rather than inline vector markup, which Gmail strips. --}}
+                                    <td style="width:40px;height:40px;vertical-align:middle;">
+                                        <img src="{{ url('/images/brand/tree-of-life.png') }}" width="40" height="40" alt="{{ $appName }}" style="display:block;width:40px;height:40px;border:0;outline:none;text-decoration:none;">
                                     </td>
                                     <td style="padding-left:12px;font-size:16px;font-weight:600;letter-spacing:-0.01em;color:#20211b;vertical-align:middle;">{{ $appName }}</td>
                                 </tr>
@@ -76,7 +74,7 @@
 
                                 <tr>
                                     <td style="padding:22px 36px 4px;">
-                                        <p style="margin:0;font-size:13px;line-height:1.6;color:#74766c;">
+                                        <p style="margin:0;font-size:13px;line-height:1.6;color:#5b5d55;">
                                             This link is unique to you and expires in 7 days. If you weren't expecting this invitation, you can safely ignore this email.
                                         </p>
                                     </td>
@@ -86,7 +84,7 @@
                                 <tr>
                                     <td style="padding:16px 36px 36px;">
                                         <div style="border-top:1px solid #eff1ea;padding-top:16px;">
-                                            <p style="margin:0;font-size:12px;line-height:1.5;color:#91938a;">
+                                            <p style="margin:0;font-size:12px;line-height:1.5;color:#6b6d65;">
                                                 Or paste this address into your browser:
                                             </p>
                                             <p style="margin:4px 0 0;font-size:12px;line-height:1.5;word-break:break-all;">
@@ -102,7 +100,7 @@
                     {{-- Footer --}}
                     <tr>
                         <td style="padding:22px 4px 0;text-align:center;">
-                            <p style="margin:0;font-size:12px;color:#91938a;">&copy; {{ date('Y') }} {{ $appName }}</p>
+                            <p style="margin:0;font-size:12px;color:#6b6d65;">&copy; {{ date('Y') }} {{ $appName }}</p>
                         </td>
                     </tr>
 
