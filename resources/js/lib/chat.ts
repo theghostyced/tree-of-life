@@ -1,6 +1,9 @@
 import { echo } from '@/echo';
 import type { Message } from '@/pages/messages/types';
 
+/** Realtime is optional; without it these subscriptions are no-ops. */
+const noop = (): void => {};
+
 type MessageSentPayload = {
     message: Message;
     conversation: {
@@ -23,19 +26,31 @@ export function subscribeConversation(
         onTyping: (p: { user_id: number }) => void;
     },
 ): () => void {
-    const channel = echo.private(`conversation.${id}`);
+    const client = echo();
+
+    if (!client) {
+        return noop;
+    }
+
+    const channel = client.private(`conversation.${id}`);
     channel.listen('.message.sent', handlers.onMessage);
     channel.listen('.message.read', handlers.onRead);
     channel.listenForWhisper('typing', handlers.onTyping);
-    return () => echo.leave(`conversation.${id}`);
+    return () => client.leave(`conversation.${id}`);
 }
 
 export function subscribeUser(
     id: number,
     onMessage: (p: MessageSentPayload) => void,
 ): () => void {
-    echo.private(`user.${id}`).listen('.message.sent', onMessage);
-    return () => echo.leave(`user.${id}`);
+    const client = echo();
+
+    if (!client) {
+        return noop;
+    }
+
+    client.private(`user.${id}`).listen('.message.sent', onMessage);
+    return () => client.leave(`user.${id}`);
 }
 
 export type NotificationBroadcast = {
@@ -53,8 +68,14 @@ export function subscribeNotifications(
     userId: number,
     onNotification: (p: NotificationBroadcast) => void,
 ): () => void {
-    echo.private(`App.Models.User.${userId}`).notification(onNotification);
-    return () => echo.leave(`App.Models.User.${userId}`);
+    const client = echo();
+
+    if (!client) {
+        return noop;
+    }
+
+    client.private(`App.Models.User.${userId}`).notification(onNotification);
+    return () => client.leave(`App.Models.User.${userId}`);
 }
 
 export function joinPresence(handlers: {
@@ -62,13 +83,22 @@ export function joinPresence(handlers: {
     joining: (u: { id: number }) => void;
     leaving: (u: { id: number }) => void;
 }): () => void {
-    echo.join('online')
+    const client = echo();
+
+    if (!client) {
+        return noop;
+    }
+
+    client
+        .join('online')
         .here(handlers.here)
         .joining(handlers.joining)
         .leaving(handlers.leaving);
-    return () => echo.leave('online');
+    return () => client.leave('online');
 }
 
 export function whisperTyping(id: number, userId: number): void {
-    echo.private(`conversation.${id}`).whisper('typing', { user_id: userId });
+    echo()
+        ?.private(`conversation.${id}`)
+        .whisper('typing', { user_id: userId });
 }
