@@ -21,6 +21,14 @@ it('renders the brand mark in the chrome', function () {
     visit('/')->assertPresent('img[src="/images/brand/tree-of-life.png"]');
 });
 
+/** The mark is traced artwork, so no SVG favicon may outrank the .ico. */
+it('declares only the artwork icons', function () {
+    visit('/')
+        ->assertPresent('link[rel="icon"][href="/favicon.ico"]')
+        ->assertPresent('link[rel="apple-touch-icon"][href="/apple-touch-icon.png"]')
+        ->assertNotPresent('link[href="/favicon.svg"]');
+});
+
 it('boots a signed-in page that subscribes to realtime', function () {
     $entrepreneur = User::factory()->entrepreneur()->approved()->create();
 
