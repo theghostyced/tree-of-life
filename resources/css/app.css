@@ -12,42 +12,82 @@
 }
 
 @theme {
-    /* Brand */
-    /* Primary: green tone rotated from the original #401602 (hsl 19),
-       keeping the exact same saturation (94%) and lightness (13%). */
-    --color-primary: hsl(140, 94%, 13%);
-    --color-accent-orange: hsl(17, 76%, 49%);
-    --color-accent-yellow: hsl(51, 100%, 44%);
-    --color-secondary-blue: hsl(200, 60%, 64%);
-    --color-background: hsl(41, 100%, 88%);
+    /* ================= Design system tokens — light mode =================
+       Values come straight from the product palette. Three layers: the raw
+       ramps, the neutrals, then a semantic layer naming what each colour is
+       for. Components reference the semantic names only. */
 
-    /* Text (namespaced under --color-* so they don't collide with
-       Tailwind's --text-* font-size namespace) */
-    --color-text-primary: hsl(19, 94%, 13%);
-    --color-text-secondary: hsl(20, 25%, 39%);
-    --color-text-on-dark: hsl(41, 100%, 88%);
+    /* Background. b0 is the page; b1 is the base surface everything sits on. */
+    --color-b0: #fafafa;
+    --color-b1: #ffffff;
+    --color-b2: #ffffff;
+    --color-b3: #ffffff;
 
-    /* Borders */
-    --color-border-light: hsl(40, 70%, 80%);
-    --color-border-dark: hsl(19, 68%, 21%);
+    /* Text */
+    --color-text-primary: #18181b;
+    --color-text-secondary: #71717a;
+    --color-text-tertiary: #a1a1aa;
+    --color-text-quaternary: #d4d4d8;
 
-    /* Status */
-    --color-success: hsl(123, 46%, 34%);
-    --color-warning: hsl(51, 100%, 44%);
-    --color-error: hsl(0, 66%, 47%);
+    /* Gray */
+    --color-gray-primary: #52525b;
+    --color-gray-secondary: #71717a;
+    --color-gray-tertiary: #a1a1aa;
+    --color-gray-quaternary: #d4d4d8;
 
-    /* Dark-canvas status tones — the brand success/error values above are
-       tuned for light surfaces and lack contrast on the near-black canvas.
-       "-strong" is the brighter text-weight step (same idea as accent-strong). */
-    --color-positive: #6fbe74; /* success fills, dots */
-    --color-positive-strong: #93cf97; /* success text on dark */
-    --color-danger: #cf8b8b; /* destructive fills, dots */
-    --color-danger-strong: #d7a1a1; /* destructive text on dark */
+    /* Fill and stroke are translucent, so they sit on any surface. */
+    --color-fill-primary: rgb(24 24 27 / 0.16);
+    --color-fill-secondary: rgb(24 24 27 / 0.08);
+    --color-fill-tertiary: rgb(24 24 27 / 0.04);
+    --color-fill-quaternary: rgb(24 24 27 / 0.02);
+    --color-stroke-primary: rgb(24 24 27 / 0.12);
+    --color-stroke-secondary: rgb(24 24 27 / 0.06);
 
-    /* Sage ramp — sampled from the leaves of the Tree Of Life mark: hue 73,
-       with saturation rising as the ramp darkens, as it does in the artwork.
-       sage-400 (#ADB982) is the auth accent; the ramp brightens above it
-       and dims below it. Additive; does not touch the warm brand tokens. */
+    /* Blue — the palette's accent ramp. Complete and available; the brand
+       accent is green, so nothing points at this by default. */
+    --color-blue-default: #2563eb;
+    --color-blue-hover: #3b82f6;
+    --color-blue-active: #1d4ed8;
+    --color-blue-stroke: #bfdbfe;
+    --color-blue-fill: #eff6ff;
+
+    /* Green — the brand ramp. */
+    --color-green-default: #16a34a;
+    --color-green-hover: #22c55e;
+    --color-green-active: #15803d;
+    --color-green-stroke: #bbf7d0;
+    --color-green-fill: #f0fdf4;
+
+    /* Yellow */
+    --color-yellow-default: #eab308;
+    --color-yellow-hover: #facc15;
+    --color-yellow-active: #ca8a04;
+    --color-yellow-stroke: #fef08a;
+    --color-yellow-fill: #fefce8;
+
+    /* Orange */
+    --color-orange-default: #ea580c;
+    --color-orange-hover: #f97316;
+    --color-orange-active: #c2410c;
+    --color-orange-stroke: #fed7aa;
+    --color-orange-fill: #fff7ed;
+
+    /* Red */
+    --color-red-default: #dc2626;
+    --color-red-hover: #ef4444;
+    --color-red-active: #b91c1c;
+    --color-red-stroke: #fecaca;
+    --color-red-fill: #fef2f2;
+
+    /* Violet */
+    --color-violet-default: #7c3aed;
+    --color-violet-hover: #8b5cf6;
+    --color-violet-active: #6d28d9;
+    --color-violet-stroke: #ddd6fe;
+    --color-violet-fill: #f5f3ff;
+
+    /* Sage — the Tree Of Life mark's own greens. Outside the palette above,
+       and kept for the dark brand surfaces the palette has no values for. */
     --color-sage-200: #d5dac5;
     --color-sage-300: #c6ccad;
     --color-sage-400: #adb982;
@@ -57,42 +97,74 @@
     --color-sage-800: #414a22;
     --color-sage-900: #2b3016;
 
-    /* App surfaces — dark mode, near-blacks tinted to the mark's leaf hue (73),
-       matching the accent rather than the cooler green they carried before.
-       Semantic layer for
-       the Tree Of Life Fund auth + admin surfaces. */
-    --color-canvas: #060605; /* page background (app.bg) */
-    --color-panel: #0c0c0a; /* framed brand panel (app.panel) */
-    --color-surface: #11120f; /* cards, inputs, raised controls (app.surface) */
-    --color-elevated: #1e1f1a; /* tracks, hover fills */
-    --color-line: #1e1f1a; /* hairline borders, dividers (app.border) */
-    --color-line-strong: #31332a; /* stronger/hover borders (app.borderHover) */
-    --color-ink: #e7e8e2; /* primary text (app.text) */
-    --color-muted: #96998b; /* secondary text (app.muted) */
-    --color-faint: #53554a; /* tertiary text, placeholders, meta (app.darker) */
-    --color-accent: #adb982; /* leaf green: actions, links, active, focus (app.primary) */
-    --color-accent-strong: #bdc797; /* accent hover — brighter (app.primaryHover) */
-    --color-accent-soft: #1e1f1a; /* subtle surface for active backgrounds */
-    --color-on-accent: #060605; /* text/icon on accent fills */
-    --color-glow-amber: #e0964a; /* warm morning-sun glow on the brand panel */
+    /* ---- Semantic layer: what components reference ---- */
+    --color-canvas: #fafafa; /* b0 — page background */
+    --color-panel: #ffffff; /* b1 — cards, dialogs, raised panels */
+    --color-surface: #ffffff; /* b1 — cards, inputs, raised controls */
+    --color-elevated: rgb(24 24 27 / 0.04); /* fill tertiary — tracks, hover */
+    --color-line: rgb(24 24 27 / 0.12); /* stroke primary */
+    --color-line-strong: #d4d4d8; /* gray quaternary — hover borders */
+    --color-ink: #18181b; /* text primary */
+    --color-muted: #52525b; /* gray primary — 7.4:1, secondary copy */
+    --color-faint: #71717a; /* text secondary — 4.6:1; renders table
+       headers and input placeholders, so it must clear AA. Text tertiary
+       (#a1a1aa) stays available for genuinely decorative marks. */
+    --color-accent: #15803d; /* green active — the one step on the ramp
+       that carries white at 5.0:1, so it is the resting fill and the link
+       colour rather than an occasional pressed state. */
+    --color-accent-strong: #16a34a; /* green default — hover */
+    --color-accent-active: #166534; /* pressed, one step under the ramp */
+    --color-accent-stroke: #bbf7d0; /* green stroke */
+    --color-accent-soft: #f0fdf4; /* green fill */
+    --color-on-accent: #ffffff;
+    --color-glow-amber: #ea580c; /* orange default */
 
-    /* Chart series — an earthy sage-forward ramp for data viz. */
-    --chart-1: #adb982; /* leaf accent */
-    --chart-2: #6fbe74; /* positive green */
-    --chart-3: #e0964a; /* warm amber */
-    --chart-4: #9aaa61; /* sage-500 */
-    --chart-5: #c6ccad; /* sage-300 */
+    /* Status */
+    --color-positive: #15803d; /* green active */
+    --color-positive-strong: #15803d; /* green active */
+    --color-danger: #dc2626; /* red default */
+    --color-danger-strong: #b91c1c; /* red active */
+
+    /* Aliases kept for names already in the components. Each points at the
+       palette above rather than carrying a value of its own, so there is one
+       source of truth and nothing drifts. */
+    --color-primary: #15803d; /* accent */
+    --color-primary-foreground: #ffffff;
+    --color-background: #fafafa; /* b0 */
+    --color-text-on-dark: #ffffff;
+    --color-border-light: rgb(24 24 27 / 0.12); /* stroke primary */
+    --color-border-dark: #d4d4d8; /* gray quaternary */
+    --color-success: #15803d; /* green active */
+    --color-warning: #eab308; /* yellow default */
+    --color-error: #dc2626; /* red default */
+    --color-accent-orange: #ea580c; /* orange default */
+    --color-accent-yellow: #eab308; /* yellow default */
+    --color-secondary-blue: #2563eb; /* blue default */
+
+    /* Chart series — one step from each ramp so series stay distinguishable. */
+    --chart-1: #16a34a; /* green */
+    --chart-2: #2563eb; /* blue */
+    --chart-3: #ea580c; /* orange */
+    --chart-4: #7c3aed; /* violet */
+    --chart-5: #eab308; /* yellow */
 
     /* Elevation — dark surfaces lean on borders; shadows stay subtle. */
-    --shadow-bar: 0 1px 2px rgba(0, 0, 0, 0.4);
-    --shadow-raised: 0 1px 2px rgba(0, 0, 0, 0.35);
-    --shadow-card: 0 24px 60px -20px rgba(0, 0, 0, 0.6);
+    --shadow-bar: 0 1px 2px rgb(24 24 27 / 0.06);
+    --shadow-raised: 0 1px 3px rgb(24 24 27 / 0.08);
+    --shadow-card: 0 24px 60px -20px rgb(24 24 27 / 0.18);
 
-    /* Accent glow for primary buttons — driven by the accent token. */
-    --shadow-btn: 0 4px 14px 0
-        color-mix(in srgb, var(--color-accent) 15%, transparent);
-    --shadow-btn-strong: 0 6px 20px 0
-        color-mix(in srgb, var(--color-accent) 20%, transparent);
+    /* Primary CTA treatment. A hairline ring in the accent stands in for the
+       1px border so the whole effect travels with the token, then a soft drop
+       shadow and two inset highlights give the fill its lift. */
+    --shadow-btn:
+        0 0 0 1px var(--color-accent), 0 1px 1px 0.05px rgb(24 24 27 / 0.24),
+        inset 0 2px 0 0 rgb(255 255 255 / 0.1),
+        inset 0 8px 16px 0 rgb(255 255 255 / 0.16);
+    --shadow-btn-strong:
+        0 0 0 1px var(--color-accent-strong),
+        0 1px 1px 0.05px rgb(24 24 27 / 0.24),
+        inset 0 2px 0 0 rgb(255 255 255 / 0.1),
+        inset 0 8px 16px 0 rgb(255 255 255 / 0.16);
 
     /* Motion */
     --animate-fade-in: fadeIn 0.3s ease-out;
