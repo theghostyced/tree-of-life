@@ -80,13 +80,12 @@
     <!-- Mission band. Tight against the hero on purpose: it reads as the hero's
          closing thought, and the long run of air comes after it. The Fund's own
          mission statement, stated plainly rather than dressed up as a quote. -->
-    <section class="bg-sage-800 px-6 py-14 lg:px-12 lg:py-16">
+    <section class="bg-accent px-6 py-14 lg:px-12 lg:py-16">
         <div class="mx-auto max-w-4xl text-center">
-            <!-- sage-200 on sage-800 is 7.86:1. The default muted grey would be
-                 3.82:1 here and fail, and grey on a tinted surface reads washed
-                 out regardless; text on a coloured band takes that band's hue. -->
+            <!-- White on the accent band is 5.02:1. Grey would both fail and
+                 read washed out; text on a coloured band takes that band's hue. -->
             <p
-                class="text-xl leading-relaxed text-balance text-sage-200 md:text-2xl"
+                class="text-xl leading-relaxed text-balance text-white md:text-2xl"
             >
                 Our mission is to build the African middle class through the
                 economic empowerment of African women entrepreneurs.
@@ -116,7 +115,10 @@
                 </p>
             </div>
 
-            <div class="grid max-w-5xl gap-10 md:grid-cols-2 md:gap-16">
+            <!-- Spans the full 7xl column, like the hero above it, so the two
+                 hairlines run the page's whole measure. The prose inside keeps
+                 its own cap; only the rules take the extra width. -->
+            <div class="grid gap-10 md:grid-cols-2 md:gap-16 lg:gap-24">
                 <div class="border-t border-line pt-6">
                     <p class="mb-3 text-sm font-semibold text-muted">
                         Elsewhere in the Fund
@@ -125,7 +127,7 @@
                         Access to finance and credit
                     </h3>
                     <p
-                        class="text-[15px] leading-relaxed text-pretty text-muted"
+                        class="max-w-[62ch] text-[15px] leading-relaxed text-pretty text-muted"
                     >
                         The Fund sets out to plug the gap in access to finance
                         and credit for African women entrepreneurs, so capital
@@ -141,7 +143,7 @@
                         Access to technical expertise
                     </h3>
                     <p
-                        class="text-[15px] leading-relaxed text-pretty text-muted"
+                        class="max-w-[62ch] text-[15px] leading-relaxed text-pretty text-muted"
                     >
                         Specialist teams of instructors support the growth and
                         scale of those companies. This portal is where that
@@ -171,9 +173,10 @@
                 </p>
             </div>
 
-            <!-- Capped narrower than the 7xl column so the hairlines end near
-                 the prose instead of running out into dead space. -->
-            <ol class="max-w-5xl border-b border-line">
+            <!-- Runs the full 7xl column, matching the hero and the section
+                 above; ProcessStep caps its own prose, so the extra width goes
+                 to the hairlines rather than to the line length. -->
+            <ol class="border-b border-line">
                 {#each steps as step, i (step.title)}
                     <ProcessStep
                         index={i + 1}

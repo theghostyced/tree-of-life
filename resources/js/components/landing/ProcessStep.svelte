@@ -20,7 +20,7 @@
 </script>
 
 <li
-    class="grid grid-cols-[auto_1fr] items-baseline gap-x-5 gap-y-2 border-t border-line py-7 md:grid-cols-[auto_minmax(0,16rem)_1fr] md:gap-x-8 md:py-9"
+    class="grid grid-cols-[auto_1fr] items-baseline gap-x-5 gap-y-2 border-t border-line py-7 md:grid-cols-[auto_minmax(0,16rem)_1fr] md:gap-x-8 md:py-9 lg:grid-cols-[auto_minmax(0,24rem)_1fr] lg:gap-x-12"
 >
     <!-- Large but deliberately quiet: the numeral is ~3x the title's size yet
          sits at 3.73:1 against the canvas where the title sits at 16.32:1, so

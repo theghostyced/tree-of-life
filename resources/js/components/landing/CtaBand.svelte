@@ -3,25 +3,30 @@
     import { cn } from '@/lib/utils';
 
     /**
-     * Closing call to action, on a solid dark sage band drawn from the same
-     * family as the primary button fill. Every colour here was contrast-checked
-     * against sage-800 (#414a22): white heading 9.43:1, sage-200 body 6.58:1,
-     * sage-500 button border 3.72:1 for the non-text boundary. Note that muted
-     * (3.24:1) and line-strong (1.36:1) both FAIL on this surface, which is why
-     * the body copy and the outlined button do not use them here.
+     * Closing call to action on a solid accent band. The primary button inverts
+     * here — white fill, accent label — because the band is already the accent,
+     * so the usual green fill would vanish into it.
+     *
+     * Contrast against the band (#15803d): white heading 5.02:1, accent-stroke
+     * body 4.14:1, clearing the 3:1 bar its 18px size sits under. On the button:
+     * accent label 5.02:1 on white, 4.79:1 on the accent-soft hover. Muted and
+     * line-strong both FAIL on this surface, which is why the body copy and the
+     * outlined button do not use them here.
      */
     const focusRing =
-        'outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-sage-800';
+        'outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-accent';
 </script>
 
-<section class="bg-sage-800 px-6 py-24 lg:px-12">
+<section class="bg-accent px-6 py-24 lg:px-12">
     <div class="mx-auto max-w-3xl text-center">
         <h2
             class="mb-6 text-4xl leading-tight font-semibold tracking-[-0.02em] text-balance text-white md:text-5xl"
         >
             Already invited to TOL?
         </h2>
-        <p class="mx-auto mb-10 max-w-2xl text-lg text-pretty text-sage-200">
+        <p
+            class="mx-auto mb-10 max-w-2xl text-lg text-pretty text-accent-stroke"
+        >
             Your invitation email carries a single-use link to set up your
             account. Once you're in, your mentor, your meetings, and every
             report live in one place.
@@ -32,7 +37,7 @@
             <Link
                 href="/login"
                 class={cn(
-                    'inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-accent px-8 py-3.5 font-semibold text-on-accent shadow-btn transition-all duration-200 hover:-translate-y-px hover:bg-accent-strong hover:shadow-btn-strong active:translate-y-0 sm:w-auto',
+                    'inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-white px-8 py-3.5 font-semibold text-accent transition-all duration-200 hover:-translate-y-px hover:bg-accent-soft active:translate-y-0 sm:w-auto',
                     focusRing,
                 )}
             >
@@ -41,7 +46,7 @@
             <a
                 href="#faq"
                 class={cn(
-                    'inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-sage-500 px-8 py-3.5 font-medium text-white transition-colors duration-200 hover:bg-white/10 sm:w-auto',
+                    'inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-accent-stroke/50 px-8 py-3.5 font-medium text-white transition-colors duration-200 hover:bg-white/10 sm:w-auto',
                     focusRing,
                 )}
             >

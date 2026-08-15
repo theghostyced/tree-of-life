@@ -38,9 +38,10 @@
         },
     ];
 
-    /** py-2 lifts the hit area to ~34px, clearing WCAG 2.2 AA target size (24px). */
+    /** min-h-11 is the 44px touch target; the 24px WCAG 2.2 floor is well under
+     *  what a thumb actually needs, and the footer has the room to spare. */
     const linkClass =
-        'inline-block rounded-sm py-2 transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50';
+        'inline-flex min-h-11 items-center rounded-sm transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50';
 </script>
 
 <footer class="bg-panel px-6 pt-20 pb-10 text-muted lg:px-12">

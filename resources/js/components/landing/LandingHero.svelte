@@ -2,50 +2,42 @@
     import { Link } from '@inertiajs/svelte';
     import { cn } from '@/lib/utils';
 
-    /**
-     * Full-bleed photographic hero. The overlay grades into the canvas colour
-     * rather than pure black so the photograph dissolves into the page instead
-     * of sitting on it as a separate block.
-     *
-     * NOTE: the photograph is a remote Unsplash asset. Replace it with an
-     * owned, licensed image before launch.
-     */
     const focusRing =
         'outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas';
 </script>
 
-<!-- `isolate` confines the sage wash's blending group to this header; without it
-     the blend escapes to the root stacking context and eats the nav. -->
+<!-- `isolate` keeps the hero's layers in their own stacking context, so the
+     full-bleed overlays can never paint over the nav. -->
 <header
     class="relative isolate flex h-screen min-h-[700px] w-full flex-col justify-end overflow-hidden"
 >
-    <!-- Desaturated and dimmed so the photograph joins the sage world rather
-         than importing its own colour cast. Intrinsic size is declared so the
-         hero reserves its space and cannot shift layout as it decodes. -->
+    <!-- Fully desaturated so the photograph joins the accent world rather than
+         importing its own colour cast. Intrinsic size is declared so the hero
+         reserves its space and cannot shift layout as it decodes. -->
     <img
-        src="https://images.unsplash.com/photo-1573167101669-476636b96cea?auto=format&fit=crop&w=2000&q=80"
-        alt="Four women entrepreneurs around a boardroom table, one mid-sentence while the others listen and laugh"
+        src="/images/landing/mural-founders.jpg"
+        alt="Six women entrepreneurs dressed in white, standing and seated against a large painted flower mural"
         width="2000"
-        height="1335"
+        height="1333"
         fetchpriority="high"
-        decoding="async"
-        class="absolute inset-0 size-full object-cover object-center brightness-[.88] saturate-[.62]"
+        class="absolute inset-0 size-full object-cover object-center contrast-110 grayscale"
     />
 
-    <!-- Sage wash: ties any source photograph to the accent hue. -->
-    <div
-        class="absolute inset-0 bg-accent/10 mix-blend-soft-light"
-        aria-hidden="true"
-    ></div>
+    <!-- Accent wash: ties any source photograph to the brand hue. Plain alpha,
+         not mix-blend-soft-light: blending a large filtered image intermittently
+         lost its raster in Chrome and the hero went blank. -->
+    <div class="wash" aria-hidden="true"></div>
 
     <!-- Grade to canvas, not black: the hero should end where the page begins.
-         The top scrim keeps the nav legible over a bright photograph. -->
+         The stops are held low so the photograph stays legible through the
+         upper two thirds; a full-height wash would erase it against a light
+         canvas. The top scrim keeps the nav readable over a bright frame. -->
     <div
-        class="absolute inset-0 bg-gradient-to-t from-canvas via-canvas/65 to-canvas/15"
+        class="absolute inset-0 bg-gradient-to-t from-canvas from-15% via-canvas/70 via-38% to-transparent to-72%"
         aria-hidden="true"
     ></div>
     <div
-        class="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-canvas/70 to-transparent"
+        class="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-canvas/85 to-transparent"
         aria-hidden="true"
     ></div>
 
@@ -57,12 +49,15 @@
             class="mx-auto flex w-full max-w-7xl flex-col items-start justify-between gap-12 lg:flex-row lg:items-end"
         >
             <div class="w-full lg:max-w-3xl">
+                <!-- Fluid rather than three fixed steps: the jump from 48 to 60
+                     to 72px landed awkwardly in the gaps between breakpoints.
+                     The 4.5rem ceiling keeps it under the display maximum, and
+                     text-balance owns the line break so the composition adapts
+                     to the copy instead of a hard-coded <br>. -->
                 <h1
-                    class="rise text-5xl leading-[1.08] font-semibold tracking-[-0.03em] text-balance text-white sm:text-6xl lg:text-7xl"
+                    class="rise text-[clamp(2.75rem,6.2vw,4.5rem)] leading-[1.06] font-semibold tracking-[-0.025em] text-balance text-ink"
                 >
-                    Where founders meet
-                    <br class="hidden sm:block" />
-                    their mentors
+                    Where founders meet their mentors
                 </h1>
             </div>
 
@@ -82,7 +77,7 @@
                             focusRing,
                         )}
                     >
-                        Sign in
+                        Get Started
                     </Link>
                     <a
                         href="#how-it-works"
@@ -100,6 +95,12 @@
 </header>
 
 <style>
+    .wash {
+        position: absolute;
+        inset: 0;
+        background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+    }
+
     /* One orchestrated page-load rather than scattered scroll reveals. The
        animation only ever *adds* to a default-visible element, so if it never
        runs (reduced motion, no animation support, a headless renderer), the
