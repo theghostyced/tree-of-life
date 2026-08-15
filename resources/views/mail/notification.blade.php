@@ -7,10 +7,10 @@
     <meta name="x-apple-disable-message-reformatting">
     <title>{{ $title }}</title>
 </head>
-<body style="margin:0;padding:0;width:100%;background:#eef1ea;-webkit-font-smoothing:antialiased;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1b211c;">
+<body style="margin:0;padding:0;width:100%;background:#eff1ea;-webkit-font-smoothing:antialiased;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#20211b;">
     <div style="display:none;max-height:0;overflow:hidden;opacity:0;">{{ $preheader ?? $body }}</div>
 
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eef1ea;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eff1ea;">
         <tr>
             <td align="center" style="padding:40px 16px;">
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:496px;margin:0 auto;">
@@ -21,12 +21,12 @@
                             <table role="presentation" cellpadding="0" cellspacing="0">
                                 <tr>
                                     <td style="width:40px;height:40px;background:#adb982;border-radius:10px;text-align:center;vertical-align:middle;">
-                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#12160f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;">
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#14160f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;">
                                             <path d="M8 19a4 4 0 0 1-1.4-7.76A4.5 4.5 0 0 1 12 5a4.5 4.5 0 0 1 5.4 6.24A4 4 0 0 1 16 19Z" />
                                             <path d="M12 19v3" />
                                         </svg>
                                     </td>
-                                    <td style="padding-left:12px;font-size:16px;font-weight:600;letter-spacing:-0.01em;color:#1b211c;vertical-align:middle;">{{ $appName }}</td>
+                                    <td style="padding-left:12px;font-size:16px;font-weight:600;letter-spacing:-0.01em;color:#20211b;vertical-align:middle;">{{ $appName }}</td>
                                 </tr>
                             </table>
                         </td>
@@ -34,7 +34,7 @@
 
                     {{-- Card --}}
                     <tr>
-                        <td style="background:#ffffff;border:1px solid #e2e7dc;border-radius:14px;">
+                        <td style="background:#ffffff;border:1px solid #e5e7dc;border-radius:14px;">
                             <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
 
                                 @isset($illustrationUrl)
@@ -48,12 +48,12 @@
                                 <tr>
                                     <td style="padding:36px 36px 0;">
                                         @isset($greeting)
-                                            <p style="margin:0 0 10px;font-size:15px;line-height:1.6;color:#3f4a43;">{{ $greeting }}</p>
+                                            <p style="margin:0 0 10px;font-size:15px;line-height:1.6;color:#484a3f;">{{ $greeting }}</p>
                                         @endisset
-                                        <h1 style="margin:0;font-size:23px;line-height:1.3;font-weight:600;letter-spacing:-0.02em;color:#171c17;">
+                                        <h1 style="margin:0;font-size:23px;line-height:1.3;font-weight:600;letter-spacing:-0.02em;color:#1b1c17;">
                                             {{ $title }}
                                         </h1>
-                                        <p style="margin:14px 0 0;font-size:15px;line-height:1.65;color:#3f4a43;">
+                                        <p style="margin:14px 0 0;font-size:15px;line-height:1.65;color:#484a3f;">
                                             {{ $body }}
                                         </p>
                                     </td>
@@ -65,7 +65,7 @@
                                             <table role="presentation" cellpadding="0" cellspacing="0">
                                                 <tr>
                                                     <td style="background:#adb982;border-radius:9px;">
-                                                        <a href="{{ $actionUrl }}" target="_blank" style="display:inline-block;padding:14px 28px;font-size:15px;font-weight:600;color:#12160f;text-decoration:none;letter-spacing:-0.01em;">
+                                                        <a href="{{ $actionUrl }}" target="_blank" style="display:inline-block;padding:14px 28px;font-size:15px;font-weight:600;color:#14160f;text-decoration:none;letter-spacing:-0.01em;">
                                                             {{ $actionText }}
                                                         </a>
                                                     </td>
@@ -77,12 +77,12 @@
                                     {{-- Plain link fallback --}}
                                     <tr>
                                         <td style="padding:22px 36px 36px;">
-                                            <div style="border-top:1px solid #eef1ea;padding-top:16px;">
-                                                <p style="margin:0;font-size:12px;line-height:1.5;color:#8a938a;">
+                                            <div style="border-top:1px solid #eff1ea;padding-top:16px;">
+                                                <p style="margin:0;font-size:12px;line-height:1.5;color:#91938a;">
                                                     Or paste this address into your browser:
                                                 </p>
                                                 <p style="margin:4px 0 0;font-size:12px;line-height:1.5;word-break:break-all;">
-                                                    <a href="{{ $actionUrl }}" style="color:#5a6b4a;text-decoration:underline;">{{ $actionUrl }}</a>
+                                                    <a href="{{ $actionUrl }}" style="color:#646b4a;text-decoration:underline;">{{ $actionUrl }}</a>
                                                 </p>
                                             </div>
                                         </td>
@@ -97,7 +97,7 @@
                     {{-- Footer --}}
                     <tr>
                         <td style="padding:22px 4px 0;text-align:center;">
-                            <p style="margin:0;font-size:12px;color:#8a938a;">&copy; {{ date('Y') }} {{ $appName }}</p>
+                            <p style="margin:0;font-size:12px;color:#91938a;">&copy; {{ date('Y') }} {{ $appName }}</p>
                         </td>
                     </tr>
 
