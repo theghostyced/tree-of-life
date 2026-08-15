@@ -43,3 +43,6 @@ yarn-error.log
 # Master logo artwork. Traced vectors of several megabytes that git cannot
 # diff; the app ships rendered crops of them from /public instead.
 /tree_of_life_traced*
+
+# macOS finder metadata
+.DS_Store
