@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Carbon\CarbonImmutable;
+use Illuminate\Foundation\DevCommands;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
@@ -24,6 +25,18 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+        $this->registerDevCommands();
+    }
+
+    /**
+     * Register additional processes started by "composer dev".
+     *
+     * Reverb is not one of Laravel's default dev processes, but chat delivery
+     * depends on it. Without this, messages persist but never broadcast.
+     */
+    protected function registerDevCommands(): void
+    {
+        DevCommands::artisan('reverb:start', 'reverb');
     }
 
     /**
