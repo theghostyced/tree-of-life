@@ -20,9 +20,10 @@
         class?: string;
     } = $props();
 
+    /** `sm` is bounded by the app navbar's h-14; 36px keeps breathing room. */
     const mark = {
-        sm: 'size-7',
-        lg: 'size-10',
+        sm: 'size-9',
+        lg: 'size-14',
     };
     const label = {
         sm: 'text-sm font-semibold tracking-tight',
@@ -34,8 +35,8 @@
     <img
         src="/images/brand/tree-of-life.png"
         alt={showName ? '' : name}
-        width="120"
-        height="120"
+        width="168"
+        height="168"
         class={cn('shrink-0 object-contain', mark[size])}
     />
     {#if showName}
