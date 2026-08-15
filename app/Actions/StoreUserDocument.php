@@ -10,8 +10,6 @@ use Illuminate\Support\Facades\Storage;
 
 class StoreUserDocument
 {
-    private const DISK = 'local';
-
     /**
      * Store an onboarding document on the private disk. Re-uploading a document
      * of the same type replaces the previous file (the old file is deleted) so
@@ -19,6 +17,8 @@ class StoreUserDocument
      */
     public function handle(User $user, DocumentType $type, UploadedFile $file): UserDocument
     {
+        $disk = config('filesystems.private');
+
         $existing = $user->documents()
             ->where('document_type', $type)
             ->first();
@@ -33,12 +33,12 @@ class StoreUserDocument
         $originalName = $file->getClientOriginalName();
         $size = $file->getSize();
 
-        $path = $file->store("user-documents/{$user->id}", self::DISK);
+        $path = $file->store("user-documents/{$user->id}", $disk);
 
         return UserDocument::updateOrCreate(
             ['user_id' => $user->id, 'document_type' => $type],
             [
-                'disk' => self::DISK,
+                'disk' => $disk,
                 'path' => $path,
                 'original_name' => $originalName,
                 'mime_type' => $mimeType,

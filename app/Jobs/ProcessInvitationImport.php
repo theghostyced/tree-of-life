@@ -43,7 +43,7 @@ class ProcessInvitationImport implements ShouldQueue
     {
         $this->import->update(['status' => InvitationImportStatus::Processing]);
 
-        $disk = Storage::disk('local');
+        $disk = Storage::disk(config('filesystems.private'));
         $line = 1;
         $stream = null;
 
@@ -112,7 +112,7 @@ class ProcessInvitationImport implements ShouldQueue
         $import->status = InvitationImportStatus::Failed;
         $import->save();
 
-        Storage::disk('local')->delete($import->storagePath());
+        Storage::disk(config('filesystems.private'))->delete($import->storagePath());
     }
 
     /**

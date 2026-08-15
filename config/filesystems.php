@@ -17,6 +17,22 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Private Filesystem Disk
+    |--------------------------------------------------------------------------
+    |
+    | The disk holding user documents and invitation imports. Production runs
+    | on an ephemeral container filesystem, so it points at an S3-compatible
+    | private bucket there; local development keeps these files on disk.
+    |
+    | Each stored file records the disk it was written to, so changing this
+    | value only affects new uploads.
+    |
+    */
+
+    'private' => env('PRIVATE_FILESYSTEM_DISK', 'local'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Filesystem Disks
     |--------------------------------------------------------------------------
     |

@@ -52,7 +52,7 @@ class InvitationImportController extends Controller
             'total_rows' => $totalRows,
         ]);
 
-        Storage::disk('local')->putFileAs(
+        Storage::disk(config('filesystems.private'))->putFileAs(
             'invitation-imports',
             $file,
             "{$import->id}.csv",
