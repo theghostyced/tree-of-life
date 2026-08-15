@@ -17,6 +17,10 @@ it('boots the public pages', function (string $path) {
     'login' => '/login',
 ]);
 
+it('renders the brand mark in the chrome', function () {
+    visit('/')->assertPresent('img[src="/images/brand/tree-of-life.png"]');
+});
+
 it('boots a signed-in page that subscribes to realtime', function () {
     $entrepreneur = User::factory()->entrepreneur()->approved()->create();
 
