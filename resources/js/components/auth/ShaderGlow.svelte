@@ -3,7 +3,7 @@
 
     /**
      * WebGL glow field for the auth brand panel. Renders the dark panel base with
-     * a few soft radial glows (sage + warm amber) whose centres drift very slowly
+     * a few soft radial glows (leaf + warm amber) whose centres drift very slowly
      * via `u_time`, as one continuous field. Uses highp precision + a dither to
      * avoid 8-bit banding on the subtle dark gradient, and renders at native
      * device resolution. Honours `prefers-reduced-motion` (static frame). Falls
@@ -43,9 +43,10 @@
             float aspect = u_res.x / u_res.y;
             float t = u_time;
 
-            vec3 base  = vec3(0.047, 0.047, 0.039); // --color-panel #0c0c0a
-            vec3 sage  = vec3(0.678, 0.725, 0.510); // --color-accent #adb982
-            vec3 amber = vec3(0.878, 0.588, 0.290); // --color-glow-amber #e0964a
+            vec3 base  = vec3(0.082, 0.502, 0.239); // --color-accent #15803d
+            // Lighter than the base so the glows read as light falling on it.
+            vec3 leaf  = vec3(0.133, 0.773, 0.369); // --color-accent-strong #16a34a
+            vec3 amber = vec3(0.918, 0.345, 0.047); // --color-glow-amber #ea580c
 
             // Slowly drifting centres (small amplitudes, low frequencies).
             // Ocean-like flow: layered traveling waves warp the sampling space,
@@ -65,7 +66,7 @@
             float g2 = glow(p, c2, 0.74, aspect) * 0.032;
             float g3 = glow(p, c3, 0.62, aspect) * 0.02;
 
-            vec3 col = base + sage * g1 + amber * g2 + sage * g3;
+            vec3 col = base + leaf * g1 + amber * g2 + leaf * g3;
 
             // ±0.5/255 ordered-ish noise removes visible banding steps.
             col += (hash(gl_FragCoord.xy) - 0.5) / 255.0;

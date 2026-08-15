@@ -2,27 +2,34 @@
     import { Link } from '@inertiajs/svelte';
     import Logo from '@/components/Logo.svelte';
     import AuthFooter from './AuthFooter.svelte';
-    import ShaderGlow from './ShaderGlow.svelte';
 
     /**
-     * Left-hand brand panel for the auth screen. A warm, softly lit dark surface,
-     * the "greenhouse at first light": a WebGL shader field of slowly drifting
-     * sage and amber glows, carrying the Tree Of Life Fund logo, a welcoming
-     * statement, the community avatars, and the legal footer. Desktop only.
+     * Left-hand brand panel for the auth screen: a full-height photograph,
+     * desaturated and washed with the accent green so it reads as part of the
+     * theme rather than stock art, carrying the Tree Of Life Fund logo, a
+     * welcoming statement set low in the frame, the community avatars, and the
+     * legal footer. Desktop only.
      */
     const community = [
-        { initials: 'EN', class: 'bg-accent/25 text-accent' },
+        { initials: 'EN', class: 'bg-white/20 text-white' },
         { initials: 'ME', class: 'bg-accent-orange/25 text-accent-orange' },
         { initials: 'AD', class: 'bg-surface text-ink' },
     ];
 </script>
 
 <aside
-    class="relative hidden w-[45%] flex-col justify-between overflow-hidden border-r border-line bg-panel lg:flex"
+    class="relative hidden w-[45%] flex-col justify-between overflow-hidden border-r border-line bg-accent lg:flex"
 >
-    <!-- Warm greenhouse light: a slow-drifting WebGL glow field. -->
-    <ShaderGlow />
-    <div class="vignette" aria-hidden="true"></div>
+    <!-- object-position keeps her face in frame as the panel narrows. -->
+    <img
+        src="/images/auth/rooftop-founder.jpg"
+        alt=""
+        aria-hidden="true"
+        fetchpriority="high"
+        class="absolute inset-0 size-full object-cover object-[62%_38%] brightness-75 contrast-125 grayscale"
+    />
+    <div class="tint" aria-hidden="true"></div>
+    <div class="scrim" aria-hidden="true"></div>
 
     <div class="relative z-10 p-12">
         <Link
@@ -30,17 +37,17 @@
             aria-label="Tree Of Life Fund home"
             class="inline-block rounded-md outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-panel"
         >
-            <Logo size="lg" />
+            <Logo size="lg" class="text-white" />
         </Link>
     </div>
 
-    <div class="relative z-10 flex flex-1 flex-col justify-center p-12">
+    <div class="relative z-10 flex flex-1 flex-col justify-end p-12">
         <h1
             class="mb-6 text-5xl leading-[1.1] font-semibold tracking-tight text-balance text-white"
         >
             Where founders<br />meet their mentors.
         </h1>
-        <p class="max-w-md text-lg leading-relaxed text-muted">
+        <p class="max-w-md text-lg leading-relaxed text-white/80">
             An invitation-only workspace that pairs entrepreneurs with mentors,
             schedules their meetings, and keeps a clear report of every one,
             especially for the women building what's next.
@@ -56,27 +63,48 @@
                     </div>
                 {/each}
             </div>
-            <p class="text-sm font-medium text-muted">
+            <p class="text-sm font-medium text-white/80">
                 Founders, mentors, and reviewers in one workflow
             </p>
         </div>
     </div>
 
-    <AuthFooter class="relative z-10 px-12" />
+    <AuthFooter
+        class="relative z-10 border-white/15 px-12 text-white/70 [&_a:hover]:text-white"
+    />
 </aside>
 
 <style>
-    /* Settle the edges so the shader field reads as light in a room, not a flat
-       panel. Sits above the shader canvas, below the z-10 content. */
-    .vignette {
+    /* Wash the grey photo in the brand green so it belongs to the theme.
+       Sits above the image, below the z-10 content. */
+    .tint {
         position: absolute;
         inset: 0;
         z-index: 0;
         pointer-events: none;
-        background: radial-gradient(
-            120% 100% at 50% 0%,
-            transparent 55%,
-            rgba(0, 0, 0, 0.4)
-        );
+        background: color-mix(in srgb, var(--color-accent) 18%, transparent);
+    }
+
+    /* Legibility, not decoration: the photo is bright sky at the top (behind the
+       logo) and busy city bokeh at the bottom (behind the copy). Darken both
+       ends so white text clears contrast over either. */
+    .scrim {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background:
+            linear-gradient(
+                to bottom,
+                color-mix(in srgb, var(--color-ink) 55%, transparent) 0%,
+                transparent 28%
+            ),
+            linear-gradient(
+                to top,
+                color-mix(in srgb, var(--color-ink) 82%, transparent) 0%,
+                color-mix(in srgb, var(--color-ink) 58%, transparent) 30%,
+                color-mix(in srgb, var(--color-ink) 14%, transparent) 62%,
+                transparent 82%
+            );
     }
 </style>

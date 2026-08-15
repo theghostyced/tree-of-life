@@ -95,7 +95,7 @@
     >
         <div class="flex w-full max-w-md flex-col items-center text-center">
             <div class="relative mb-7">
-                <!-- Soft sage halo grounds the illustration on the dark canvas. -->
+                <!-- Soft accent halo grounds the illustration on the canvas. -->
                 <div
                     class="absolute -inset-12 rounded-full"
                     style="background: radial-gradient(closest-side, color-mix(in srgb, var(--color-accent) 9%, transparent), transparent)"

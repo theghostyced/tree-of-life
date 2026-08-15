@@ -37,7 +37,8 @@
     };
 </script>
 
-<div class={cn('flex items-center gap-3', className)}>
+<!-- The wordmark inherits its colour so a dark surface can override it. -->
+<div class={cn('flex items-center gap-3 text-ink', className)}>
     <img
         src="/images/brand/tree-of-life.png"
         alt={showName ? '' : name}
@@ -46,6 +47,6 @@
         class={cn('shrink-0 object-contain', mark[size])}
     />
     {#if showName}
-        <span class={cn('text-ink', label[size])}>{name}</span>
+        <span class={cn(label[size])}>{name}</span>
     {/if}
 </div>

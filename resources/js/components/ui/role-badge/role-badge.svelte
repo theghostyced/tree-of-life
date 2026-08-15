@@ -9,15 +9,15 @@
 
     /**
      * Label + status-dot tone per role. The pill itself stays neutral; only the
-     * small dot carries colour, keeping the marker calm and on the sage palette.
+     * small dot carries colour, keeping the marker calm and on the accent palette.
      * Typed as a full Record<UserRole, …> so adding a role fails to compile
      * until it has a label and a tone.
      */
     const config: Record<UserRole, { label: string; dot: string }> = {
         admin: { label: 'Admin', dot: 'bg-accent' },
-        mentor: { label: 'Mentor', dot: 'bg-sage-500' },
+        mentor: { label: 'Mentor', dot: 'bg-accent' },
         entrepreneur: { label: 'Entrepreneur', dot: 'bg-success' },
-        employee: { label: 'Employee', dot: 'bg-sage-300' },
+        employee: { label: 'Employee', dot: 'bg-accent-strong' },
     };
 
     const current = $derived(config[role] ?? config.entrepreneur);
