@@ -5,9 +5,9 @@
     /**
      * Closing call to action, on a solid dark sage band drawn from the same
      * family as the primary button fill. Every colour here was contrast-checked
-     * against sage-800 (#363c30): white heading 11.38:1, sage-200 body 7.86:1,
-     * sage-500 button border 3.60:1 for the non-text boundary. Note that muted
-     * (3.82:1) and line-strong (1.15:1) both FAIL on this surface, which is why
+     * against sage-800 (#414a22): white heading 9.43:1, sage-200 body 6.58:1,
+     * sage-500 button border 3.72:1 for the non-text boundary. Note that muted
+     * (3.24:1) and line-strong (1.36:1) both FAIL on this surface, which is why
      * the body copy and the outlined button do not use them here.
      */
     const focusRing =
