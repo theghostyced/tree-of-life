@@ -20,7 +20,7 @@
     const steps = [
         {
             title: 'An admin invites you',
-            body: 'Tolfund is invitation-only. Your invitation arrives by email carrying a single-use link, and it stays valid for seven days.',
+            body: 'TOL is invitation-only. Your invitation arrives by email carrying a single-use link, and it stays valid for seven days.',
         },
         {
             title: 'You set up your profile',
@@ -46,8 +46,8 @@
 
     const faqs = [
         {
-            question: 'Who can join Tolfund?',
-            answer: 'Tolfund is invitation-only. A programme admin invites entrepreneurs and mentors by email, and each invitation carries a single-use link. There is no public sign-up form.',
+            question: 'Who can join TOL?',
+            answer: 'TOL is invitation-only. A programme admin invites entrepreneurs and mentors by email, and each invitation carries a single-use link. There is no public sign-up form.',
             open: true,
         },
         {
@@ -71,7 +71,7 @@
         'outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas';
 </script>
 
-<AppHead title="Tolfund: where founders meet their mentors" />
+<AppHead title="TOL: where founders meet their mentors" />
 
 <div class="min-h-screen bg-canvas font-sans text-ink antialiased">
     <LandingNav />
@@ -163,7 +163,7 @@
                 <h2
                     class="mb-4 text-4xl font-semibold tracking-[-0.02em] text-balance text-ink md:text-5xl"
                 >
-                    How Tolfund works
+                    How TOL works
                 </h2>
                 <p class="max-w-[65ch] text-lg text-pretty text-muted">
                     Six steps from an invitation to a written record, the same
@@ -231,9 +231,9 @@
                 <p
                     class="mb-8 max-w-[65ch] text-lg leading-relaxed text-pretty text-muted"
                 >
-                    That takes more than good intentions. Tolfund keeps the
-                    whole relationship in one place: who is paired with whom,
-                    when they are meeting next, and what came out of the last
+                    That takes more than good intentions. TOL keeps the whole
+                    relationship in one place: who is paired with whom, when
+                    they are meeting next, and what came out of the last
                     conversation, so mentors, founders, and programme admins are
                     all working from the same picture.
                 </p>

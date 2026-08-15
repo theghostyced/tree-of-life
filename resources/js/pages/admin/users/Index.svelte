@@ -202,7 +202,7 @@
                     Users
                 </h1>
                 <p class="mt-1 max-w-xl text-sm text-muted">
-                    Everyone with an account on Tolfund. Revoke, restore, or
+                    Everyone with an account on TOL. Revoke, restore, or
                     remove access, and open a profile for the full picture.
                 </p>
             </div>

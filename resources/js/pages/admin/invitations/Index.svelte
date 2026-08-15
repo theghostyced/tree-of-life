@@ -315,7 +315,7 @@
                     Invitations
                 </h1>
                 <p class="mt-1 max-w-xl text-sm text-muted">
-                    Tolfund is invitation-only. Invite founders, mentors and
+                    TOL is invitation-only. Invite founders, mentors and
                     admins by email, and track who has joined.
                 </p>
             </div>
@@ -484,7 +484,7 @@
                     No invitations yet
                 </h3>
                 <p class="mt-2 max-w-sm text-[15px] text-muted">
-                    Everyone on Tolfund starts with an invitation. Send your
+                    Everyone on TOL starts with an invitation. Send your
                     first one to bring a founder, mentor or admin on board.
                 </p>
                 <button

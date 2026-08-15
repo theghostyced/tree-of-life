@@ -20,7 +20,7 @@ class AdminUserSeeder extends Seeder
         User::updateOrCreate(
             ['email' => 'admin@tolfund.com'],
             [
-                'name' => 'Tolfund Admin',
+                'name' => 'TOL Admin',
                 // Bootstrap credential for local/dev only; plain value is hashed
                 // by the User model's 'hashed' cast on save. Change after first sign-in.
                 'password' => 'password',

@@ -19,7 +19,7 @@
         <h2
             class="mb-6 text-4xl leading-tight font-semibold tracking-[-0.02em] text-balance text-white md:text-5xl"
         >
-            Already invited to Tolfund?
+            Already invited to TOL?
         </h2>
         <p class="mx-auto mb-10 max-w-2xl text-lg text-pretty text-sage-200">
             Your invitation email carries a single-use link to set up your
@@ -36,7 +36,7 @@
                     focusRing,
                 )}
             >
-                Sign in to Tolfund
+                Sign in to TOL
             </Link>
             <a
                 href="#faq"

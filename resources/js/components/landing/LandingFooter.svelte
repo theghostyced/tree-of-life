@@ -17,7 +17,7 @@
             links: [
                 { label: 'The fund', href: '#fund' },
                 { label: 'How it works', href: '#how-it-works' },
-                { label: 'Inside Tolfund', href: '#programme' },
+                { label: 'Inside TOL', href: '#programme' },
                 { label: 'Questions', href: '#faq' },
             ],
         },
