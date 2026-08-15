@@ -44,17 +44,18 @@
     --color-danger: #cf8b8b; /* destructive fills, dots */
     --color-danger-strong: #d7a1a1; /* destructive text on dark */
 
-    /* Sage ramp — muted sage-green grays for the dark auth surfaces.
-       sage-400 (#A3B18A) is the auth accent; the ramp brightens above it
+    /* Sage ramp — sampled from the leaves of the Tree Of Life mark: hue 73,
+       with saturation rising as the ramp darkens, as it does in the artwork.
+       sage-400 (#ADB982) is the auth accent; the ramp brightens above it
        and dims below it. Additive; does not touch the warm brand tokens. */
-    --color-sage-200: #d3d9c6;
-    --color-sage-300: #c1c9b0;
-    --color-sage-400: #a3b18a;
-    --color-sage-500: #8a9576;
-    --color-sage-600: #6e7860;
-    --color-sage-700: #515a47;
-    --color-sage-800: #363c30;
-    --color-sage-900: #23271f;
+    --color-sage-200: #d5dac5;
+    --color-sage-300: #c6ccad;
+    --color-sage-400: #adb982;
+    --color-sage-500: #9aaa61;
+    --color-sage-600: #808f49;
+    --color-sage-700: #606d34;
+    --color-sage-800: #414a22;
+    --color-sage-900: #2b3016;
 
     /* App surfaces — dark mode, sage-tinted near-blacks. Semantic layer for
        the Tree Of Life Fund auth + admin surfaces. */
@@ -67,18 +68,18 @@
     --color-ink: #e2e8e4; /* primary text (app.text) */
     --color-muted: #8b9990; /* secondary text (app.muted) */
     --color-faint: #4a554e; /* tertiary text, placeholders, meta (app.darker) */
-    --color-accent: #a3b18a; /* sage: actions, links, active, focus (app.primary) */
-    --color-accent-strong: #b5c49a; /* accent hover — brighter (app.primaryHover) */
+    --color-accent: #adb982; /* leaf green: actions, links, active, focus (app.primary) */
+    --color-accent-strong: #bdc797; /* accent hover — brighter (app.primaryHover) */
     --color-accent-soft: #1a1f1c; /* subtle surface for active backgrounds */
     --color-on-accent: #050606; /* text/icon on accent fills */
     --color-glow-amber: #e0964a; /* warm morning-sun glow on the brand panel */
 
     /* Chart series — an earthy sage-forward ramp for data viz. */
-    --chart-1: #a3b18a; /* sage accent */
+    --chart-1: #adb982; /* leaf accent */
     --chart-2: #6fbe74; /* positive green */
     --chart-3: #e0964a; /* warm amber */
-    --chart-4: #8a9576; /* sage-500 */
-    --chart-5: #c1c9b0; /* sage-300 */
+    --chart-4: #9aaa61; /* sage-500 */
+    --chart-5: #c6ccad; /* sage-300 */
 
     /* Elevation — dark surfaces lean on borders; shadows stay subtle. */
     --shadow-bar: 0 1px 2px rgba(0, 0, 0, 0.4);

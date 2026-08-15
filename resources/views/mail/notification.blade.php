@@ -20,7 +20,7 @@
                         <td style="padding:0 4px 24px;">
                             <table role="presentation" cellpadding="0" cellspacing="0">
                                 <tr>
-                                    <td style="width:40px;height:40px;background:#a3b18a;border-radius:10px;text-align:center;vertical-align:middle;">
+                                    <td style="width:40px;height:40px;background:#adb982;border-radius:10px;text-align:center;vertical-align:middle;">
                                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#12160f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;">
                                             <path d="M8 19a4 4 0 0 1-1.4-7.76A4.5 4.5 0 0 1 12 5a4.5 4.5 0 0 1 5.4 6.24A4 4 0 0 1 16 19Z" />
                                             <path d="M12 19v3" />
@@ -64,7 +64,7 @@
                                         <td style="padding:28px 36px 0;">
                                             <table role="presentation" cellpadding="0" cellspacing="0">
                                                 <tr>
-                                                    <td style="background:#a3b18a;border-radius:9px;">
+                                                    <td style="background:#adb982;border-radius:9px;">
                                                         <a href="{{ $actionUrl }}" target="_blank" style="display:inline-block;padding:14px 28px;font-size:15px;font-weight:600;color:#12160f;text-decoration:none;letter-spacing:-0.01em;">
                                                             {{ $actionText }}
                                                         </a>

@@ -44,7 +44,7 @@
             float t = u_time;
 
             vec3 base  = vec3(0.039, 0.047, 0.043); // --color-panel #0a0c0b
-            vec3 sage  = vec3(0.639, 0.694, 0.541); // --color-accent #a3b18a
+            vec3 sage  = vec3(0.678, 0.725, 0.510); // --color-accent #adb982
             vec3 amber = vec3(0.878, 0.588, 0.290); // --color-glow-amber #e0964a
 
             // Slowly drifting centres (small amplitudes, low frequencies).
