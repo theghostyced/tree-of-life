@@ -14,19 +14,25 @@
         name = 'Tree Of Life Fund',
         class: className,
     }: {
-        size?: 'sm' | 'lg';
+        size?: 'sm' | 'md' | 'lg';
         showName?: boolean;
         name?: string;
         class?: string;
     } = $props();
 
-    /** `sm` is bounded by the app navbar's h-14; 36px keeps breathing room. */
+    /**
+     * `sm` is bounded by the app navbar's h-14; 36px keeps breathing room.
+     * `md` is for the landing chrome, which sets its own height and can
+     * carry the mark larger.
+     */
     const mark = {
         sm: 'size-9',
+        md: 'size-12',
         lg: 'size-14',
     };
     const label = {
         sm: 'text-sm font-semibold tracking-tight',
+        md: 'text-base font-semibold tracking-tight',
         lg: 'text-2xl font-semibold tracking-tight',
     };
 </script>

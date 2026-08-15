@@ -33,7 +33,7 @@
             aria-label="Tree Of Life Fund home"
             class={cn('rounded-md', focusRing)}
         >
-            <Logo size="sm" />
+            <Logo size="md" />
         </Link>
 
         <ul class="hidden items-center gap-8 text-sm font-medium lg:flex">

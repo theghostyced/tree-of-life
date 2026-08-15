@@ -49,7 +49,7 @@
             class="mb-16 grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-5"
         >
             <div class="lg:col-span-2">
-                <Logo size="sm" class="mb-6" />
+                <Logo size="md" class="mb-6" />
                 <p class="max-w-sm leading-relaxed text-muted">
                     An invitation-only programme pairing entrepreneurs with
                     mentors, scheduling their meetings, and keeping a clear
