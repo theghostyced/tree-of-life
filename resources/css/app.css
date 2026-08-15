@@ -57,21 +57,23 @@
     --color-sage-800: #414a22;
     --color-sage-900: #2b3016;
 
-    /* App surfaces — dark mode, sage-tinted near-blacks. Semantic layer for
+    /* App surfaces — dark mode, near-blacks tinted to the mark's leaf hue (73),
+       matching the accent rather than the cooler green they carried before.
+       Semantic layer for
        the Tree Of Life Fund auth + admin surfaces. */
-    --color-canvas: #050606; /* page background (app.bg) */
-    --color-panel: #0a0c0b; /* framed brand panel (app.panel) */
-    --color-surface: #0f1210; /* cards, inputs, raised controls (app.surface) */
-    --color-elevated: #1a1f1c; /* tracks, hover fills */
-    --color-line: #1a1f1c; /* hairline borders, dividers (app.border) */
-    --color-line-strong: #2a332e; /* stronger/hover borders (app.borderHover) */
-    --color-ink: #e2e8e4; /* primary text (app.text) */
-    --color-muted: #8b9990; /* secondary text (app.muted) */
-    --color-faint: #4a554e; /* tertiary text, placeholders, meta (app.darker) */
+    --color-canvas: #060605; /* page background (app.bg) */
+    --color-panel: #0c0c0a; /* framed brand panel (app.panel) */
+    --color-surface: #11120f; /* cards, inputs, raised controls (app.surface) */
+    --color-elevated: #1e1f1a; /* tracks, hover fills */
+    --color-line: #1e1f1a; /* hairline borders, dividers (app.border) */
+    --color-line-strong: #31332a; /* stronger/hover borders (app.borderHover) */
+    --color-ink: #e7e8e2; /* primary text (app.text) */
+    --color-muted: #96998b; /* secondary text (app.muted) */
+    --color-faint: #53554a; /* tertiary text, placeholders, meta (app.darker) */
     --color-accent: #adb982; /* leaf green: actions, links, active, focus (app.primary) */
     --color-accent-strong: #bdc797; /* accent hover — brighter (app.primaryHover) */
-    --color-accent-soft: #1a1f1c; /* subtle surface for active backgrounds */
-    --color-on-accent: #050606; /* text/icon on accent fills */
+    --color-accent-soft: #1e1f1a; /* subtle surface for active backgrounds */
+    --color-on-accent: #060605; /* text/icon on accent fills */
     --color-glow-amber: #e0964a; /* warm morning-sun glow on the brand panel */
 
     /* Chart series — an earthy sage-forward ramp for data viz. */
