@@ -18,6 +18,13 @@
         { href: '#faq', label: 'Questions' },
     ];
 
+    /**
+     * A mailto rather than a page: there is no contact route yet, and the only
+     * other address in the app is the no-reply sender. Kept as one value so the
+     * link can be repointed at a contact page without touching the markup.
+     */
+    const contactHref = 'mailto:info@treeoflifefund.org';
+
     let menuOpen = $state(false);
 
     const focusRing =
@@ -54,7 +61,20 @@
 
         <!-- lg, not md: below the lg breakpoint the burger owns the nav, and showing
          both a Sign in button and a burger duplicates the affordance. -->
-        <div class="hidden items-center gap-3 text-sm font-medium lg:flex">
+        <div class="hidden items-center gap-6 text-sm font-medium lg:flex">
+            <!-- Sits between the section links and Sign in, so the bar reads
+                 sections → contact → account. Styled as a section link rather
+                 than an account action, because that is what it is. -->
+            <a
+                href={contactHref}
+                class={cn(
+                    'rounded-md py-2 text-ink/90 transition-colors hover:text-ink',
+                    focusRing,
+                )}
+            >
+                Contact us
+            </a>
+
             <!-- A link, not a filled button: the hero already carries the primary
              Sign in CTA, and two competing buttons blunt both. -->
             <Link
@@ -102,6 +122,16 @@
                 {section.label}
             </a>
         {/each}
+        <a
+            href={contactHref}
+            onclick={() => (menuOpen = false)}
+            class={cn(
+                'block rounded-lg px-4 py-3 text-sm font-medium text-ink transition-colors hover:bg-elevated',
+                focusRing,
+            )}
+        >
+            Contact us
+        </a>
         <Link
             href="/login"
             class={cn(

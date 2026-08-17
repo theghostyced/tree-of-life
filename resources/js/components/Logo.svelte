@@ -6,7 +6,10 @@
      * beside it. Used on the auth screens and in app chrome.
      *
      * The mark is a raster rather than the source SVG: that file is traced
-     * artwork of ~7,600 paths, and the logo never renders above 40px.
+     * artwork of ~7,600 paths. The PNG is 168px with a transparent background,
+     * which caps `lg` at 80px to stay sharp on a 2x display. Going larger needs
+     * a new export — the 1080px source in the repo root has an opaque white
+     * background and renders as a white box on the dark hero.
      */
     let {
         size = 'lg',
@@ -21,18 +24,19 @@
     } = $props();
 
     /**
-     * `sm` is bounded by the app navbar's h-14; 36px keeps breathing room.
-     * `md` is for the landing chrome, which sets its own height and can
-     * carry the mark larger.
+     * The mark is a detailed illustration — fine roots, gem leaves, a double
+     * ring — so it needs real size before those features read at all. `sm` is
+     * bounded by the app navbar's h-14 and cannot grow; `md` and `lg` sit in
+     * chrome that sets its own height, so they carry the mark large.
      */
     const mark = {
         sm: 'size-9',
-        md: 'size-12',
-        lg: 'size-14',
+        md: 'size-16',
+        lg: 'size-20',
     };
     const label = {
         sm: 'text-sm font-semibold tracking-tight',
-        md: 'text-base font-semibold tracking-tight',
+        md: 'text-lg font-semibold tracking-tight',
         lg: 'text-2xl font-semibold tracking-tight',
     };
 </script>

@@ -77,19 +77,49 @@
     <LandingNav />
     <LandingHero />
 
-    <!-- Mission band. Tight against the hero on purpose: it reads as the hero's
-         closing thought, and the long run of air comes after it. The Fund's own
-         mission statement, stated plainly rather than dressed up as a quote. -->
+    <!-- Vision and mission band. Tight against the hero on purpose: it reads as
+         the hero's closing thought, and the long run of air comes after it. The
+         two are set side by side because they answer different questions — what
+         changes, and what we do about it — and reading them together is the
+         point. Both are the Fund's own wording, stated plainly rather than
+         dressed up as a quote. -->
     <section class="bg-accent px-6 py-14 lg:px-12 lg:py-16">
-        <div class="mx-auto max-w-4xl text-center">
+        <div
+            class="mx-auto grid w-full max-w-6xl gap-10 md:grid-cols-2 md:gap-14"
+        >
             <!-- White on the accent band is 5.02:1. Grey would both fail and
-                 read washed out; text on a coloured band takes that band's hue. -->
-            <p
-                class="text-xl leading-relaxed text-balance text-white md:text-2xl"
-            >
-                Our mission is to build the African middle class through the
-                economic empowerment of African women entrepreneurs.
-            </p>
+                 read washed out; text on a coloured band takes that band's hue.
+                 The eyebrow is white/70 at this size, which still clears AA. -->
+            <div class="border-t border-white/25 pt-6 md:border-t-0 md:pt-0">
+                <p
+                    class="mb-4 text-sm font-semibold tracking-wide text-white/70 uppercase"
+                >
+                    Our vision
+                </p>
+                <p
+                    class="text-lg leading-relaxed text-pretty text-white md:text-xl"
+                >
+                    TLF believes in a vision which changes the narrative about
+                    the capacity of African women's businesses to grow, scale
+                    and adapt to technology in such a way that they can generate
+                    financial resources of their own and take advantage of the
+                    AfCFTA marketplace.
+                </p>
+            </div>
+
+            <div class="border-t border-white/25 pt-6 md:border-t-0 md:pt-0">
+                <p
+                    class="mb-4 text-sm font-semibold tracking-wide text-white/70 uppercase"
+                >
+                    Our mission
+                </p>
+                <p
+                    class="text-lg leading-relaxed text-pretty text-white md:text-xl"
+                >
+                    Our mission is to build the African middle class through the
+                    economic empowerment of African women entrepreneurs.
+                </p>
+            </div>
         </div>
     </section>
 
@@ -197,21 +227,22 @@
                 <div
                     class="relative isolate aspect-[4/3] overflow-hidden rounded-xl border border-line"
                 >
-                    <!-- NOTE: remote Unsplash asset; replace with an owned,
-                         licensed image before launch. Dimmed and desaturated to
-                         match the hero so a bright photograph does not punch a
-                         hole in the canvas. -->
+                    <!-- NOTE: Unsplash-licensed asset; replace with an owned,
+                         licensed image before launch. Desaturated to match the
+                         hero so a bright photograph does not punch a hole in
+                         the canvas. No `decoding="async"`: paired with a CSS
+                         filter it leaves Chrome rasterizing the layer before
+                         the image decodes, and the frame renders blank. -->
                     <img
-                        src="https://images.unsplash.com/photo-1744973149087-179e3ed54eae?auto=format&fit=crop&w=1400&q=80"
-                        alt="Two women listening intently at a programme gathering, lit in warm gold"
-                        width="1400"
-                        height="1050"
+                        src="/images/landing/women-founders.jpg"
+                        alt="Five women entrepreneurs sitting together and smiling in front of a painted wall"
+                        width="1600"
+                        height="1598"
                         loading="lazy"
-                        decoding="async"
-                        class="absolute inset-0 size-full object-cover brightness-[.82] saturate-[.6]"
+                        class="absolute inset-0 size-full object-cover object-[50%_60%] brightness-95 grayscale"
                     />
                     <div
-                        class="absolute inset-0 bg-accent/10 mix-blend-soft-light"
+                        class="absolute inset-0 bg-accent/15"
                         aria-hidden="true"
                     ></div>
                 </div>
