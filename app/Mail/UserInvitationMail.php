@@ -9,6 +9,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Throwable;
 
 class UserInvitationMail extends Mailable implements ShouldQueue
 {
@@ -24,6 +25,23 @@ class UserInvitationMail extends Mailable implements ShouldQueue
         return new Envelope(
             subject: 'You are invited to '.config('app.name'),
         );
+    }
+
+    /**
+     * Laravel calls this when the queued send exhausts its attempts.
+     *
+     * Without it a rejection by the mail provider is invisible: the queue push
+     * succeeded, so the request returned success, and the actual send happens
+     * later inside the worker where nothing is watching. That is the difference
+     * between "no error and no email" and a row that says why.
+     */
+    public function failed(Throwable $e): void
+    {
+        $this->invitation->forceFill([
+            'delivered_at' => null,
+            'delivery_failed_at' => now(),
+            'delivery_error' => $e->getMessage(),
+        ])->save();
     }
 
     public function content(): Content

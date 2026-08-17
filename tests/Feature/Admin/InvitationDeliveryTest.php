@@ -93,3 +93,22 @@ test('a normal send still queues and is marked delivered', function () {
         ->delivery_failed_at->toBeNull()
         ->delivered_at->not->toBeNull();
 });
+
+test('a queued send rejected by the provider marks the invitation, not just the log', function () {
+    $admin = User::factory()->admin()->approved()->create();
+    $invitation = UserInvitation::factory()->create([
+        'email' => 'invitee@example.com',
+        'invited_by' => $admin->id,
+        'delivered_at' => now(),
+    ]);
+
+    // What the worker does when Resend rejects the message: the HTTP request is
+    // long gone, so this hook is the only thing that can record it.
+    (new UserInvitationMail($invitation, 'raw-token'))
+        ->failed(new RuntimeException('The treeoflifefund.org domain is not verified.'));
+
+    expect($invitation->fresh())
+        ->delivered_at->toBeNull()
+        ->delivery_failed_at->not->toBeNull()
+        ->delivery_error->toContain('domain is not verified');
+});

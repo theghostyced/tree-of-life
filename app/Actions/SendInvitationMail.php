@@ -45,6 +45,9 @@ class SendInvitationMail
             }
         }
 
+        // "Accepted for delivery", not "in their inbox": on the queued path the
+        // provider has not been contacted yet. UserInvitationMail::failed()
+        // flips this back if the worker's send is rejected.
         $invitation->forceFill([
             'delivered_at' => now(),
             'delivery_failed_at' => null,
