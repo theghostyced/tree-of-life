@@ -44,7 +44,7 @@
                 Sign in to TLF
             </Link>
             <a
-                href="#faq"
+                href="/#faq"
                 class={cn(
                     'inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-accent-stroke/50 px-8 py-3.5 font-medium text-white transition-colors duration-200 hover:bg-white/10 sm:w-auto',
                     focusRing,

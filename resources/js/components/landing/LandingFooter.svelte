@@ -15,10 +15,10 @@
         {
             heading: 'The programme',
             links: [
-                { label: 'The fund', href: '#fund' },
-                { label: 'How it works', href: '#how-it-works' },
-                { label: 'Inside TLF', href: '#programme' },
-                { label: 'Questions', href: '#faq' },
+                { label: 'The fund', href: '/#fund' },
+                { label: 'How it works', href: '/how-it-works' },
+                { label: 'Inside TLF', href: '/#programme' },
+                { label: 'Questions', href: '/#faq' },
             ],
         },
         {

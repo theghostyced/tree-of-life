@@ -29,6 +29,7 @@ use App\Http\Controllers\Onboarding\DocumentController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');
+Route::inertia('/how-it-works', 'HowItWorks')->name('how-it-works');
 
 /*
  * Guest authentication + invitation acceptance (token-gated, no session required).

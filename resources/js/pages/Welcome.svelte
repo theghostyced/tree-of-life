@@ -7,7 +7,6 @@
     import LandingFooter from '@/components/landing/LandingFooter.svelte';
     import LandingHero from '@/components/landing/LandingHero.svelte';
     import LandingNav from '@/components/landing/LandingNav.svelte';
-    import ProcessStep from '@/components/landing/ProcessStep.svelte';
     import { cn } from '@/lib/utils';
 
     /**
@@ -15,34 +14,6 @@
      * login and invitation-acceptance screens, so it explains what TLF is
      * and routes invited people to sign in. There is no public registration.
      */
-
-    /** The real product loop, in the order a participant actually meets it. */
-    const steps = [
-        {
-            title: 'An admin invites you',
-            body: 'TLF is invitation-only. Your invitation arrives by email carrying a single-use link, and it stays valid for seven days.',
-        },
-        {
-            title: 'You set up your profile',
-            body: 'A guided wizard collects your details and documents, and shows exactly what is still missing, so nobody is left guessing whether they are ready.',
-        },
-        {
-            title: 'You choose your mentor',
-            body: 'Entrepreneurs browse approved mentors by expertise and industry and choose who to work with, several if that is what the business needs. Nobody is assigned a mentor without choosing them.',
-        },
-        {
-            title: 'You book real availability',
-            body: 'Mentors publish the hours they are free. Bookings land inside those hours, and every confirmed meeting carries its own joining link.',
-        },
-        {
-            title: 'You talk between meetings',
-            body: 'A private thread for each pairing keeps questions, context, and follow-ups in one place rather than scattered across inboxes.',
-        },
-        {
-            title: 'The meeting leaves a report',
-            body: 'The mentor writes a short written record afterwards. It is what both sides revisit later, and how the programme knows a mentorship is genuinely running.',
-        },
-    ];
 
     const faqs = [
         {
@@ -182,39 +153,6 @@
                     </p>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- How it works: an ordered sequence, not a tile grid. -->
-    <section
-        id="how-it-works"
-        class="scroll-mt-24 px-6 py-24 lg:px-12 lg:py-32"
-    >
-        <div class="mx-auto w-full max-w-7xl">
-            <div class="mb-14 max-w-2xl">
-                <h2
-                    class="mb-4 text-4xl font-semibold tracking-[-0.02em] text-balance text-ink md:text-5xl"
-                >
-                    How TLF works
-                </h2>
-                <p class="max-w-[65ch] text-lg text-pretty text-muted">
-                    Six steps from an invitation to a written record, the same
-                    path for every founder and every mentor on the programme.
-                </p>
-            </div>
-
-            <!-- Runs the full 7xl column, matching the hero and the section
-                 above; ProcessStep caps its own prose, so the extra width goes
-                 to the hairlines rather than to the line length. -->
-            <ol class="border-b border-line">
-                {#each steps as step, i (step.title)}
-                    <ProcessStep
-                        index={i + 1}
-                        title={step.title}
-                        body={step.body}
-                    />
-                {/each}
-            </ol>
         </div>
     </section>
 

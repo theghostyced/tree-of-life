@@ -87,7 +87,7 @@
                         Get Started
                     </Link>
                     <a
-                        href="#how-it-works"
+                        href="/how-it-works"
                         class={cn(
                             'inline-flex min-h-11 items-center rounded-lg border border-line-strong px-6 py-3 text-sm font-medium text-ink transition-colors duration-200 hover:bg-elevated sm:text-base',
                             focusRing,

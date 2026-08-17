@@ -10,12 +10,18 @@
      * behind it. TLF is invitation-only, so there is no "sign up" here on
      * purpose; the only account action a visitor can take is signing in.
      */
-    /** Ordered to match the page, so the bar reads as a table of contents. */
+    /**
+     * Ordered to match the landing page, so the bar reads as a table of
+     * contents. The anchors are absolute rather than bare fragments because
+     * this bar also renders on /how-it-works, where a bare `#fund` would
+     * resolve to nothing; from the landing page itself the browser still
+     * treats `/#fund` as a same-document scroll.
+     */
     const sections = [
-        { href: '#fund', label: 'The fund' },
-        { href: '#how-it-works', label: 'How it works' },
-        { href: '#programme', label: 'The programme' },
-        { href: '#faq', label: 'Questions' },
+        { href: '/#fund', label: 'The fund' },
+        { href: '/how-it-works', label: 'How it works' },
+        { href: '/#programme', label: 'The programme' },
+        { href: '/#faq', label: 'Questions' },
     ];
 
     /**
