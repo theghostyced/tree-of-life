@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\InvitationImportStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreInvitationImportRequest;
 use App\Jobs\ProcessInvitationImport;
@@ -11,6 +12,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Throwable;
 
 class InvitationImportController extends Controller
 {
@@ -58,7 +60,19 @@ class InvitationImportController extends Controller
             "{$import->id}.csv",
         );
 
-        ProcessInvitationImport::dispatch($import);
+        // Dispatching is what fails first when the queue broker is unreachable.
+        // The file is already stored, so mark the import failed and say so
+        // rather than throwing: the admin can re-upload once the queue is back.
+        try {
+            ProcessInvitationImport::dispatch($import);
+        } catch (Throwable $e) {
+            report($e);
+            $import->update(['status' => InvitationImportStatus::Failed]);
+
+            return redirect()
+                ->route('admin.invitations.index')
+                ->with('status', "Import of {$import->filename} could not be started because the queue is unavailable. Try again once it is back.");
+        }
 
         return redirect()
             ->route('admin.invitations.index')

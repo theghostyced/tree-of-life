@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\Entrepreneur;
 
 use App\Actions\CreateUserInvitation;
+use App\Actions\SendInvitationMail;
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Entrepreneur\StoreEmployeeInvitationRequest;
-use App\Mail\UserInvitationMail;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Mail;
 
 class EmployeeInvitationController extends Controller
 {
@@ -24,8 +23,10 @@ class EmployeeInvitationController extends Controller
             name: $request->validated('name'),
         );
 
-        Mail::to($invitation->email)->queue(new UserInvitationMail($invitation, $token));
+        $delivered = app(SendInvitationMail::class)->handle($invitation, $token);
 
-        return back()->with('status', 'Invitation sent to '.$invitation->email.'.');
+        return back()->with('status', $delivered
+            ? 'Invitation sent to '.$invitation->email.'.'
+            : 'Invitation created, but the email to '.$invitation->email.' could not be delivered. Ask an admin to retry it.');
     }
 }

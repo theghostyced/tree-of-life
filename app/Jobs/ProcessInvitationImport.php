@@ -3,16 +3,15 @@
 namespace App\Jobs;
 
 use App\Actions\CreateUserInvitation;
+use App\Actions\SendInvitationMail;
 use App\Enums\InvitationImportStatus;
 use App\Enums\UserRole;
-use App\Mail\UserInvitationMail;
 use App\Models\InvitationImport;
 use App\Models\User;
 use App\Models\UserInvitation;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Throwable;
 
@@ -184,7 +183,13 @@ class ProcessInvitationImport implements ShouldQueue
             name: $name,
         );
 
-        Mail::to($invitation->email)->queue(new UserInvitationMail($invitation, $token));
+        if (! app(SendInvitationMail::class)->handle($invitation, $token)) {
+            // The row is still a real invitation, so it counts as invited; the
+            // admin retries the delivery from the invitations list.
+            $this->record('invited_count', $line, $email, 'invited, but the email could not be delivered');
+
+            return;
+        }
 
         $this->import->invited_count++;
     }
