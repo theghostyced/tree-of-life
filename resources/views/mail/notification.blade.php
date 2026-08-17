@@ -20,9 +20,13 @@
                         <td style="padding:0 4px 24px;">
                             <table role="presentation" cellpadding="0" cellspacing="0">
                                 <tr>
-                                    {{-- A hosted raster rather than inline vector markup, which Gmail strips. --}}
+                                    {{-- Embedded, not linked. Gmail and Outlook block remote images by
+                                         default until the reader clicks "display images", which left the
+                                         mark as an empty box. Attaching it to the message sidesteps that.
+                                         The url() fallback covers rendering outside a mail context, where
+                                         $message does not exist. --}}
                                     <td style="width:40px;height:40px;vertical-align:middle;">
-                                        <img src="{{ url('/images/brand/tree-of-life.png') }}" width="40" height="40" alt="{{ $appName }}" style="display:block;width:40px;height:40px;border:0;outline:none;text-decoration:none;">
+                                        <img src="{{ isset($message) ? $message->embed(public_path('images/brand/tree-of-life.png')) : url('/images/brand/tree-of-life.png') }}" width="40" height="40" alt="{{ $appName }}" style="display:block;width:40px;height:40px;border:0;outline:none;text-decoration:none;">
                                     </td>
                                     <td style="padding-left:12px;font-size:16px;font-weight:600;letter-spacing:-0.01em;color:#20211b;vertical-align:middle;">{{ $appName }}</td>
                                 </tr>
