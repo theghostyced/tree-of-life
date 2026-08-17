@@ -14,11 +14,18 @@
     <!-- Fully desaturated so the photograph joins the accent world rather than
          importing its own colour cast. Intrinsic size is declared so the hero
          reserves its space and cannot shift layout as it decodes. -->
+    <!-- The hero is the LCP element and spans the viewport, so it ships a
+         srcset rather than one file: a phone pulls 112KB where a wide 2x
+         display pulls 356KB. `sizes` is 100vw because the frame is full-bleed. -->
     <img
-        src="/images/landing/boardroom-founders.jpg"
+        src="/images/landing/boardroom-founders-1920.jpg"
+        srcset="/images/landing/boardroom-founders-1280.jpg 1280w,
+                /images/landing/boardroom-founders-1920.jpg 1920w,
+                /images/landing/boardroom-founders-2560.jpg 2560w"
+        sizes="100vw"
         alt="Five women entrepreneurs around a boardroom table, one speaking while the others listen"
-        width="675"
-        height="453"
+        width="1920"
+        height="1282"
         fetchpriority="high"
         class="absolute inset-0 size-full object-cover object-center contrast-110 grayscale"
     />

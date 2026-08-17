@@ -27,7 +27,7 @@
         alt=""
         aria-hidden="true"
         fetchpriority="high"
-        class="absolute inset-0 size-full object-cover object-[50%_42%] brightness-75 contrast-125 grayscale"
+        class="absolute inset-0 size-full object-cover object-[55%_35%] brightness-75 contrast-125 grayscale"
     />
     <div class="tint" aria-hidden="true"></div>
     <div class="scrim" aria-hidden="true"></div>

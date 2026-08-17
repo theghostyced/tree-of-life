@@ -227,19 +227,21 @@
                 <div
                     class="relative isolate aspect-[4/3] overflow-hidden rounded-xl border border-line"
                 >
-                    <!-- NOTE: Unsplash-licensed asset; replace with an owned,
-                         licensed image before launch. Desaturated to match the
-                         hero so a bright photograph does not punch a hole in
-                         the canvas. No `decoding="async"`: paired with a CSS
-                         filter it leaves Chrome rasterizing the layer before
-                         the image decodes, and the frame renders blank. -->
+                    <!-- NOTE: 600px source, the largest supplied. It is about
+                         1:1 in CSS pixels here but upscales on a 2x display;
+                         swap in the original when it is available. Desaturated
+                         to match the hero so a bright photograph does not punch
+                         a hole in the canvas. No `decoding="async"`: paired
+                         with a CSS filter it leaves Chrome rasterizing the
+                         layer before the image decodes, and the frame renders
+                         blank. -->
                     <img
                         src="/images/landing/women-founders.jpg"
-                        alt="Five women entrepreneurs sitting together and smiling in front of a painted wall"
-                        width="1600"
-                        height="1598"
+                        alt="Three women entrepreneurs talking over a tablet and notes at a low table"
+                        width="600"
+                        height="400"
                         loading="lazy"
-                        class="absolute inset-0 size-full object-cover object-[50%_60%] brightness-95 grayscale"
+                        class="absolute inset-0 size-full object-cover object-center brightness-95 grayscale"
                     />
                     <div
                         class="absolute inset-0 bg-accent/15"
