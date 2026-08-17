@@ -31,10 +31,17 @@
         <button
             type="button"
             onclick={() => onResend(invitation)}
-            class={cn(btn, 'text-muted hover:bg-elevated hover:text-ink')}
+            class={cn(
+                btn,
+                invitation.deliveryFailed
+                    ? 'font-semibold text-danger hover:bg-danger/10'
+                    : 'text-muted hover:bg-elevated hover:text-ink',
+            )}
         >
             <RotateCw class="size-3.5" strokeWidth={1.75} />
-            Resend
+            <!-- Same action either way; the word changes because retrying a
+                 failed delivery is a different intent from nudging an invitee. -->
+            {invitation.deliveryFailed ? 'Retry' : 'Resend'}
         </button>
         {#if confirming}
             <button

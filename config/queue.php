@@ -73,6 +73,18 @@ return [
             'after_commit' => false,
         ],
 
+        /*
+         * Redis first, database as the safety net. Set QUEUE_CONNECTION=failover
+         * where a Redis outage should degrade rather than throw: pushes fall
+         * through to the `jobs` table instead of refusing the connection. The
+         * worker must then be told to drain both, e.g.
+         * `queue:work failover --queue=default`.
+         */
+        'failover' => [
+            'driver' => 'failover',
+            'connections' => ['redis', 'database'],
+        ],
+
         'deferred' => [
             'driver' => 'deferred',
         ],

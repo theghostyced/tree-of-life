@@ -57,7 +57,11 @@ export function createColumns(handlers: Handlers): ColumnDef<Invitation>[] {
             header: ({ column }) =>
                 renderComponent(SortableHeader, { label: 'Status', column }),
             cell: ({ row }) =>
-                renderComponent(StatusCell, { status: row.original.status }),
+                renderComponent(StatusCell, {
+                    status: row.original.status,
+                    deliveryFailed: row.original.deliveryFailed,
+                    deliveryError: row.original.deliveryError,
+                }),
         },
         {
             accessorKey: 'invitedBy',

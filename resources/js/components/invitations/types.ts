@@ -15,6 +15,9 @@ export type Invitation = {
     invitedBy: string;
     sentAt: number;
     expiresAt: number;
+    /** The invitation exists but its email never got out; it can be retried. */
+    deliveryFailed: boolean;
+    deliveryError: string | null;
 };
 
 // Calm, semantic tones. Status is always paired with a dot + label so it never

@@ -23,10 +23,14 @@ use Illuminate\Support\Carbon;
  * @property Carbon $expires_at
  * @property Carbon|null $accepted_at
  * @property Carbon|null $revoked_at
+ * @property Carbon|null $delivered_at
+ * @property Carbon|null $delivery_failed_at
+ * @property string|null $delivery_error
  */
 #[Fillable([
     'email', 'role', 'token_hash', 'invited_by', 'accepted_user_id',
     'company_id', 'name', 'note', 'expires_at', 'accepted_at', 'revoked_at',
+    'delivered_at', 'delivery_failed_at', 'delivery_error',
 ])]
 class UserInvitation extends Model
 {
@@ -43,6 +47,8 @@ class UserInvitation extends Model
             'expires_at' => 'datetime',
             'accepted_at' => 'datetime',
             'revoked_at' => 'datetime',
+            'delivered_at' => 'datetime',
+            'delivery_failed_at' => 'datetime',
         ];
     }
 

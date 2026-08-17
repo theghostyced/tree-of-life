@@ -3,16 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Actions\CreateUserInvitation;
+use App\Actions\SendInvitationMail;
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\BulkInvitationActionRequest;
 use App\Http\Requests\Admin\StoreInvitationRequest;
-use App\Mail\UserInvitationMail;
 use App\Models\InvitationImport;
 use App\Models\UserInvitation;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -34,6 +33,8 @@ class InvitationController extends Controller
                 'invitedBy' => $invitation->inviter?->name ?? 'Unknown',
                 'sentAt' => $invitation->created_at->getTimestampMs(),
                 'expiresAt' => $invitation->expires_at->getTimestampMs(),
+                'deliveryFailed' => $invitation->delivery_failed_at !== null,
+                'deliveryError' => $invitation->delivery_error,
             ]);
 
         $latestImport = InvitationImport::query()->latest('id')->first();
@@ -62,11 +63,13 @@ class InvitationController extends Controller
             name: $request->validated('name'),
         );
 
-        Mail::to($invitation->email)->queue(new UserInvitationMail($invitation, $token));
+        $delivered = app(SendInvitationMail::class)->handle($invitation, $token);
 
         return redirect()
             ->route('admin.invitations.index')
-            ->with('status', 'Invitation sent to '.$invitation->email.'.');
+            ->with('status', $delivered
+                ? 'Invitation sent to '.$invitation->email.'.'
+                : 'Invitation created, but the email to '.$invitation->email.' could not be delivered. Retry it from the list.');
     }
 
     public function resend(UserInvitation $invitation): RedirectResponse
@@ -80,9 +83,11 @@ class InvitationController extends Controller
             'expires_at' => now()->addDays(7),
         ]);
 
-        Mail::to($invitation->email)->queue(new UserInvitationMail($invitation, $token));
+        $delivered = app(SendInvitationMail::class)->handle($invitation, $token);
 
-        return back()->with('status', 'Invitation resent to '.$invitation->email.'.');
+        return back()->with('status', $delivered
+            ? 'Invitation resent to '.$invitation->email.'.'
+            : 'The email to '.$invitation->email.' still could not be delivered.');
     }
 
     public function revoke(UserInvitation $invitation): RedirectResponse
@@ -118,7 +123,7 @@ class InvitationController extends Controller
                     'token_hash' => hash('sha256', $token),
                     'expires_at' => now()->addDays(7),
                 ]);
-                Mail::to($invitation->email)->queue(new UserInvitationMail($invitation, $token));
+                app(SendInvitationMail::class)->handle($invitation, $token);
             } else {
                 $invitation->update(['revoked_at' => now()]);
             }
