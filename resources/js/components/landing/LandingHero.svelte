@@ -15,10 +15,10 @@
          importing its own colour cast. Intrinsic size is declared so the hero
          reserves its space and cannot shift layout as it decodes. -->
     <img
-        src="/images/landing/mural-founders.jpg"
-        alt="Six women entrepreneurs dressed in white, standing and seated against a large painted flower mural"
-        width="2000"
-        height="1333"
+        src="/images/landing/boardroom-founders.jpg"
+        alt="Five women entrepreneurs around a boardroom table, one speaking while the others listen"
+        width="675"
+        height="453"
         fetchpriority="high"
         class="absolute inset-0 size-full object-cover object-center contrast-110 grayscale"
     />

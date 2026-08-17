@@ -20,13 +20,14 @@
 <aside
     class="relative hidden w-[45%] flex-col justify-between overflow-hidden border-r border-line bg-accent lg:flex"
 >
-    <!-- object-position keeps her face in frame as the panel narrows. -->
+    <!-- A landscape frame in a tall panel: object-position holds the group
+         centred so the vertical crop keeps faces rather than table and wall. -->
     <img
-        src="/images/auth/rooftop-founder.jpg"
+        src="/images/auth/corporate-founders.jpg"
         alt=""
         aria-hidden="true"
         fetchpriority="high"
-        class="absolute inset-0 size-full object-cover object-[62%_38%] brightness-75 contrast-125 grayscale"
+        class="absolute inset-0 size-full object-cover object-[50%_42%] brightness-75 contrast-125 grayscale"
     />
     <div class="tint" aria-hidden="true"></div>
     <div class="scrim" aria-hidden="true"></div>
