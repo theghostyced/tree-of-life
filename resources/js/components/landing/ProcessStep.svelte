@@ -1,6 +1,6 @@
 <script lang="ts">
     /**
-     * One step in the "How Tolfund works" sequence.
+     * One step in the "How TLF works" sequence.
      *
      * Deliberately not a card. DESIGN.md rules out repeated icon+heading+text
      * tiles and asks for queues and timelines instead, and the invite → profile

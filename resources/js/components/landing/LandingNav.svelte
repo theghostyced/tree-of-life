@@ -7,7 +7,7 @@
     /**
      * Public top bar for the marketing page. Sits over the hero photograph, so
      * every control is light-on-dark regardless of what the image is doing
-     * behind it. Tolfund is invitation-only, so there is no "sign up" here on
+     * behind it. TLF is invitation-only, so there is no "sign up" here on
      * purpose; the only account action a visitor can take is signing in.
      */
     /** Ordered to match the page, so the bar reads as a table of contents. */

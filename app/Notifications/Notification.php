@@ -9,7 +9,7 @@ use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification as BaseNotification;
 
 /**
- * Base for every Tolfund notification. Concrete notifications declare their
+ * Base for every TLF notification. Concrete notifications declare their
  * channels via `via()` and build one `data()` payload reused by the database,
  * broadcast, and (where present) mail representations. Always queued.
  */

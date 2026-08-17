@@ -315,8 +315,8 @@
                     Invitations
                 </h1>
                 <p class="mt-1 max-w-xl text-sm text-muted">
-                    TOL is invitation-only. Invite founders, mentors and
-                    admins by email, and track who has joined.
+                    TLF is invitation-only. Invite founders, mentors and admins
+                    by email, and track who has joined.
                 </p>
             </div>
             <div class="flex shrink-0 items-center gap-2.5">
@@ -484,8 +484,8 @@
                     No invitations yet
                 </h3>
                 <p class="mt-2 max-w-sm text-[15px] text-muted">
-                    Everyone on TOL starts with an invitation. Send your
-                    first one to bring a founder, mentor or admin on board.
+                    Everyone on TLF starts with an invitation. Send your first
+                    one to bring a founder, mentor or admin on board.
                 </p>
                 <button
                     type="button"

@@ -33,7 +33,7 @@
             dot: 'bg-accent-orange',
             illustration: '/images/illustrations/security-spy.svg',
             headline: 'This area isn’t part of your role',
-            body: 'You’re signed in, but this page belongs to a different role on TOL. If you think you should have access, ask your program admin to update your account.',
+            body: 'You’re signed in, but this page belongs to a different role on TLF. If you think you should have access, ask your program admin to update your account.',
             secondary: 'back',
         },
         404: {

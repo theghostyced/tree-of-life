@@ -6,7 +6,7 @@ product
 
 ## Users
 
-Tolfund is an invitation-only platform that connects entrepreneurs with mentors and supports that relationship through scheduled meetings and a report for every meeting. Three roles, each in a different operational context:
+TLF is an invitation-only platform that connects entrepreneurs with mentors and supports that relationship through scheduled meetings and a report for every meeting. Three roles, each in a different operational context:
 
 - **Admins** — program operators who invite and vet people, manage accounts (revoke / restore / remove), monitor mentor–entrepreneur pairings, and keep an eye on whether meetings are happening and reports are being captured. Context: focused, repeated daily use; they keep the program running and accountable.
 - **Entrepreneurs** — founders who complete a profile, choose their mentors from the approved mentors in the system (several at once if they want), schedule meetings, and read the report from each meeting. Context: goal-oriented, often less technical; needs clear guidance and status at every step.
@@ -14,17 +14,17 @@ Tolfund is an invitation-only platform that connects entrepreneurs with mentors 
 
 The job to be done: connect the right mentor to each entrepreneur, make meetings easy to schedule and keep, and leave a clear record — a report — of every meeting, so the relationship is well supported and the program stays accountable. Every actor needs to know *what state something is in* and *what they can do next*.
 
-**Tolfund does not move money and runs no funding workflow.** It is a mentorship and meeting-support system only — no applications, awards, milestones, or disbursements.
+**TLF does not move money and runs no funding workflow.** It is a mentorship and meeting-support system only — no applications, awards, milestones, or disbursements.
 
 ## Product Purpose
 
-Tolfund runs a mentorship program end to end: onboarding, mentor–entrepreneur pairing, availability, scheduling, meetings, and a report for every meeting. It exists to make a multi-party working relationship transparent and accountable — replacing spreadsheets and email with a single system of record where authorization is enforced server-side. Success looks like: admins always know who is paired and whether meetings are happening, entrepreneurs and mentors always know their next meeting and next action, and every meeting leaves a durable, reviewable report.
+TLF runs a mentorship program end to end: onboarding, mentor–entrepreneur pairing, availability, scheduling, meetings, and a report for every meeting. It exists to make a multi-party working relationship transparent and accountable — replacing spreadsheets and email with a single system of record where authorization is enforced server-side. Success looks like: admins always know who is paired and whether meetings are happening, entrepreneurs and mentors always know their next meeting and next action, and every meeting leaves a durable, reviewable report.
 
 ## Brand Personality
 
 **Trustworthy · grounded · warm.**
 
-Serious about people's time and growth, but human and encouraging. Tolfund is a supportive institution, not a cold portal. The voice is plain, direct, and reassuring — it tells people exactly where they stand and what to do next, without jargon or false cheer. Emotional goals: confidence (this is handled properly), clarity (I know my next step), and dignity (I'm supported, not processed). The warm cream/green/earth palette carries the human side; precision and strong status visibility carry the trust.
+Serious about people's time and growth, but human and encouraging. TLF is a supportive institution, not a cold portal. The voice is plain, direct, and reassuring — it tells people exactly where they stand and what to do next, without jargon or false cheer. Emotional goals: confidence (this is handled properly), clarity (I know my next step), and dignity (I'm supported, not processed). The warm cream/green/earth palette carries the human side; precision and strong status visibility carry the trust.
 
 ## Anti-references
 

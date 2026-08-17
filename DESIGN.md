@@ -1,5 +1,5 @@
 ---
-name: Tolfund
+name: TLF
 description: A warm, status-driven mentorship and meeting-support platform — trustworthy, grounded, human.
 colors:
   primary: "#024017"
@@ -94,13 +94,13 @@ components:
     padding: "24px"
 ---
 
-# Design System: Tolfund
+# Design System: TLF
 
 ## 1. Overview
 
 **Creative North Star: "The Greenhouse"**
 
-Tolfund is a greenhouse for entrepreneurs: a warm, structured, well-lit place where mentor–entrepreneur relationships are cultivated, tracked, and brought to maturity. The green primary (`#024017`, a deep cultivated leaf) is the growth; the cream background (`#ffecc2`, warm morning light through glass) is the shelter; the earth-brown ink (`#401602`) is the soil everything is rooted in. This is not a bank and not a government portal — it is a supportive institution that is careful with people's time and growth, and the interface must feel like it is *handling this properly* while still treating people with warmth and dignity.
+TLF is a greenhouse for entrepreneurs: a warm, structured, well-lit place where mentor–entrepreneur relationships are cultivated, tracked, and brought to maturity. The green primary (`#024017`, a deep cultivated leaf) is the growth; the cream background (`#ffecc2`, warm morning light through glass) is the shelter; the earth-brown ink (`#401602`) is the soil everything is rooted in. This is not a bank and not a government portal — it is a supportive institution that is careful with people's time and growth, and the interface must feel like it is *handling this properly* while still treating people with warmth and dignity.
 
 The system is built for operators under repeated daily pressure. Its first job on every screen is to make the current **state** and the next **legal action** unmistakable — status is the interface, not decoration on top of it. Density is a feature: reviewers clear queues in tables and timelines, not in spacious marketing layouts. But density only earns its keep when warmth, hierarchy, and contrast keep it legible. The warm palette carries the human side; exact numbers, aligned columns, and strong status visibility carry the trust.
 
@@ -119,7 +119,7 @@ This system explicitly rejects the **generic SaaS dashboard** (no purple gradien
 A warm earth palette: deep cultivated green as the voice of action and trust, a cream field as the ground, brown as ink, and a tightly scoped set of accents and semantic status colors. Authored in HSL in `resources/css/app.css` (`@theme`); hex equivalents appear in the frontmatter for tooling.
 
 ### Primary
-- **Cultivated Green** (`#024017` · `hsl(140, 94%, 13%)`): The brand voice. Primary buttons, active nav, key totals, brand chrome, and any surface that must read as "Tolfund, handled." Deliberately deep and low-lightness so cream text sits on it at ~10:1. Note: this hue was rotated from the original brown `#401602` at *identical* saturation and lightness — green and ink are the same color wearing different clothes.
+- **Cultivated Green** (`#024017` · `hsl(140, 94%, 13%)`): The brand voice. Primary buttons, active nav, key totals, brand chrome, and any surface that must read as "TLF, handled." Deliberately deep and low-lightness so cream text sits on it at ~10:1. Note: this hue was rotated from the original brown `#401602` at *identical* saturation and lightness — green and ink are the same color wearing different clothes.
 - **Cultivated Green Deep** (`#013012` · synthesized): The hover/active step under Cultivated Green. Used only as the pressed/hover state of primary surfaces.
 
 ### Secondary
@@ -146,7 +146,7 @@ A warm earth palette: deep cultivated green as the voice of action and trust, a 
 ### Named Rules
 **The Cream Field Rule.** Every screen sits on Warm Field cream (`#ffecc2`). Content lifts off it on Surface White. Pure white is never the page background, and cream is never a content plane — the two-layer warmth is the identity.
 
-**The Green-Is-Action Rule.** Cultivated Green means "the primary thing you can do" and "Tolfund itself." It is never decoration and never a status. Status is carried only by the semantic quartet (Success / Warning / Error / Info-blue). If green and Success Green ever appear adjacent, the Success color must be the brighter cool one so the two do not read as the same state.
+**The Green-Is-Action Rule.** Cultivated Green means "the primary thing you can do" and "TLF itself." It is never decoration and never a status. Status is carried only by the semantic quartet (Success / Warning / Error / Info-blue). If green and Success Green ever appear adjacent, the Success color must be the brighter cool one so the two do not read as the same state.
 
 **The Accent Rarity Rule.** Ember Orange and Harvest Yellow together occupy ≤10% of any screen. Their heat is the signal; spend it only on genuine attention and pending action.
 
@@ -170,7 +170,7 @@ A warm earth palette: deep cultivated green as the voice of action and trust, a 
 
 ## 4. Elevation
 
-Tolfund is **flat with a warm two-layer ground**, not a shadow-driven system. Depth comes from the cream-field-vs-Surface-White contrast and from hairline borders (Light Border on the field, Dark Border for emphasis), not from stacked drop shadows. The only ambient lift permitted is a single soft, low shadow to float a content surface off the cream field, and structural shadows for genuinely floating layers — dropdowns, popovers, modals, toasts. Resting cards do **not** cast shadows; they are defined by their border and their white plane.
+TLF is **flat with a warm two-layer ground**, not a shadow-driven system. Depth comes from the cream-field-vs-Surface-White contrast and from hairline borders (Light Border on the field, Dark Border for emphasis), not from stacked drop shadows. The only ambient lift permitted is a single soft, low shadow to float a content surface off the cream field, and structural shadows for genuinely floating layers — dropdowns, popovers, modals, toasts. Resting cards do **not** cast shadows; they are defined by their border and their white plane.
 
 ### Shadow Vocabulary
 - **Field Lift** (`box-shadow: 0 1px 2px rgba(64, 22, 2, 0.06)`): Optional, subtle. Floats a primary content card off the cream field. Tinted with Earth Ink, never neutral gray-black.
@@ -239,7 +239,7 @@ Role pages are full-height surfaces inside their role layout (the layout's `<mai
 
 ### Do:
 - **Do** sit every screen on Warm Field cream (`#ffecc2`) and lift content onto Surface White. The two-layer warmth is the brand.
-- **Do** reserve Cultivated Green (`#024017`) for primary actions and Tolfund's own chrome — action and identity, never status.
+- **Do** reserve Cultivated Green (`#024017`) for primary actions and TLF's own chrome — action and identity, never status.
 - **Do** carry status with the semantic quartet (Success `#2f7f33` / Warning `#e0bf00` / Error `#c72929` / Info `#6cb6da`) **and always a text label**. Never encode status by color alone.
 - **Do** keep Muted Earth (`#7c5b4b`) as the floor for secondary text — it passes 4.5:1 on cream and white. Verify contrast on the warm background, where muted text easily falls short.
 - **Do** use one family, Instrument Sans, at fixed rem sizes across headings, data, and labels.
