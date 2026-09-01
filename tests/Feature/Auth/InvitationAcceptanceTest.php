@@ -7,6 +7,7 @@ use App\Models\UserInvitation;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 
@@ -211,4 +212,61 @@ test('the acceptance POST revalidates the token even if the GET page was valid',
     ])->assertGone();
 
     expect(User::where('email', 'racer@example.com')->exists())->toBeFalse();
+});
+
+/**
+ * The 410 page is deliberately vague, because the visitor is unauthenticated
+ * and holds only a token. The operator is a different audience: the log has to
+ * say which of the three dead states fired, or a refused link is unanswerable
+ * after the fact.
+ */
+test('a refused invitation link records which state refused it', function (string $state, string $expected) {
+    Log::spy();
+    [$invitation, $token] = pendingInvitation(['email' => 'invitee@example.com']);
+    $invitation->forceFill(match ($state) {
+        'expired' => ['expires_at' => now()->subDay()],
+        'revoked' => ['revoked_at' => now()],
+        'accepted' => ['accepted_at' => now()],
+    })->save();
+
+    $this->get("/invitations/accept/{$token}")->assertGone();
+
+    Log::shouldHaveReceived('warning')->withArgs(
+        fn (string $message, array $context): bool => $message === 'Invitation link refused'
+            && $context['invitation_id'] === $invitation->id
+            && $context['status'] === $expected
+            && $context['method'] === 'GET'
+    )->once();
+})->with([
+    ['expired', 'expired'],
+    ['revoked', 'revoked'],
+    ['accepted', 'accepted'],
+]);
+
+test('a refused invitation link never writes the token or the email to the log', function () {
+    Log::spy();
+    [$invitation, $token] = pendingInvitation(['email' => 'invitee@example.com']);
+    $invitation->forceFill(['revoked_at' => now()])->save();
+
+    $this->get("/invitations/accept/{$token}")->assertGone();
+
+    Log::shouldHaveReceived('warning')->withArgs(function (string $message, array $context) use ($token): bool {
+        $encoded = json_encode($context);
+
+        return ! str_contains($encoded, $token)
+            && ! str_contains($encoded, hash('sha256', $token))
+            && ! str_contains($encoded, 'invitee@example.com');
+    })->once();
+});
+
+test('an unrecognised invitation token is recorded without echoing the token', function () {
+    Log::spy();
+    $token = Str::random(64);
+
+    $this->get("/invitations/accept/{$token}")->assertNotFound();
+
+    Log::shouldHaveReceived('warning')->withArgs(
+        fn (string $message, array $context): bool => $message === 'Invitation token not recognised'
+            && ! str_contains(json_encode($context), $token)
+    )->once();
 });

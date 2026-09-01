@@ -8,6 +8,7 @@ use App\Http\Requests\Auth\AcceptInvitationRequest;
 use App\Models\UserInvitation;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -51,6 +52,12 @@ class InvitationAcceptanceController extends Controller
     /**
      * Resolve a still-pending invitation by its raw token, or abort:
      * 404 for an unknown token, 410 Gone for an expired/revoked/used one.
+     *
+     * Both refusals are logged. The page shown to the visitor is deliberately
+     * vague — they are unauthenticated and hold only a token — so these lines
+     * are the only record of why a link was turned away. Neither the token,
+     * its hash, nor the invited email is written out: the invitation id is
+     * enough to look the rest up, and keeps credentials and PII out of logs.
      */
     private function pendingInvitationOrAbort(string $token): UserInvitation
     {
@@ -58,8 +65,23 @@ class InvitationAcceptanceController extends Controller
             ->where('token_hash', hash('sha256', $token))
             ->first();
 
-        abort_if($invitation === null, 404);
-        abort_unless($invitation->isPending(), 410);
+        $method = request()->method();
+
+        if ($invitation === null) {
+            Log::warning('Invitation token not recognised', ['method' => $method]);
+
+            abort(404);
+        }
+
+        if (! $invitation->isPending()) {
+            Log::warning('Invitation link refused', [
+                'invitation_id' => $invitation->id,
+                'status' => $invitation->status()->value,
+                'method' => $method,
+            ]);
+
+            abort(410);
+        }
 
         return $invitation;
     }

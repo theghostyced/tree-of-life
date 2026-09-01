@@ -80,3 +80,39 @@ test('a non-admin cannot resend or revoke invitations', function () {
 
     expect($invitation->fresh()->revoked_at)->toBeNull();
 });
+
+/**
+ * The expiry window is one number applied by three separate write paths, so it
+ * lives in config rather than being retyped at each call site — otherwise a
+ * resend can silently grant a different window than the original invite.
+ */
+test('the invitation expiry window comes from config', function () {
+    Mail::fake();
+    config(['invitations.expiry_days' => 3]);
+    $admin = User::factory()->admin()->approved()->create();
+
+    $this->actingAs($admin)
+        ->post('/admin/invitations', ['email' => 'fresh@example.com', 'role' => 'entrepreneur'])
+        ->assertRedirect();
+
+    expect(UserInvitation::firstWhere('email', 'fresh@example.com')->expires_at)
+        ->toBeBetween(now()->addDays(3)->subMinute(), now()->addDays(3)->addMinute());
+});
+
+test('resending applies the configured expiry window, not a hardcoded one', function () {
+    Mail::fake();
+    config(['invitations.expiry_days' => 3]);
+    $admin = User::factory()->admin()->approved()->create();
+    $invitation = UserInvitation::factory()->pending()->create();
+
+    $this->actingAs($admin)
+        ->post("/admin/invitations/{$invitation->id}/resend")
+        ->assertRedirect();
+
+    expect($invitation->fresh()->expires_at)
+        ->toBeBetween(now()->addDays(3)->subMinute(), now()->addDays(3)->addMinute());
+});
+
+test('the shipped default expiry window is seven days', function () {
+    expect(config('invitations.expiry_days'))->toBe(7);
+});

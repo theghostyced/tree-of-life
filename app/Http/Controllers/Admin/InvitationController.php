@@ -80,7 +80,7 @@ class InvitationController extends Controller
         $token = Str::random(64);
         $invitation->update([
             'token_hash' => hash('sha256', $token),
-            'expires_at' => now()->addDays(7),
+            'expires_at' => now()->addDays(config('invitations.expiry_days')),
         ]);
 
         $delivered = app(SendInvitationMail::class)->handle($invitation, $token);
@@ -121,7 +121,7 @@ class InvitationController extends Controller
                 $token = Str::random(64);
                 $invitation->update([
                     'token_hash' => hash('sha256', $token),
-                    'expires_at' => now()->addDays(7),
+                    'expires_at' => now()->addDays(config('invitations.expiry_days')),
                 ]);
                 app(SendInvitationMail::class)->handle($invitation, $token);
             } else {

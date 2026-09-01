@@ -31,7 +31,7 @@ class CreateUserInvitation
             'invited_by' => $invitedBy->id,
             'company_id' => $companyId,
             'name' => $name,
-            'expires_at' => now()->addDays(7),
+            'expires_at' => now()->addDays(config('invitations.expiry_days')),
         ]);
 
         return [$invitation, $token];
