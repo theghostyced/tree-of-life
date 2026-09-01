@@ -38,7 +38,10 @@ return Application::configure(basePath: dirname(__DIR__))
             $status = $response->getStatusCode();
 
             // 500s keep the framework debug page while APP_DEBUG is on.
-            $renderable = in_array($status, [403, 404], true)
+            // 410 is the dead-invitation link: neither Laravel nor this app ships
+            // an errors::410 or errors::4xx view, so without it the invitee falls
+            // through to Symfony's unbranded page.
+            $renderable = in_array($status, [403, 404, 410], true)
                 || ($status === 500 && ! config('app.debug'));
 
             if ($renderable && ! $request->expectsJson() && ! $request->is('api/*')) {

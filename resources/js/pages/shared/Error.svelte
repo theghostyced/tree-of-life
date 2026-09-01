@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Link, page } from '@inertiajs/svelte';
-    import { ArrowLeft, RotateCw } from '@lucide/svelte';
+    import { ArrowLeft, House, RotateCw } from '@lucide/svelte';
     import AppHead from '@/components/AppHead.svelte';
     import Logo from '@/components/Logo.svelte';
     import { cn } from '@/lib/utils';
@@ -22,8 +22,16 @@
         illustration: string;
         headline: string;
         body: string;
-        /** Secondary escape: 'back' navigates away, 'retry' reloads (for transient failures). */
-        secondary: 'back' | 'retry';
+        /**
+         * Overrides the default primary action (dashboard/homepage) where the
+         * status implies a better next step than "go where you came from".
+         */
+        primary?: { href: string; label: string };
+        /**
+         * Secondary escape: 'back' navigates away, 'retry' reloads (for transient
+         * failures), 'home' for arrivals from outside the app with no history.
+         */
+        secondary: 'back' | 'retry' | 'home';
     };
 
     const meta: Record<number, ErrorMeta> = {
@@ -44,6 +52,21 @@
             headline: 'We couldn’t find that page',
             body: 'The link may be broken, or the page may have been moved or removed. Check the address, or head back to familiar ground.',
             secondary: 'back',
+        },
+        410: {
+            title: 'Invitation link no longer active',
+            chip: '410 · Invitation link inactive',
+            dot: 'bg-accent-orange',
+            illustration: '/images/illustrations/social-envelope.svg',
+            headline: 'This invitation link is no longer active',
+            // Deliberately generic: the visitor is unauthenticated and holds only
+            // a token, so the copy must not reveal whether the invitation was
+            // used, withdrawn, or simply timed out. The conditional phrasing lets
+            // someone who already registered help themselves without the page
+            // confirming that an account exists at the invited address.
+            body: 'Invitation links are single-use and expire after a while. If you’ve already set up your account, sign in below. Otherwise, ask your program admin to send you a fresh invitation.',
+            primary: { href: '/login', label: 'Sign in' },
+            secondary: 'home',
         },
         500: {
             title: 'Something went wrong',
@@ -72,6 +95,9 @@
     const homeLabel = $derived(
         homeHref === '/' ? 'Go to the homepage' : 'Go to your dashboard',
     );
+
+    const primaryHref = $derived(current.primary?.href ?? homeHref);
+    const primaryLabel = $derived(current.primary?.label ?? homeLabel);
 
     const focusRing =
         'outline-none focus-visible:ring-2 focus-visible:ring-accent/60';
@@ -132,33 +158,46 @@
                 class="mt-8 flex w-full flex-col items-center gap-3 sm:w-auto sm:flex-row"
             >
                 <Link
-                    href={homeHref}
+                    href={primaryHref}
                     class={cn(
-                        'inline-flex w-full items-center justify-center rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-on-accent shadow-btn transition-all hover:-translate-y-px hover:bg-accent-strong active:translate-y-0 sm:w-auto',
+                        'inline-flex w-full items-center justify-center rounded-lg bg-accent px-5 py-3 text-sm font-semibold text-on-accent shadow-btn transition-all hover:-translate-y-px hover:bg-accent-strong active:translate-y-0 sm:w-auto',
                         focusRing,
                     )}
                 >
-                    {homeLabel}
+                    {primaryLabel}
                 </Link>
-                <button
-                    type="button"
-                    onclick={() =>
-                        current.secondary === 'retry'
-                            ? window.location.reload()
-                            : history.back()}
-                    class={cn(
-                        'inline-flex w-full items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium text-muted transition-colors hover:bg-elevated hover:text-ink sm:w-auto',
-                        focusRing,
-                    )}
-                >
-                    {#if current.secondary === 'retry'}
-                        <RotateCw class="size-4" strokeWidth={1.75} />
-                        Try again
-                    {:else}
-                        <ArrowLeft class="size-4" strokeWidth={1.75} />
-                        Go back
-                    {/if}
-                </button>
+                {#if current.secondary === 'home'}
+                    <Link
+                        href={homeHref}
+                        class={cn(
+                            'inline-flex w-full items-center justify-center gap-2 rounded-lg px-5 py-3 text-sm font-medium text-muted transition-colors hover:bg-elevated hover:text-ink sm:w-auto',
+                            focusRing,
+                        )}
+                    >
+                        <House class="size-4" strokeWidth={1.75} />
+                        {homeLabel}
+                    </Link>
+                {:else}
+                    <button
+                        type="button"
+                        onclick={() =>
+                            current.secondary === 'retry'
+                                ? window.location.reload()
+                                : history.back()}
+                        class={cn(
+                            'inline-flex w-full items-center justify-center gap-2 rounded-lg px-5 py-3 text-sm font-medium text-muted transition-colors hover:bg-elevated hover:text-ink sm:w-auto',
+                            focusRing,
+                        )}
+                    >
+                        {#if current.secondary === 'retry'}
+                            <RotateCw class="size-4" strokeWidth={1.75} />
+                            Try again
+                        {:else}
+                            <ArrowLeft class="size-4" strokeWidth={1.75} />
+                            Go back
+                        {/if}
+                    </button>
+                {/if}
             </div>
         </div>
     </main>
