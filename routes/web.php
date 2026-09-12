@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\InvitationImportController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\InvitationAcceptanceController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\AvatarController;
 use App\Http\Controllers\Chat\ConversationMessagesController;
 use App\Http\Controllers\Chat\MarkReadController;
 use App\Http\Controllers\Chat\MessagesController;
@@ -26,6 +27,7 @@ use App\Http\Controllers\Mentor\RescheduleController;
 use App\Http\Controllers\Mentorship\MeetingRescheduleController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Onboarding\DocumentController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');
@@ -113,6 +115,12 @@ Route::middleware('auth')->group(function () {
         ->name('conversations.messages.store');
     Route::post('/conversations/{conversation}/read', [MarkReadController::class, 'store'])
         ->name('conversations.read');
+
+    Route::inertia('/help/how-it-works', 'shared/HowItWorks')->name('help.how-it-works');
+
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/users/{user}/avatar', [AvatarController::class, 'show'])->name('users.avatar');
 
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/read-all', [NotificationController::class, 'readAll'])->name('notifications.read-all');

@@ -1,10 +1,18 @@
 <script lang="ts">
     import { Link, page, router } from '@inertiajs/svelte';
-    import { LayoutGrid, Search, Menu, X, LogOut } from '@lucide/svelte';
+    import {
+        LayoutGrid,
+        Search,
+        Menu,
+        X,
+        LogOut,
+        UserRound,
+        CircleHelp,
+    } from '@lucide/svelte';
     import { fade, fly } from 'svelte/transition';
     import Logo from '@/components/Logo.svelte';
     import { RoleBadge } from '@/components/ui/role-badge';
-    import { cn } from '@/lib/utils';
+    import { cn, initialsOf } from '@/lib/utils';
     import type { Auth } from '@/types/auth';
     import UserMenu from './UserMenu.svelte';
     import NotificationBell from './NotificationBell.svelte';
@@ -225,17 +233,18 @@
 
                 <div class="mt-1 flex items-center gap-3 px-3 py-3">
                     <div
-                        class="flex size-9 items-center justify-center rounded-full border border-line bg-accent-soft text-[12px] font-semibold text-accent"
+                        class="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-line bg-accent-soft text-[12px] font-semibold text-accent"
                         aria-hidden="true"
                     >
-                        {auth.user.name
-                            .trim()
-                            .split(/\s+/)
-                            .map((part) => part[0])
-                            .slice(0, 2)
-                            .join('')
-                            .toUpperCase() ||
-                            auth.user.email.charAt(0).toUpperCase()}
+                        {#if auth.user.avatarUrl}
+                            <img
+                                src={auth.user.avatarUrl}
+                                alt=""
+                                class="size-full object-cover"
+                            />
+                        {:else}
+                            {initialsOf(auth.user.name, auth.user.email)}
+                        {/if}
                     </div>
                     <div class="min-w-0 leading-tight">
                         <p class="truncate text-sm font-medium text-ink">
@@ -247,6 +256,23 @@
                     </div>
                     <RoleBadge role={auth.role} class="ml-auto shrink-0" />
                 </div>
+
+                <Link
+                    href="/profile"
+                    onclick={closeMobile}
+                    class={mobileRowClass(isActive('/profile'))}
+                >
+                    <UserRound class="size-5" strokeWidth={1.75} />
+                    Profile
+                </Link>
+                <Link
+                    href="/help/how-it-works"
+                    onclick={closeMobile}
+                    class={mobileRowClass(isActive('/help/how-it-works'))}
+                >
+                    <CircleHelp class="size-5" strokeWidth={1.75} />
+                    How Tree of Life works
+                </Link>
 
                 <button
                     type="button"

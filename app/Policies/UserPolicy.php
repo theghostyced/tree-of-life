@@ -17,6 +17,15 @@ class UserPolicy
     }
 
     /**
+     * Profile pictures appear in chat, cards and the navbar, so any signed-in
+     * user may load anyone's.
+     */
+    public function viewAvatar(User $actor, User $target): bool
+    {
+        return true;
+    }
+
+    /**
      * Revoking access. An admin cannot lock themselves out, and an account that
      * is already deactivated has nothing to revoke.
      */
