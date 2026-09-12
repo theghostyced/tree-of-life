@@ -117,8 +117,8 @@
         if (user.role === 'mentor') {
             return [
                 {
-                    label: 'Primary expertise',
-                    value: asText(p.primary_expertise),
+                    label: 'Areas of expertise',
+                    value: asList(p.expertise_areas),
                 },
                 { label: 'Industry focus', value: asList(p.industry_focus) },
                 {

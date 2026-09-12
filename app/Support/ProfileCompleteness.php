@@ -47,11 +47,14 @@ class ProfileCompleteness
             }
         } elseif ($user->role === UserRole::Mentor) {
             $profile = $user->mentorProfile;
-            $fields = ['primary_expertise', 'years_experience', 'afcfta_knowledge', 'availability'];
+            $fields = ['years_experience', 'afcfta_knowledge', 'availability'];
             foreach ($fields as $field) {
                 if (blank($profile?->{$field})) {
                     $missing[] = 'Add your '.str_replace('_', ' ', $field).'.';
                 }
+            }
+            if (blank($profile?->expertise_areas)) {
+                $missing[] = 'Select at least one area of expertise.';
             }
             if (blank($profile?->industry_focus)) {
                 $missing[] = 'Select at least one industry focus.';

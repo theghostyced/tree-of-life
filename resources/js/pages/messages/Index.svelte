@@ -130,8 +130,8 @@
                             Your conversations
                         </p>
                         <p class="mt-1 max-w-xs text-sm text-muted">
-                            Choose a mentor from the list to read your history
-                            and pick up where you left off.
+                            Choose a conversation from the list to read your
+                            history and pick up where you left off.
                         </p>
                     </div>
                 </div>

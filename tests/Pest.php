@@ -62,7 +62,7 @@ function availableMentor(string $name = 'Grace Mentor'): User
 {
     $mentor = User::factory()->mentor()->approved()->create(['name' => $name]);
     $mentor->mentorProfile->update([
-        'primary_expertise' => 'Trade finance',
+        'expertise_areas' => ['Trade finance'],
         'industry_focus' => ['Agriculture'],
         'years_experience' => 10,
         'afcfta_knowledge' => 'Deep experience across the AfCFTA.',

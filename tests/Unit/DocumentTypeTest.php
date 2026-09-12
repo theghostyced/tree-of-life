@@ -41,3 +41,9 @@ test('a document type belongs to exactly one onboarding role', function () {
     expect(DocumentType::BusinessPlan->role())->toBe(UserRole::Entrepreneur)
         ->and(DocumentType::PassportPhoto->role())->toBe(UserRole::Mentor);
 });
+
+test('every required onboarding document explains what to upload', function (string $role) {
+    foreach (DocumentType::requiredFor(UserRole::from($role)) as $type) {
+        expect($type->description())->toBeString()->not->toBe('');
+    }
+})->with(['entrepreneur', 'mentor']);

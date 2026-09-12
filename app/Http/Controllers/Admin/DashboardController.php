@@ -93,7 +93,7 @@ class DashboardController extends Controller
 
         if ($role === UserRole::Mentor) {
             $query->whereHas('mentorProfile', fn (Builder $p) => $p
-                ->whereNotNull('primary_expertise')
+                ->whereNotNull('expertise_areas')
                 ->whereNotNull('years_experience')
                 ->whereNotNull('afcfta_knowledge')
                 ->whereNotNull('availability')

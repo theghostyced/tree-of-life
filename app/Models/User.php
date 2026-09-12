@@ -27,6 +27,7 @@ use Illuminate\Support\Carbon;
  * @property UserRole $role
  * @property AccountStatus $account_status
  * @property string|null $phone_number
+ * @property string|null $avatar_path
  * @property int|null $company_id
  * @property Carbon|null $email_verified_at
  * @property Carbon|null $account_status_changed_at
@@ -37,7 +38,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  */
 #[Fillable([
-    'name', 'email', 'password', 'role', 'account_status', 'phone_number',
+    'name', 'email', 'password', 'role', 'account_status', 'phone_number', 'avatar_path',
     'company_id', 'account_status_changed_at', 'profile_submitted_at',
 ])]
 #[Hidden(['password', 'remember_token'])]
@@ -132,7 +133,16 @@ class User extends Authenticatable
     {
         $query->where('role', UserRole::Mentor)
             ->where('account_status', AccountStatus::Approved)
-            ->whereHas('mentorProfile', fn (Builder $q) => $q->whereNotNull('primary_expertise'));
+            ->whereHas('mentorProfile', fn (Builder $q) => $q->whereNotNull('expertise_areas'));
+    }
+
+    /**
+     * The authenticated streaming route for the profile picture, or null when
+     * the user has not uploaded one.
+     */
+    public function avatarUrl(): ?string
+    {
+        return $this->avatar_path === null ? null : route('users.avatar', $this, absolute: false);
     }
 
     public function isAdmin(): bool

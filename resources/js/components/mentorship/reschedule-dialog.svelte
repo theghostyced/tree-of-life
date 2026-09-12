@@ -17,12 +17,14 @@
         occurrences = [],
         endpoint,
         reasonRequired = false,
+        emptyMessage = "There are no other free times in this mentor's published availability right now.",
         onclose,
     }: {
         target: Target | null;
         occurrences: Occurrence[];
         endpoint: (meetingId: number) => string;
         reasonRequired?: boolean;
+        emptyMessage?: string;
         onclose: () => void;
     } = $props();
 
@@ -124,10 +126,7 @@
 
         <div class="max-h-[50vh] overflow-y-auto px-5 py-4">
             {#if occurrences.length === 0}
-                <p class="text-sm text-muted">
-                    There are no other free times in this mentor's published
-                    availability right now.
-                </p>
+                <p class="text-sm text-muted">{emptyMessage}</p>
             {:else}
                 <p class="mb-3 text-xs font-semibold text-muted">
                     Choose a new time

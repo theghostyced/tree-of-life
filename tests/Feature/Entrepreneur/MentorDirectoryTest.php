@@ -39,14 +39,15 @@ test('the directory excludes mentors the entrepreneur already works with', funct
 
 test('the hub filters by search server-side', function () {
     $entrepreneur = completeEntrepreneur();
-    availableMentor('Grace Mentor'); // expertise 'Trade finance'
+    availableMentor('Grace Mentor'); // expertise ['Trade finance']
     availableMentor('Noah Guide')->mentorProfile
-        ->update(['primary_expertise' => 'Operations & supply chain']);
+        ->update(['expertise_areas' => ['Strategy', 'Operations & supply chain']]);
 
     $this->actingAs($entrepreneur)->get('/entrepreneur/mentors?search=operations')
         ->assertInertia(fn (Assert $page) => $page
             ->has('mentors.data', 1)
-            ->where('mentors.data.0.name', 'Noah Guide'));
+            ->where('mentors.data.0.name', 'Noah Guide')
+            ->where('mentors.data.0.expertise', ['Strategy', 'Operations & supply chain']));
 });
 
 test('the hub filters by focus area server-side', function () {

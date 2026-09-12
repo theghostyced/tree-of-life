@@ -1,8 +1,8 @@
 <script lang="ts">
     import { Link } from '@inertiajs/svelte';
     import { ArrowRight, ListChecks, ChevronRight } from '@lucide/svelte';
-    import EntrepreneurLayout from '@/components/layout/EntrepreneurLayout.svelte';
     import BarTrend from '@/components/charts/bar-trend.svelte';
+    import EntrepreneurLayout from '@/components/layout/EntrepreneurLayout.svelte';
     import { cn } from '@/lib/utils';
 
     type Onboarding = {
@@ -15,7 +15,7 @@
     type Mentor = {
         id: number;
         name: string;
-        expertise: string | null;
+        expertise: string[];
         industries: string[];
         yearsExperience: number | null;
         availability: string | null;
@@ -101,9 +101,9 @@
                                 >
                                     {m.name}
                                 </p>
-                                {#if m.expertise}
+                                {#if m.expertise.length}
                                     <p class="truncate text-xs text-muted">
-                                        {m.expertise}
+                                        {m.expertise.join(' · ')}
                                     </p>
                                 {/if}
                             </div>

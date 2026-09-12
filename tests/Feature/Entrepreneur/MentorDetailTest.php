@@ -12,7 +12,7 @@ test('the detail page shows one of the entrepreneur’s chosen mentors', functio
         ->assertInertia(fn (Assert $page) => $page
             ->component('entrepreneur/Mentor')
             ->where('mentor.name', 'Grace Mentor')
-            ->where('mentor.expertise', 'Trade finance')
+            ->where('mentor.expertise', ['Trade finance'])
             ->whereNot('pairedAt', null));
 });
 

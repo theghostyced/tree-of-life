@@ -275,5 +275,6 @@
         ? (availability[rescheduling.pairingId] ?? [])
         : []}
     endpoint={(id) => `/mentor/meetings/${id}/reschedule`}
+    emptyMessage="There are no other free times in your published availability right now."
     onclose={() => (rescheduling = null)}
 />

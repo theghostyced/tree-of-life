@@ -52,6 +52,25 @@ enum DocumentType: string
         };
     }
 
+    /**
+     * What the applicant should actually upload. Shown next to the requirement
+     * so people can gather the right file before they reach the upload step.
+     */
+    public function description(): string
+    {
+        return match ($this) {
+            self::BusinessCertificate => 'Your certificate of business registration or incorporation.',
+            self::BusinessRegistrationDocuments => 'Official documents showing the business is registered.',
+            self::BusinessPlan => 'Your current business plan: what you sell, to whom, and how the business will grow over the next two to three years.',
+            self::Milestones => 'The key milestones you aim to reach during the programme, with target dates.',
+            self::OperationalPlan => 'How the business runs day to day: team, suppliers, production or delivery, and key processes.',
+            self::TechnicalSupportRequirements => 'The technical support your business needs from the programme.',
+            self::PassportPhoto => 'A recent, clear head-and-shoulders photo of yourself against a plain background.',
+            self::IdentificationCard => 'A government-issued photo ID: national ID card, passport, or driver\'s licence. The whole document must be readable.',
+            self::Certification => 'Your highest relevant professional qualification: a degree certificate, professional membership, or an industry certification that supports your areas of expertise.',
+        };
+    }
+
     public function role(): UserRole
     {
         return match ($this) {

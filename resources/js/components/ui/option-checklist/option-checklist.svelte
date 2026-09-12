@@ -5,10 +5,14 @@
     let {
         options,
         value = $bindable([]),
+        max,
     }: {
         options: string[];
         value: string[];
+        max?: number;
     } = $props();
+
+    const atMax = $derived(max !== undefined && value.length >= max);
 
     const optionSet = $derived(new Set(options));
 
@@ -16,9 +20,11 @@
     let otherText = $state(value.filter((v) => !optionSet.has(v)).join(', '));
 
     function toggle(opt: string) {
-        value = value.includes(opt)
-            ? value.filter((v) => v !== opt)
-            : [...value, opt];
+        if (value.includes(opt)) {
+            value = value.filter((v) => v !== opt);
+        } else if (!atMax) {
+            value = [...value, opt];
+        }
     }
 
     function commitOther() {
@@ -27,7 +33,7 @@
             .split(',')
             .map((s) => s.trim())
             .filter(Boolean);
-        value = [...predefined, ...customs];
+        value = [...predefined, ...customs].slice(0, max);
     }
 
     function toggleOther() {
@@ -46,6 +52,7 @@
             active
                 ? 'border-accent bg-accent-soft text-ink'
                 : 'border-line bg-surface text-muted hover:border-line-strong',
+            !active && atMax && 'cursor-not-allowed opacity-50 hover:border-line',
         );
 </script>
 
@@ -55,6 +62,7 @@
             <button
                 type="button"
                 onclick={() => toggle(opt)}
+                disabled={!value.includes(opt) && atMax}
                 class={rowClass(value.includes(opt))}
             >
                 <Checkbox
@@ -68,6 +76,7 @@
         <button
             type="button"
             onclick={toggleOther}
+            disabled={!otherOpen && atMax}
             class={rowClass(otherOpen)}
         >
             <Checkbox

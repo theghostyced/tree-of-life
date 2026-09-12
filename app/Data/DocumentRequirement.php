@@ -12,6 +12,7 @@ class DocumentRequirement implements Arrayable
     public function __construct(
         public string $type,
         public string $label,
+        public string $description,
         public ?string $uploaded,
     ) {}
 
@@ -23,6 +24,7 @@ class DocumentRequirement implements Arrayable
         return [
             'type' => $this->type,
             'label' => $this->label,
+            'description' => $this->description,
             'uploaded' => $this->uploaded,
         ];
     }

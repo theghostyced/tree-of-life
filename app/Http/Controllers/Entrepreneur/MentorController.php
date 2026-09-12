@@ -41,7 +41,7 @@ class MentorController extends Controller
                 fn (Builder $inner) => $inner
                     ->where('name', 'like', "%{$search}%")
                     ->orWhereHas('mentorProfile', fn (Builder $p) => $p
-                        ->where('primary_expertise', 'like', "%{$search}%")
+                        ->where('expertise_areas', 'like', "%{$search}%")
                         ->orWhere('afcfta_knowledge', 'like', "%{$search}%"))
             ))
             ->when($focus !== '', fn (Builder $q) => $q->whereHas(

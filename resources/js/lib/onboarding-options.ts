@@ -37,8 +37,8 @@ export const SECTORS: string[] = [
     'Textiles & apparel',
 ];
 
-// Mentors focus on the same industry set.
-export const INDUSTRIES: string[] = SECTORS;
+// Mentors focus on the same industry set, plus areas that cut across sectors.
+export const INDUSTRIES: string[] = [...SECTORS, 'Regulatory compliance'];
 
 export const EXPERTISE_AREAS: string[] = [
     'Trade finance',

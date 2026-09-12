@@ -30,6 +30,7 @@ class MentorOnboardingData implements Arrayable
             ->map(fn (DocumentType $type): DocumentRequirement => new DocumentRequirement(
                 type: $type->value,
                 label: $type->label(),
+                description: $type->description(),
                 uploaded: $documents->get($type->value)?->original_name,
             ))->all();
 

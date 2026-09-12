@@ -9,17 +9,19 @@
         ChevronDown,
     } from '@lucide/svelte';
     import EntrepreneurLayout from '@/components/layout/EntrepreneurLayout.svelte';
-    import { Stepper } from '@/components/ui/stepper';
-    import { OptionChecklist } from '@/components/ui/option-checklist';
+    import DocumentChecklist from '@/components/onboarding/document-checklist.svelte';
+    import ProfileSummary from '@/components/onboarding/profile-summary.svelte';
+    import type { RequiredDocument } from '@/components/onboarding/types';
     import { Button } from '@/components/ui/button';
+    import { OptionChecklist } from '@/components/ui/option-checklist';
     import { toast } from '@/components/ui/sonner';
+    import { Stepper } from '@/components/ui/stepper';
     import {
         SECTORS,
         YEAR_RANGES,
         EMPLOYEE_RANGES,
     } from '@/lib/onboarding-options';
 
-    type Doc = { type: string; label: string; uploaded: string | null };
     type Profile = {
         business_name: string | null;
         business_description: string | null;
@@ -43,7 +45,7 @@
         progress,
     }: {
         profile: Profile;
-        requiredDocuments: Doc[];
+        requiredDocuments: RequiredDocument[];
         progress: Progress;
     } = $props();
 
@@ -64,6 +66,30 @@
         years_in_operation: profile.years_in_operation,
         employee_count: profile.employee_count,
     });
+
+    const rangeLabel = (
+        ranges: { value: number; label: string }[],
+        value: number | null,
+    ) => ranges.find((r) => r.value === value)?.label ?? null;
+
+    const summary = $derived([
+        { label: 'Business name', value: profile.business_name },
+        { label: 'Description', value: profile.business_description },
+        {
+            label: 'Sectors',
+            value: profile.sector.length ? profile.sector.join(', ') : null,
+        },
+        { label: 'Business email', value: profile.business_email },
+        { label: 'Business phone', value: profile.business_phone_number },
+        {
+            label: 'Years in operation',
+            value: rangeLabel(YEAR_RANGES, profile.years_in_operation),
+        },
+        {
+            label: 'Employees',
+            value: rangeLabel(EMPLOYEE_RANGES, profile.employee_count),
+        },
+    ]);
 
     // Step completeness reflects the *saved* profile, so ticks appear after Save.
     const steps = $derived([
@@ -113,7 +139,11 @@
     function uploadDoc(type: string, e: Event) {
         const input = e.target as HTMLInputElement;
         const file = input.files?.[0];
-        if (!file) return;
+
+        if (!file) {
+            return;
+        }
+
         router.post(
             '/onboarding/documents',
             { document_type: type, file },
@@ -165,7 +195,11 @@
 
         <div class="mt-8 rounded-2xl border border-line bg-panel/40 p-6 sm:p-8">
             {#if current === 0}
-                <h2 class="text-lg font-semibold text-ink">
+                <DocumentChecklist
+                    documents={requiredDocuments}
+                    fileHint="PDF, JPG, PNG or DOCX, up to 5 MB each."
+                />
+                <h2 class="mt-8 text-lg font-semibold text-ink">
                     About your business
                 </h2>
                 <div class="mt-5 space-y-5">
@@ -318,7 +352,9 @@
                 </p>
                 <ul class="mt-5 divide-y divide-line">
                     {#each requiredDocuments as doc (doc.type)}
-                        <li class="flex items-center gap-4 py-4">
+                        <li
+                            class="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-4 gap-y-3 py-4 sm:grid-cols-[auto_minmax(0,1fr)_auto]"
+                        >
                             <div
                                 class="flex size-10 shrink-0 items-center justify-center rounded-lg border border-line {doc.uploaded
                                     ? 'bg-accent-soft text-accent'
@@ -334,15 +370,22 @@
                                 {/if}
                             </div>
                             <div class="min-w-0 flex-1">
-                                <p class="truncate font-medium text-ink">
+                                <p class="font-medium text-ink">
                                     {doc.label}
                                 </p>
-                                <p class="truncate text-sm text-muted">
+                                <p class="text-sm text-muted">
+                                    {doc.description}
+                                </p>
+                                <p
+                                    class="mt-1 truncate text-xs {doc.uploaded
+                                        ? 'text-accent'
+                                        : 'text-faint'}"
+                                >
                                     {doc.uploaded ?? 'Not uploaded yet'}
                                 </p>
                             </div>
                             <label
-                                class="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-line px-3.5 py-2 text-sm font-medium text-muted transition-colors hover:border-accent hover:text-ink"
+                                class="col-start-2 inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-lg border border-line px-3.5 text-sm font-medium text-muted transition-colors focus-within:ring-2 focus-within:ring-accent/60 hover:border-accent hover:text-ink sm:col-start-auto sm:justify-self-end"
                             >
                                 <Upload class="size-4" strokeWidth={1.75} />
                                 {doc.uploaded ? 'Replace' : 'Upload'}
@@ -384,6 +427,11 @@
                         </p>
                     </div>
                 {/if}
+                <ProfileSummary
+                    items={summary}
+                    documents={requiredDocuments}
+                    onedit={goto}
+                />
             {/if}
         </div>
 

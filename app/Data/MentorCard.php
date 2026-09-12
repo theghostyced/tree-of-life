@@ -14,12 +14,13 @@ use Illuminate\Contracts\Support\Arrayable;
 class MentorCard implements Arrayable
 {
     /**
+     * @param  array<int, string>  $expertise
      * @param  array<int, string>  $industries
      */
     public function __construct(
         public int $id,
         public string $name,
-        public ?string $expertise,
+        public array $expertise,
         public array $industries,
         public ?int $yearsExperience,
         public ?string $availability,
@@ -33,8 +34,8 @@ class MentorCard implements Arrayable
         return new self(
             id: $mentor->id,
             name: $mentor->name,
-            expertise: $profile?->primary_expertise,
-            industries: $profile?->industry_focus ?? [],
+            expertise: $profile->expertise_areas ?? [],
+            industries: $profile->industry_focus ?? [],
             yearsExperience: $profile?->years_experience,
             availability: $profile?->availability,
             bio: $profile?->afcfta_knowledge,

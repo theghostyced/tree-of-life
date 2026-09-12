@@ -7,7 +7,7 @@
     type Mentor = {
         id: number;
         name: string;
-        expertise: string | null;
+        expertise: string[];
         industries: string[];
         yearsExperience: number | null;
         availability: string | null;
@@ -88,9 +88,9 @@
                     >
                         {mentor.name}
                     </h2>
-                    {#if mentor.expertise}
+                    {#if mentor.expertise.length}
                         <p class="text-[15px] text-accent capitalize">
-                            {mentor.expertise}
+                            {mentor.expertise.join(' · ')}
                         </p>
                     {/if}
                     {#if pairedLabel}

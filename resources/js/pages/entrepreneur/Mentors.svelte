@@ -16,7 +16,7 @@
     type Mentor = {
         id: number;
         name: string;
-        expertise: string | null;
+        expertise: string[];
         industries: string[];
         yearsExperience: number | null;
         availability: string | null;
@@ -177,11 +177,11 @@
                                 >
                                     {m.name}
                                 </p>
-                                {#if m.expertise}
+                                {#if m.expertise.length}
                                     <p
                                         class="truncate text-xs text-muted capitalize"
                                     >
-                                        {m.expertise}
+                                        {m.expertise.join(' · ')}
                                     </p>
                                 {/if}
                             </div>
@@ -316,11 +316,11 @@
                                             >
                                                 {m.name}
                                             </h3>
-                                            {#if m.expertise}
+                                            {#if m.expertise.length}
                                                 <p
                                                     class="truncate text-sm text-accent capitalize"
                                                 >
-                                                    {m.expertise}
+                                                    {m.expertise.join(' · ')}
                                                 </p>
                                             {/if}
                                         </div>

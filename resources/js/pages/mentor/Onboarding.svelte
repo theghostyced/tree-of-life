@@ -9,10 +9,13 @@
         ChevronDown,
     } from '@lucide/svelte';
     import MentorLayout from '@/components/layout/MentorLayout.svelte';
-    import { Stepper } from '@/components/ui/stepper';
-    import { OptionChecklist } from '@/components/ui/option-checklist';
+    import DocumentChecklist from '@/components/onboarding/document-checklist.svelte';
+    import ProfileSummary from '@/components/onboarding/profile-summary.svelte';
+    import type { RequiredDocument } from '@/components/onboarding/types';
     import { Button } from '@/components/ui/button';
+    import { OptionChecklist } from '@/components/ui/option-checklist';
     import { toast } from '@/components/ui/sonner';
+    import { Stepper } from '@/components/ui/stepper';
     import {
         INDUSTRIES,
         YEAR_RANGES,
@@ -20,9 +23,8 @@
         AVAILABILITY,
     } from '@/lib/onboarding-options';
 
-    type Doc = { type: string; label: string; uploaded: string | null };
     type Profile = {
-        primary_expertise: string | null;
+        expertise_areas: string[];
         industry_focus: string[];
         years_experience: number | null;
         afcfta_knowledge: string | null;
@@ -42,52 +44,56 @@
         progress,
     }: {
         profile: Profile;
-        requiredDocuments: Doc[];
+        requiredDocuments: RequiredDocument[];
         progress: Progress;
     } = $props();
 
     const form = useForm<{
-        primary_expertise: string;
+        expertise_areas: string[];
         industry_focus: string[];
         years_experience: number | null;
         afcfta_knowledge: string;
         availability: string;
     }>({
-        primary_expertise: profile.primary_expertise ?? '',
+        expertise_areas: profile.expertise_areas ?? [],
         industry_focus: profile.industry_focus ?? [],
         years_experience: profile.years_experience,
         afcfta_knowledge: profile.afcfta_knowledge ?? '',
         availability: profile.availability ?? '',
     });
 
-    // Primary expertise: a single choice from a list, or a custom "Other" value.
-    const OTHER = '__other__';
-    let expertiseChoice = $state(
-        profile.primary_expertise
-            ? EXPERTISE_AREAS.includes(profile.primary_expertise)
-                ? profile.primary_expertise
-                : OTHER
-            : '',
-    );
-    let expertiseOther = $state(
-        profile.primary_expertise &&
-            !EXPERTISE_AREAS.includes(profile.primary_expertise)
-            ? profile.primary_expertise
-            : '',
-    );
+    const MAX_EXPERTISE = 3;
 
-    function syncExpertise() {
-        form.primary_expertise =
-            expertiseChoice === OTHER ? expertiseOther : expertiseChoice;
-    }
+    const yearsLabel = (value: number | null) =>
+        YEAR_RANGES.find((r) => r.value === value)?.label ?? null;
+
+    const summary = $derived([
+        {
+            label: 'Areas of expertise',
+            value: profile.expertise_areas.length
+                ? profile.expertise_areas.join(', ')
+                : null,
+        },
+        {
+            label: 'Industry focus',
+            value: profile.industry_focus.length
+                ? profile.industry_focus.join(', ')
+                : null,
+        },
+        {
+            label: 'Years of experience',
+            value: yearsLabel(profile.years_experience),
+        },
+        { label: 'Availability', value: profile.availability },
+        { label: 'AfCFTA knowledge', value: profile.afcfta_knowledge },
+    ]);
 
     const steps = $derived([
         {
             label: 'Expertise',
-            complete: !!(
-                profile.primary_expertise &&
-                (profile.industry_focus?.length ?? 0) > 0
-            ),
+            complete:
+                profile.expertise_areas.length > 0 &&
+                (profile.industry_focus?.length ?? 0) > 0,
         },
         {
             label: 'Experience',
@@ -126,7 +132,11 @@
     function uploadDoc(type: string, e: Event) {
         const input = e.target as HTMLInputElement;
         const file = input.files?.[0];
-        if (!file) return;
+
+        if (!file) {
+            return;
+        }
+
         router.post(
             '/onboarding/documents',
             { document_type: type, file },
@@ -177,42 +187,33 @@
 
         <div class="mt-8 rounded-2xl border border-line bg-panel/40 p-6 sm:p-8">
             {#if current === 0}
-                <h2 class="text-lg font-semibold text-ink">Your expertise</h2>
+                <DocumentChecklist
+                    documents={requiredDocuments}
+                    fileHint="PDF, JPG or PNG (DOCX for certifications), up to 2 MB each."
+                />
+                <h2 class="mt-8 text-lg font-semibold text-ink">
+                    Your expertise
+                </h2>
                 <div class="mt-5 space-y-5">
                     <div class="space-y-2">
-                        <label for="pe" class={labelClass}
-                            >Primary expertise</label
-                        >
-                        <div class="relative">
-                            <select
-                                id="pe"
-                                class="{field} appearance-none pr-10"
-                                style="color-scheme: dark;"
-                                bind:value={expertiseChoice}
-                                onchange={syncExpertise}
-                            >
-                                <option value="" disabled>Select…</option>
-                                {#each EXPERTISE_AREAS as area (area)}
-                                    <option value={area}>{area}</option>
-                                {/each}
-                                <option value={OTHER}>Other</option>
-                            </select>
-                            <ChevronDown
-                                class="pointer-events-none absolute top-1/2 right-3.5 size-4 -translate-y-1/2 text-muted"
-                                strokeWidth={1.75}
-                            />
+                        <div class="flex items-baseline justify-between gap-3">
+                            <span class={labelClass}>Areas of expertise</span>
+                            <span class="text-xs text-faint tabular-nums">
+                                {form.expertise_areas.length}/{MAX_EXPERTISE} selected
+                            </span>
                         </div>
-                        {#if expertiseChoice === OTHER}
-                            <input
-                                class={field}
-                                bind:value={expertiseOther}
-                                oninput={syncExpertise}
-                                placeholder="Your primary expertise"
-                            />
-                        {/if}
-                        {#if form.errors.primary_expertise}
+                        <p class="text-sm text-muted">
+                            Choose up to {MAX_EXPERTISE}. Entrepreneurs find you
+                            by these.
+                        </p>
+                        <OptionChecklist
+                            options={EXPERTISE_AREAS}
+                            bind:value={form.expertise_areas}
+                            max={MAX_EXPERTISE}
+                        />
+                        {#if form.errors.expertise_areas}
                             <p class="text-sm text-error">
-                                {form.errors.primary_expertise}
+                                {form.errors.expertise_areas}
                             </p>
                         {/if}
                     </div>
@@ -309,7 +310,9 @@
                 </p>
                 <ul class="mt-5 divide-y divide-line">
                     {#each requiredDocuments as doc (doc.type)}
-                        <li class="flex items-center gap-4 py-4">
+                        <li
+                            class="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-4 gap-y-3 py-4 sm:grid-cols-[auto_minmax(0,1fr)_auto]"
+                        >
                             <div
                                 class="flex size-10 shrink-0 items-center justify-center rounded-lg border border-line {doc.uploaded
                                     ? 'bg-accent-soft text-accent'
@@ -325,15 +328,22 @@
                                 {/if}
                             </div>
                             <div class="min-w-0 flex-1">
-                                <p class="truncate font-medium text-ink">
+                                <p class="font-medium text-ink">
                                     {doc.label}
                                 </p>
-                                <p class="truncate text-sm text-muted">
+                                <p class="text-sm text-muted">
+                                    {doc.description}
+                                </p>
+                                <p
+                                    class="mt-1 truncate text-xs {doc.uploaded
+                                        ? 'text-accent'
+                                        : 'text-faint'}"
+                                >
                                     {doc.uploaded ?? 'Not uploaded yet'}
                                 </p>
                             </div>
                             <label
-                                class="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-line px-3.5 py-2 text-sm font-medium text-muted transition-colors hover:border-accent hover:text-ink"
+                                class="col-start-2 inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-lg border border-line px-3.5 text-sm font-medium text-muted transition-colors focus-within:ring-2 focus-within:ring-accent/60 hover:border-accent hover:text-ink sm:col-start-auto sm:justify-self-end"
                             >
                                 <Upload class="size-4" strokeWidth={1.75} />
                                 {doc.uploaded ? 'Replace' : 'Upload'}
@@ -375,6 +385,11 @@
                         </p>
                     </div>
                 {/if}
+                <ProfileSummary
+                    items={summary}
+                    documents={requiredDocuments}
+                    onedit={goto}
+                />
             {/if}
         </div>
 
